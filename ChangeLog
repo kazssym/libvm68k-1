@@ -1,5 +1,7 @@
 2001-07-03  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Version 1.0.6.
+
 	* Makefile.am (libvm68k_la_LDFLAGS): Updates the version
 	information.
 
