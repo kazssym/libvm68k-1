@@ -1,3 +1,8 @@
+2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* configure.in (LTLIBRELEASE): Remove `AC_DEFINE(_GNU_SOURCE)'.
+	Reorder some tests.
+
 2001-07-03  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Version 1.0.6.
