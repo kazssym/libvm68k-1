@@ -1,0 +1,401 @@
+\input texinfo                  @c -*- Texinfo -*-
+@c %**start of header
+@setfilename libvm68k.info
+@settitle Libvm68k Reference Manual
+@set VERSION 1.0
+@c $Format: "@set REVISION $Revision$" $
+@set REVISION 1.1
+@c $Format: "@set DATE $Date$" $
+@set DATE Sat, 16 Jun 2001 23:17:03 +0900
+@c %**end of header
+
+@dircategory Miscellaneous packages
+@direntry
+* Libvm68k: (libvm68k).         M68000 virtual machine library.
+@end direntry
+
+@ifinfo
+This file documents the usage and the internals of Libvm68k.
+
+Copyright 1999-2001 Hypercore Software Design, Ltd.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+@end ifinfo
+
+@titlepage
+@title Libvm68k Reference Manual
+@subtitle Version @value{VERSION}
+@author Kaz Sasayama
+@page
+@vskip 0pt plus 1filll
+Revision @value{REVISION}, updated @value{DATE}.
+
+Copyright @copyright{} 1999-2001 Hypercore Software Design, Ltd.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+@end titlepage
+
+@ifnothtml
+@contents
+@end ifnothtml
+
+@ifnottex
+@node Top, M68000 Architecture Basics, (dir), (dir)
+@top Libvm68k
+
+Libvm68k is an M68000 virtual machine library written in C++.
+
+This is Revision @value{REVISION} of the Libvm68k Reference Manual,
+updated @value{DATE}.  This manual applies to Version @value{VERSION} of
+Libvm68k.
+@end ifnottex
+
+@menu
+* M68000 Architecture Basics::  M68000 architecture in brief.
+* Using Libvm68k::              How to use Libvm68k in a program.
+* Function Index::              Index for functions.
+* Object Index::                Index for objects.
+* Type Index::                  Index for types.
+* Concept Index::               Index for concepts.
+
+@detailmenu
+ --- The Detailed Node Listing ---
+
+M68000 Architecture Basics
+
+* Data Size::                   Data size description.
+
+Using Libvm68k
+
+* Basic Types::                 Definitions of Basic Types.
+* Memory Interface::            Basics of the memory subsystem.
+* Processor::                   How is a processor constructed?
+
+Memory Interface
+
+* Memory Exceptions::           Exceptions on memory.
+* Memory::                      Memory objects.
+* Memory Map::                  Memory maps.
+
+Processor
+
+* Context::                     Context of execution.
+* Execution Unit::              How instructions are decoded and executed.
+
+Execution Unit
+
+* Instructions::                Handling instructions.
+
+@end detailmenu
+@end menu
+
+@node M68000 Architecture Basics, Using Libvm68k, Top, Top
+@chapter M68000 Architecture Basics
+
+Before describing internals of Libvm68k, let's review the M68000
+architecture.
+
+Readers who is familiar with this architecture can skip this chapter.
+
+@menu
+* Data Size::                   Data size description.
+@end menu
+
+@node Data Size,  , M68000 Architecture Basics, M68000 Architecture Basics
+@section Data Size
+
+In M68000 architecture, a @dfn{byte} is 8-bit long.  A @dfn{word} is two
+bytes.  A @dfn{long word} is two words, or four bytes.
+
+@node Using Libvm68k, Function Index, M68000 Architecture Basics, Top
+@chapter Using Libvm68k
+
+@cindex coding convention
+This chapter describes the application program interface of Libvm68k.
+
+They are declared in the namespace @code{vm68k}.
+
+@menu
+* Basic Types::                 Definitions of Basic Types.
+* Memory Interface::            Basics of the memory subsystem.
+* Processor::                   How is a processor constructed?
+@end menu
+
+@node Basic Types, Memory Interface, Using Libvm68k, Using Libvm68k
+@section Definitions of Basic Types.
+Libvm68k defines several basic types to keep the program
+portable. These types are defined in namespace
+@code{vm68k::types} and imported in namespace
+@code{vm68k}.
+
+@deftp Typedef uint_type
+This is a natural unsigned type that can
+hold an unsigned word number on M68000. This type is
+@code{unsigned int} on all host architectures.
+@end deftp
+
+@deftp Typedef uint32_type
+This is a natural unsigned type that can
+hold an unsigned long word number on M68000. This type is
+@code{unsigned int} on host architectures that have
+@code{unsigned int} with at least 32-bit.
+@end deftp
+
+@deftp Typedef sint_type
+@code{sint_type} is a natural signed type that can
+hold a signed word number on M68000. This type is
+@code{int} on most host architectures, but if the host
+architecture cannot represent -0x8000 in that type, i.e. it
+does not use 2's complement representation, it is @code{long
+int} instead.
+@end deftp
+
+@deftp Typedef sint32_type
+@code{sint32_type} is a natural signed type that can hold a signed long
+word number on M68000. This type is @code{int} on host architectures
+that have @code{int} with at least 32-bit and that can represent
+-0x80000000 in that type. Otherwise, it is @code{long int} if the type
+can hold -0x80000000, or @code{long long int} if the compiler is GCC. If
+there is no type that can hold -0x80000000 on the architecture, Libvm68k
+cannot be compiled.
+@end deftp
+
+@node Memory Interface, Processor, Basic Types, Using Libvm68k
+@section Memory Interface
+
+@cindex memory
+Memory is an object that can be mapped in an address space.
+The class @code{memory} is the abstract base
+class for all memory.
+
+Libvm68k uses a single address space to access memory
+and peripheral devices.
+
+@menu
+* Memory Exceptions::           Exceptions on memory.
+* Memory::                      Memory objects.
+* Memory Map::                  Memory maps.
+@end menu
+
+@node Memory Exceptions, Memory, Memory Interface, Memory Interface
+@subsection Memory Exceptions
+
+@deftp {Abstract Class} memory_exception
+@end deftp
+
+@deftp Class bus_error_exception
+@end deftp
+
+@deftp Class address_error_exception
+@end deftp
+
+@node Memory, Memory Map, Memory Exceptions, Memory Interface
+@subsection Memory
+
+@deftp {Abstract Class} memory
+Abstract base class for memory components.
+@end deftp
+
+@deftp {Enumeration in @code{memory}} function_code
+Classifies memory references.  These values are defined:
+
+@vtable @code
+@item USER_DATA
+User data reference.  The processor uses this value in the user state
+for reading and writing data.
+
+@item USER_PROGRAM
+User program reference.  The processor uses this value in the user state
+for reading instructions.
+
+@item SUPER_DATA
+Supervisor data reference.  The processor uses this value in the
+supervisor state for reading and writing data.
+
+@item SUPER_PROGRAM
+Supervisor program reference.  The processor uses this value in the
+supervisor state for reading instructions.
+@end vtable
+@end deftp
+
+@deftypeop {Abstract Method} memory int get_8 (uint32_type @var{address}, function_code @var{fc}) const
+Reads an 8-bit data from this memory.  The return value is unsigned.
+@end deftypeop
+
+@deftypeop {Abstract Method} memory uint16_type get_16 (uint32_type @var{address}, function_code @var{fc}) const
+Reads a 16-bit data from this memory.  @var{address} must be a multiple
+of 2.  The return value is unsigned.
+@end deftypeop
+
+@deftypemethod memory uint32_type get_32 (uint32_type @var{address}, function_code @var{fc}) const
+Reads a 32-bit data from this memory.  @var{address} must be a multiple
+of 4.  The return value is unsigned.
+
+This method is just implemented using two @code{get_16} calls for
+convenience, but can be overridden by a derived class for a slightly
+better performance.
+@end deftypemethod
+
+@deftypeop {Abstract Method} memory void put_8 (uint32_type @var{address}, int @var{value}, function_code @var{fc})
+Writes an 8-bit value to this memory.  @var{value} may be signed or
+unsigned.  @var{fc} must be one of the data references.
+@end deftypeop
+
+@deftypeop {Abstract Method} memory void put_16 (uint32_type @var{address}, uint16_type @var{value}, function_code @var{fc})
+Writes a 16-bit value to this memory.  @var{address} must be a multiple
+of 2.  @var{value} may be signed or unsigned.  @var{fc} must be one of
+the data references.
+@end deftypeop
+
+@deftypemethod memory void put_32 (uint32_type @var{address}, uint32_type @var{value}, function_code @var{fc})
+Writes a 32-bit value to this memory.  @var{address} must be a multiple
+of 4.  @var{value} may be signed or unsigned.  @var{fc} must be one of
+the data references.
+
+This method is just implemented using two @code{put_16} calls for
+convenience, but can be overridden by a derived class for a slightly
+better performance.
+@end deftypemethod
+
+@node Memory Map,  , Memory, Memory Interface
+@subsection Memory Map
+
+@deftp Class memory_map
+This is a class of address spaces for memory.
+@end deftp
+
+@deftp {Typedef in @code{memory_map}} function_code
+Alias of @code{memory::function_code}.
+@end deftp
+
+@deftypemethod memory_map int get_8 (uint32_type @var{address}, function_code @var{fc}) const
+@end deftypemethod
+
+@deftypemethod memory_map uint16_type get_16 (uint32_type @var{address}, function_code @var{fc}) const
+@end deftypemethod
+
+@deftypemethod memory_map uint16_type get_16_unchecked (uint32_type @var{address}, function_code @var{fc}) const
+@end deftypemethod
+
+@deftypemethod memory_map uint32_type get_32 (uint32_type @var{address}, function_code @var{fc}) const
+@end deftypemethod
+
+@deftypemethod memory_map void put_8 (uint32_type @var{address}, int @var{value}, function_code @var{fc})
+@end deftypemethod
+
+@deftypemethod memory_map void put_16 (uint32_type @var{address}, uint16_type @var{value}, function_code @var{fc})
+@end deftypemethod
+
+@deftypemethod memory_map void put_16_unchecked (uint32_type @var{address}, uint16_type @var{value}, function_code @var{fc})
+@end deftypemethod
+
+@deftypemethod memory_map void put_32 (uint32_type @var{address}, uint32_type @var{value}, function_code @var{fc})
+@end deftypemethod
+
+@node Processor,  , Memory Interface, Using Libvm68k
+@section Processor
+@cindex processor
+
+A processor is made of a pair of a context and an execution
+unit. A context represents the dynamic state, which is
+updated by program execution. An execution unit represents
+the static setting that is not changed while program
+execution.
+
+@menu
+* Context::                     Context of execution.
+* Execution Unit::              How instructions are decoded and executed.
+@end menu
+
+@node Context, Execution Unit, Processor, Processor
+@subsection Context
+@cindex context
+
+The state of the processor is stored in a context. Major
+components of a context are a set of registers and a
+reference to an address space.
+
+@deftp Class context
+This class represents the dynamic part of a processor.
+@end deftp
+
+@deftypeivar context registers regs
+This variable keeps values of the processor registers.
+@end deftypeivar
+
+@deftypemethod context bool supervisor_state () const
+This method returns true if this context is in the supervisor state.
+@end deftypemethod
+
+@deftypemethod context void set_supervisor_state (bool @var{state})
+This method sets the supervisor state to @var{state}.
+@end deftypemethod
+
+@deftypemethod context memory::function_code data_fc () const
+This method returns the function code for data.
+@end deftypemethod
+
+@deftypemethod context memory::function_code program_fc () const
+This method returns the function code for programs.
+@end deftypemethod
+
+@node Execution Unit,  , Context, Processor
+@subsection Execution Unit
+
+@cindex execution unit
+Libvm68k encapsulates non-dynamic aspects of a M68000
+processor into an execution unit.
+
+@deftp Class exec_unit
+This class represents the static part of a processor.
+@end deftp
+
+@deftypemethod exec_unit instruction_type set_instruction (uint16_type @var{op}, const instruction_type &@var{i})
+This method sets an instruction for operation word @var{op} to @var{i}
+and returns the previous value.
+@end deftypemethod
+
+@deftypemethod exec_unit void step (context &@var{c}) const
+This method executes a single instruction in context @var{c}.
+@end deftypemethod
+
+@deftypemethod exec_unit void run (context &@var{c}) const
+This method executes instructions in context @var{c}.
+@end deftypemethod
+
+@menu
+* Instructions::                Handling instructions.
+@end menu
+
+@node Instructions,  , Execution Unit, Execution Unit
+@subsubsection Instructions
+
+@cindex instruction handler
+An instruction is defined by a function.
+This function is called @dfn{instruction handler}.
+
+@node Function Index, Object Index, Using Libvm68k, Top
+@unnumbered Function Index
+
+@printindex fn
+
+@node Object Index, Type Index, Function Index, Top
+@unnumbered Object Index
+
+@printindex vr
+
+@node Type Index, Concept Index, Object Index, Top
+@unnumbered Type Index
+
+@printindex tp
+
+@node Concept Index,  , Type Index, Top
+@unnumbered Concept Index
+
+@printindex cp
+
+@bye

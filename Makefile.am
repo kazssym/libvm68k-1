@@ -12,6 +12,8 @@ context.cc condition_code.cc memory_map.cc memory.cc
 
 noinst_HEADERS = instr.h
 
+info_TEXINFOS = libvm68k.texi
+
 EXTRA_DIST = ChangeLog.vx68k NEWS.vx68k
 
 SUBDIRS = vm68k

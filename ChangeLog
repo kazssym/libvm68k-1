@@ -1,3 +1,10 @@
+2001-06-16  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* Makefile.am (info_TEXINFOS): New macro.
+
+	* libvm68k.texi: New file.
+	* texinfo.tex: New file.
+
 2001-06-13  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Separated from vx68k.  See the file ChangeLog.vx68k for older
