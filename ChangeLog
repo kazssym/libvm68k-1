@@ -1,5 +1,12 @@
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Version 1.0.5.
+
+	* Makefile.am (libvm68k_la_LDFLAGS): Update the version
+	information.
+
+	* configure.in: Set VERSION to 1.0.5.
+
 	* TODO: Updated.
 
 	* NEWS: Updated.
