@@ -24,7 +24,7 @@
 
 #include "instr.h"
 
-#include <vm68k/addressing.h>
+#include <vm68k/add.h>
 #include <vm68k/processor.h>
 
 #include <cstdio>
@@ -48,7 +48,7 @@ namespace vm68k
 {
   namespace instr
   {
-    using namespace addressing;
+    using namespace add;
 
     /* Handles a CLR instruction.  */
     template <class Size, class Destination>

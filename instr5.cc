@@ -24,7 +24,7 @@
 
 #include "instr.h"
 
-#include <vm68k/addressing.h>
+#include <vm68k/add.h>
 #include <vm68k/conditional.h>
 #include <vm68k/processor.h>
 
@@ -50,7 +50,7 @@ namespace vm68k
   namespace instr
   { 
     using namespace conditional;
-    using namespace addressing;
+    using namespace add;
 
     /* Handles an ADDQ instruction.  */
     template <class Size, class Destination>

@@ -26,7 +26,7 @@
 
 namespace vm68k
 {
-  namespace addressing
+  namespace add
   {
     using namespace std;
 
@@ -300,11 +300,11 @@ namespace vm68k
       int r;
 
     private:
-      uint32_type addr;
+      uint32_type add;
 
     public:
       basic_disp_indirect(int reg, uint32_type address)
-	: r(reg), addr(address) {}
+	: r(reg), add(address) {}
 
     public:
       uint32_type address(const context &c) const;
@@ -321,7 +321,7 @@ namespace vm68k
     template <class Size> inline uint32_type
     basic_disp_indirect<Size>::address(const context &c) const
     {
-      return c.regs.a[r] + c.fetch_s(word_size(), addr);
+      return c.regs.a[r] + c.fetch_s(word_size(), add);
     }
 
     template <class Size> inline typename Size::svalue_type
@@ -334,7 +334,7 @@ namespace vm68k
     basic_disp_indirect<Size>::text(const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%u@(%d)/* %#lx */", r, c.fetch_s(word_size(), addr),
+      sprintf(buf, "%%a%u@(%d)/* %#lx */", r, c.fetch_s(word_size(), add),
 	      address(c) + 0UL);
       return buf;
     }
@@ -357,11 +357,11 @@ namespace vm68k
       int r;
 
     private:
-      uint32_type addr;
+      uint32_type add;
 
     public:
       basic_index_indirect(int reg, uint32_type address)
-	: r(reg), addr(address) {}
+	: r(reg), add(address) {}
 
     public:
       uint32_type address(const context &c) const;
@@ -379,7 +379,7 @@ namespace vm68k
     template <class Size> inline uint32_type
     basic_index_indirect<Size>::address(const context &c) const
     {
-      uint16_type w = c.fetch_u(word_size(), addr);
+      uint16_type w = c.fetch_u(word_size(), add);
       int r = w >> 12 & 0xf;
       uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
       if (w & 0x800)
@@ -397,7 +397,7 @@ namespace vm68k
     template <class Size> string
     basic_index_indirect<Size>::text(const context &c) const
     {
-      uint16_type w = c.fetch_u(word_size(), addr);
+      uint16_type w = c.fetch_u(word_size(), add);
       int r = w >> 12 & 0xf;
       char buf[64];
       if (r >= 8)
@@ -424,11 +424,11 @@ namespace vm68k
       static size_t extension_size() {return 2;}
 
     private:
-      uint32_type addr;
+      uint32_type add;
 
     public:
       basic_abs_short(int reg, uint32_type address)
-	: addr(address) {}
+	: add(address) {}
 
     public:
       uint32_type address(const context &c) const;
@@ -450,7 +450,7 @@ namespace vm68k
     template <class Size> inline uint32_type
     basic_abs_short<Size>::address(const context &c) const
     {
-      return c.fetch_s(word_size(), addr);
+      return c.fetch_s(word_size(), add);
     }
 
     template <class Size> inline typename Size::svalue_type
@@ -474,11 +474,11 @@ namespace vm68k
       static size_t extension_size() {return 4;}
 
     private:
-      uint32_type addr;
+      uint32_type add;
 
     public:
       basic_abs_long(int reg, uint32_type address)
-	: addr(address) {}
+	: add(address) {}
 
     public:
       uint32_type address(const context &c) const;
@@ -495,7 +495,7 @@ namespace vm68k
     template <class Size> inline uint32_type
     basic_abs_long<Size>::address(const context &c) const
     {
-      return c.fetch_s(long_word_size(), addr);
+      return c.fetch_s(long_word_size(), add);
     }
 
     template <class Size> inline typename Size::svalue_type
@@ -527,11 +527,11 @@ namespace vm68k
       static size_t extension_size() {return 2;}
 
     private:
-      uint32_type addr;
+      uint32_type add;
 
     public:
       basic_disp_pc_indirect(int reg, uint32_type address)
-	: addr(address) {}
+	: add(address) {}
 
     public:
       uint32_type address(const context &c) const;
@@ -548,7 +548,7 @@ namespace vm68k
     template <class Size> inline uint32_type
     basic_disp_pc_indirect<Size>::address(const context &c) const
     {
-      return addr + c.fetch_s(word_size(), addr);
+      return add + c.fetch_s(word_size(), add);
     }
 
     template <class Size> inline typename Size::svalue_type
@@ -561,7 +561,7 @@ namespace vm68k
     basic_disp_pc_indirect<Size>::text(const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%%pc@(%d)/* %#lx */", c.fetch_s(word_size(), addr),
+      sprintf(buf, "%%pc@(%d)/* %#lx */", c.fetch_s(word_size(), add),
 	      address(c) + 0UL);
       return buf;
     }
@@ -581,11 +581,11 @@ namespace vm68k
       static size_t extension_size() {return 2;}
 
     private:
-      uint32_type addr;
+      uint32_type add;
 
     public:
       basic_index_pc_indirect(int reg, uint32_type address)
-	: addr(address) {}
+	: add(address) {}
 
     public:
       uint32_type address(const context &c) const;
@@ -602,13 +602,13 @@ namespace vm68k
     template <class Size> inline uint32_type
     basic_index_pc_indirect<Size>::address(const context &c) const
     {
-      uint16_type w = c.fetch_u(word_size(), addr);
+      uint16_type w = c.fetch_u(word_size(), add);
       int r = w >> 12 & 0xf;
       uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
       if (w & 0x800)
-	return addr + byte_size::svalue(w) + long_word_size::get(x);
+	return add + byte_size::svalue(w) + long_word_size::get(x);
       else
-	return addr + byte_size::svalue(w) + word_size::get(x);
+	return add + byte_size::svalue(w) + word_size::get(x);
     }
 
     template <class Size> inline typename Size::svalue_type
@@ -620,7 +620,7 @@ namespace vm68k
     template <class Size> string
     basic_index_pc_indirect<Size>::text(const context &c) const
     {
-      uint16_type w = c.fetch_u(word_size(), addr);
+      uint16_type w = c.fetch_u(word_size(), add);
       int r = w >> 12 & 0xf;
       char buf[64];
       if (r >= 8)
@@ -648,11 +648,11 @@ namespace vm68k
       static size_t extension_size() {return Size::aligned_value_size();}
 
     private:
-      uint32_type addr;
+      uint32_type add;
 
     public:
       basic_immediate(int reg, uint32_type address)
-	: addr(address) {}
+	: add(address) {}
 
     public:
       // XXX address is left unimplemented.
@@ -669,7 +669,7 @@ namespace vm68k
     template <class Size> inline typename Size::svalue_type
     basic_immediate<Size>::get(const context &c) const
     {
-      return c.fetch_s(Size(), addr);
+      return c.fetch_s(Size(), add);
     }
 
     template <class Size> string
