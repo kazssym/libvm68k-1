@@ -1,3 +1,10 @@
+2002-10-02  Kaz Sasayama  <kaz2002@hypercore.co.jp>
+
+	* instr1-3.cc (m68k_move): Replace _move.
+	(m68k_movea): Replace _movea.
+
+	* vm68k/addressing: Use std:: for sprintf.
+
 2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* vm68k/addressing (class data_register_direct, class
