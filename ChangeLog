@@ -1,4 +1,10 @@
+2001-06-24  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* NEWS: Reformated for the Emacs outline mode.
+
 2001-06-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* Version 1.0.3.
 
 	* Makefile.am (libvm68k_la_LDFLAGS): Update the version info.
 

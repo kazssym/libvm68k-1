@@ -1,17 +1,17 @@
 List of user-visible changes in Libvm68k.
 
-Version 1.0.3
+* Version 1.0.3
 
-* Code was modified to fix errors detected by GCC 3.0.
+** Code was modified to fix errors detected by GCC 3.0.
 
-* Part of the library interface changed.  Now the library version can
+** Part of the library interface changed.  Now the library version can
 be retrieved by the function vm68k::version.
 
-Version 1.0.2
+* Version 1.0.2
 
-* Texinfo documentation was added.
+** Texinfo documentation was added.
 
-Version 1.0.1
+* Version 1.0.1
 
-* Separated from the vx68k package.  See the file NEWS.vx68k for older
-changes.
+** Separated from the vx68k package.  See the file NEWS.vx68k for
+older changes.
