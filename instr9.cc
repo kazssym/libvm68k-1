@@ -60,8 +60,8 @@ namespace vm68k
 #endif
 
       typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value2 = Size::get(c.regs.d[reg2]);
-      typename Size::svalue_type value = Size::svalue(value2 - value1);
+      typename Size::svalue_type value2 = Size::get_s(c.regs.d[reg2]);
+      typename Size::svalue_type value = Size::normal_s(value2 - value1);
       Size::put(c.regs.d[reg2], value);
       c.regs.ccr.set_cc_sub(value, value2, value1);
 
@@ -80,9 +80,9 @@ namespace vm68k
       L("\tsub%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
-      typename Size::svalue_type value2 = Size::get(c.regs.d[reg2]);
+      typename Size::svalue_type value2 = Size::get_s(c.regs.d[reg2]);
       typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value = Size::svalue(value1 - value2);
+      typename Size::svalue_type value = Size::normal_s(value1 - value2);
       ea1.put(c, value);
       c.regs.ccr.set_cc_sub(value, value1, value2);
 
@@ -103,9 +103,9 @@ namespace vm68k
 
       // This instruction does not affect the condition codes.
       long_word::svalue_type value1 = ea1.get(c);
-      long_word::svalue_type value2 = long_word::get(c.regs.a[reg2]);
+      long_word::svalue_type value2 = long_word::get_s(c.regs.a[reg2]);
       long_word::svalue_type value
-	= long_word::svalue(value2 - value1);
+	= long_word::normal_s(value2 - value1);
       long_word::put(c.regs.a[reg2], value);
 
       ea1.finish(c);
