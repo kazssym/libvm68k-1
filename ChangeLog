@@ -1,5 +1,7 @@
 2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* ChangeLog: Correct mail addresses.
+
 	* bus_target.cc: Move the location of #includes.
 	* bus.cc: Likewise.
 
@@ -108,7 +110,7 @@
 	get_16 and get_32 to throw bus_error and address_error.
 	(find_memory): Use const_cast in the const override.
 
-2001-12-07  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-12-07  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* vm68k/memory.h (class memory_error): Renamed from
 	memory_exception.  Also change all references.
@@ -130,13 +132,13 @@
 	* instr13.cc: Change the instruction handlers.
 	* instr14.cc: Likewise.
 
-2001-12-06  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-12-06  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* instr9.cc: Change the instruction handlers.
 	* instr11.cc: Likewise.
 	* instr12.cc: Likewise.
 
-2001-12-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-12-04  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* vm68k/addressing.h: Change the addressing mode to take an
 	address instead of an offset from the PC.
@@ -161,14 +163,14 @@
 	* instr5.cc: Renamed from inst5.cc.  Change the instruction
 	handlers.
 
-2001-12-03  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-12-03  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Makefile.am (libvm68k_la_SOURCES): Change the file name.
 
 	* instr4.cc: Renamed rom inst4.cc.  Change the instruction
 	handlers.
 
-2001-12-02  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-12-02  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Makefile.am (libvm68k_la_SOURCES): Change the file name.
 
@@ -193,7 +195,7 @@
 	change static method illegal.  Change dispatch, step, run to take
 	and return the PC.
 
-2001-11-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-11-30  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* libvm68k.texi (Processor Class): Updated as the code changed.
 
@@ -205,16 +207,16 @@
 
 	* texinfo.tex: Updated.
 
-2001-08-05  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-08-05  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* libvm68k.texi (Basic Types): Updated.
 
-2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-07-04  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* configure.in (LTLIBRELEASE): Remove `AC_DEFINE(_GNU_SOURCE)'.
 	Reorder some tests.
 
-2001-07-03  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-07-03  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Version 1.0.6.
 
@@ -228,11 +230,11 @@
 	-, ==, and != non-member.
 	(class basic_uint16_iterator): Likewise.
 
-2001-07-02  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-07-02  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Change tests for Nana macros.
 
-2001-07-01  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-07-01  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* memory_map.cc: Move Nana inclusion first.  Use "vm68k/memory.h"
 	instead of <vm68k/memory.h>.
@@ -270,7 +272,7 @@
 	Add new member `base'.
 	(class basic_uint32_iterator): Likewise.
 
-2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-06-29  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Version 1.0.5.
 
@@ -317,7 +319,7 @@
 
 	* configure.in (LTLIBRELEASE): Set for substitution.
 
-2001-06-27  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-06-27  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* vm68k/memory.h (class basic_uint16_iterator): Removed.
 	(class basic_uint32_iterator): Removed.
@@ -340,7 +342,7 @@
 	(_POSIX_C_SOURCE): Defined.
 	(inline): Remove #undef.
 
-2001-06-26  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-06-26  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Version 1.0.4.
 
@@ -383,11 +385,11 @@
 
 	* TODO: Updated.
 
-2001-06-24  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-06-24  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* NEWS: Reformated for the Emacs outline mode.
 
-2001-06-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-06-19  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Version 1.0.3.
 
@@ -419,7 +421,7 @@
 
 	* vm68k/misc.h: New file.
 
-2001-06-17  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-06-17  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Version 1.0.2.
 
@@ -429,7 +431,7 @@
 
 	* NEWS: Updated for new release.
 
-2001-06-16  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-06-16  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Makefile.am (info_TEXINFOS): New macro.
 	(LTLIBRELEASE): New macro.
@@ -438,7 +440,7 @@
 	* libvm68k.texi: New file.
 	* texinfo.tex: New file.
 
-2001-06-13  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+2001-06-13  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* Separated from vx68k.  See the file ChangeLog.vx68k for older
 	changes.
