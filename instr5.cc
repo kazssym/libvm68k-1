@@ -108,16 +108,16 @@ namespace vm68k
 #endif
 
       // This instruction does not affect the condition codes.
-      if (cond(c))
-	return pc + 2 + 2;
+      if (!cond(c))
+	{
+	  sint16_type value = word_size::get(c.regs.d[reg1]);
+	  value = word_size::svalue(value - 1);
+	  word_size::put(c.regs.d[reg1], value);
+	  if (value != -1)
+	    return pc + 2 + disp;
+	}
 
-      sint16_type value = word_size::get(c.regs.d[reg1]);
-      value = word_size::svalue(value - 1);
-      word_size::put(c.regs.d[reg1], value);
-      if (value == -1)
-	return pc + 2 + 2;
-
-      return pc + 2 + disp;
+      return pc + 2 + 2;
     }
 
     /* Handles a Scc instruction.  */
