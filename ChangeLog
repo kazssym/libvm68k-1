@@ -1,5 +1,19 @@
 2002-10-01  Kaz Sasayama  <kaz2002@hypercore.co.jp>
 
+	* vm68k/bus (PAGE_SHIFT, PAGE_SIZE, ADDRESS_BIT, NPAGES): Removed.
+	(class memory_device): Renamed from bus_target.
+	(class memory_device): Rename each get and put to load and store
+	respectively.
+	(class memory): Renamed from bus.
+	(class memory): Rename each get and put to load and store
+	respectively.
+	(class memory): Rename read and write to copy_out and copy_in
+	respectively.
+	(class memory): Add new members address_mask and page_size.
+	(class memory): Rename no_target to no_device.
+	(class memory): Rename fill_memory to add.
+	(class memory): Rename find_memory to find_device.
+
 	* vm68k/processor (struct registers): Removed.
 	(class context): Replace member regs with registers including pc.
 	(class context): Rename member mem to _bus and make it private.

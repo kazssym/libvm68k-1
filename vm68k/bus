@@ -27,13 +27,6 @@
 
 namespace vm68k
 {
-  const int PAGE_SHIFT = 12;
-  const uint32_type PAGE_SIZE = uint32_type(1) << PAGE_SHIFT;
-
-  // External mc68000 address is 24-bit size.
-  const int ADDRESS_BIT = 24;
-  const uint32_type NPAGES = uint32_type(1) << ADDRESS_BIT - PAGE_SHIFT;
-
   /* Function code, which identifies an access type.  */
   enum function_code
     {USER_DATA = 1,
@@ -99,146 +92,156 @@ namespace vm68k
 
 namespace vm68k
 {
-  /* Abstract bus target.  A bus target will be mapped within an address
-     space.  */
-  class bus_target
+  /* Abstract device that can be mapped in a memory address space.  */
+  class memory_device
   {
   public:
-    virtual ~bus_target() {}
+    virtual int load_8(uint32_type address,
+		       function_code fc) const throw (bus_error) = 0;
+    virtual uint16_type load_16(uint32_type address,
+				function_code fc) const throw (bus_error) = 0;
+    virtual uint32_type load_32(uint32_type address,
+				function_code fc) const throw (bus_error);
 
   public:
-    virtual int get_8(uint32_type address, function_code fc) const
-      throw (bus_error) = 0;
-    virtual uint16_type get_16(uint32_type address, function_code fc) const
-      throw (bus_error) = 0;
-    virtual uint32_type get_32(uint32_type address, function_code fc) const
-      throw (bus_error);
-    virtual void put_8(uint32_type address, int value, function_code fc)
-      throw (bus_error) = 0;
-    virtual void put_16(uint32_type address, uint16_type value,
-			function_code fc) throw (bus_error) = 0;
-    virtual void put_32(uint32_type address, uint32_type value,
-			function_code fc) throw (bus_error);
+    virtual void store_8(uint32_type address, int value,
+			 function_code fc) throw (bus_error) = 0;
+    virtual void store_16(uint32_type address, uint16_type value,
+			  function_code fc) throw (bus_error) = 0;
+    virtual void store_32(uint32_type address, uint32_type value,
+			  function_code fc) throw (bus_error);
+
+  public:
+    virtual ~memory_device() {}
   };
 
-  /* Maps an address space to memories.  An address space is a
-     software view of a target machine.  */
-  class bus
+  /* Memory in the programmer's view.  A memory has a single address
+     space and consists of memory pages.  */
+  class memory
   {
-  protected:
-    typedef std::vector<bus_target *> page_table_type;
-
   private:
+    typedef std::vector<memory_device *> page_table_type;
     page_table_type page_table;
 
   public:
-    bus();
-    virtual ~bus();
-
-  public:
-    static bus_target *no_target() throw ();
-
-  protected:
-    /* Finds a page that contains address ADDRESS.  */
-    page_table_type::iterator
-    find_memory(uint32_type address);
-    page_table_type::const_iterator
-    find_memory(uint32_type address) const;
-
-  public:
-    /* Fills an address range with memory.  */
-    void fill_memory(uint32_type, uint32_type, bus_target *);
+    memory();
 
   public:
     /* Returns one byte at address ADDRESS in this address space.  */
-    int get_8(uint32_type address, function_code fc) const
-      throw (bus_error);
+    int load_8(uint32_type address,
+	       function_code fc) const throw (bus_error);
 
     /* Returns one word at address ADDRESS in this address space.  Any
        unaligned address will be handled.  */
-    uint16_type get_16(uint32_type address, function_code fc) const
-      throw (bus_error, address_error);
+    uint16_type load_16(uint32_type address,
+			function_code fc) const throw (bus_error,
+						       address_error);
 
     /* Returns one word at address ADDRESS in this address space.
        The address must be word-aligned.  */
-    uint16_type get_16_aligned(uint32_type address, function_code fc) const
-      throw (bus_error);
+    uint16_type load_16_aligned(uint32_type address,
+				function_code fc) const throw (bus_error);
 
     /* Returns one long word at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
-    uint32_type get_32(uint32_type address, function_code fc) const
-      throw (bus_error, address_error);
+    uint32_type load_32(uint32_type address,
+			function_code fc) const throw (bus_error,
+						       address_error);
 
-    std::string get_string(uint32_type address, function_code fc) const;
+    std::string load_string(uint32_type address,
+			    function_code fc) const throw (bus_error);
 
-    void read(uint32_type, void *, size_t, function_code fc) const;
-
+  public:
     /* Stores byte VALUE at address ADDRESS in this address space.  */
-    void put_8(uint32_type address, int value, function_code fc)
-      throw (bus_error);
+    void store_8(uint32_type address, int value,
+		 function_code fc) throw (bus_error);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
-    void put_16(uint32_type address, uint16_type value, function_code fc)
-      throw (bus_error, address_error);
+    void store_16(uint32_type address, uint16_type value,
+		  function_code fc) throw (bus_error, address_error);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        The address must be word-aligned.  */
-    void put_16_aligned(uint32_type address, uint16_type value,
-			  function_code fc)
-      throw (bus_error);
+    void store_16_aligned(uint32_type address, uint16_type value,
+			  function_code fc) throw (bus_error);
 
     /* Stores long word VALUE at address ADDRESS in this address
        space.  Any unaligned address will be handled.  */
-    void put_32(uint32_type address, uint32_type value, function_code fc)
-      throw (bus_error, address_error);
+    void store_32(uint32_type address, uint32_type value,
+		  function_code fc) throw (bus_error, address_error);
 
-    void put_string(uint32_type address, const std::string &, function_code fc);
+    void store_string(uint32_type address, const std::string &,
+		      function_code fc) throw (bus_error);
 
-    void write(uint32_type, const void *, size_t, function_code fc);
+  public:
+    void copy_out(uint32_type, void *, size_t,
+		  function_code fc) const throw (bus_error);
+    void copy_in(uint32_type, const void *, size_t,
+		 function_code fc) throw (bus_error);
+
+  public:
+    // External mc68000 address is 24-bit size.
+    static uint32_type address_mask() throw () {return 0xffffff;}
+    static uint32_type page_size() throw () {return 0x1000;}
+    static memory_device *no_device() throw ();
+
+  public:
+    /* Fills an address range with memory.  */
+    void add(uint32_type, uint32_type, memory_device *);
+
+  protected:
+    /* Finds a page that contains address ADDRESS.  */
+    page_table_type::iterator find_device(uint32_type address);
+    page_table_type::const_iterator find_device(uint32_type address) const;
+
+  public:
+    virtual ~memory();
   };
 
-  inline bus::page_table_type::iterator
-  bus::find_memory(uint32_type address)
+  inline memory::page_table_type::iterator
+  memory::find_device(uint32_type address)
   {
-    return page_table.begin() + (address >> PAGE_SHIFT) % NPAGES;
+    address &= address_mask();
+    return page_table.begin() + address / page_size();
   }
 
-  inline bus::page_table_type::const_iterator
-  bus::find_memory(uint32_type address) const
+  inline memory::page_table_type::const_iterator
+  memory::find_device(uint32_type address) const
   {
-    return const_cast<bus *>(this)->find_memory(address);
+    return const_cast<memory *>(this)->find_device(address);
   }
 
   inline int
-  bus::get_8(uint32_type address, function_code fc) const throw (bus_error)
+  memory::load_8(uint32_type address,
+		 function_code fc) const throw (bus_error)
   {
-    const bus_target *p = *this->find_memory(address);
-    return p->get_8(address, fc);
+    const memory_device *p = *this->find_device(address);
+    return p->load_8(address, fc);
   }
 
   inline uint16_type
-  bus::get_16_aligned(uint32_type address, function_code fc) const
-    throw (bus_error)
+  memory::load_16_aligned(uint32_type address,
+			  function_code fc) const throw (bus_error)
   {
-    const bus_target *p = *this->find_memory(address);
-    return p->get_16(address, fc);
+    const memory_device *p = *this->find_device(address);
+    return p->load_16(address, fc);
   }
 
   inline void
-  bus::put_8(uint32_type address, int value, function_code fc)
-    throw (bus_error)
+  memory::store_8(uint32_type address, int value,
+		  function_code fc) throw (bus_error)
   {
-    bus_target *p = *this->find_memory(address);
-    p->put_8(address, value, fc);
+    memory_device *p = *this->find_device(address);
+    p->store_8(address, value, fc);
   }
 
   inline void
-  bus::put_16_aligned(uint32_type address, uint16_type value,
+  memory::store_16_aligned(uint32_type address, uint16_type value,
 		      function_code fc) throw (bus_error)
   {
-    bus_target *p = *this->find_memory(address);
-    p->put_16(address, value, fc);
+    memory_device *p = *this->find_device(address);
+    p->store_16(address, value, fc);
   }
 }
 
