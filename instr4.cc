@@ -473,7 +473,7 @@ namespace vm68k
       if (!c.supervisor_state())
 	throw privilege_violation_exception();
 
-      memory::function_code fc = memory::SUPER_DATA;
+      memory::function_code fc = c.data_fc();
       uint16_type status = word_size::uget(*c.mem, fc, c.regs.a[7] + 0);
       uint32_type address = long_word_size::uget(*c.mem, fc, c.regs.a[7] + 2);
       c.regs.a[7] += 6;

@@ -1,8 +1,17 @@
+2001-12-03  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* instr4.cc: Change the instruction handlers.
+
+	* Makefile.am (libvm68k_la_SOURCES): Change the file name.
+
+	* instr4.cc: Renamed rom inst4.cc.
+
 2001-12-02  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Makefile.am (libvm68k_la_SOURCES): Change the file name.
 
-	* instr1-3.cc: Renamed inst1to3.cc.
+	* instr1-3.cc: Renamed inst1to3.cc.  Change the instruction
+	handlers.
 
 	* processor.cc (run): Updated as the interface changed.
 	(illegal): Updated.
@@ -12,7 +21,7 @@
 
 	* Makefile.am (libvm68k_la_SOURCES): Change the file name.
 
-	* instr0.cc: Renamed from inst0.  Change instruction handlers.
+	* instr0.cc: Renamed from inst0.cc.  Change instruction handlers.
 
 	* vm68k/processor.h (struct registers): Remove member pc, set_pc,
 	and advance_pc.

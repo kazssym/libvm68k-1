@@ -391,7 +391,7 @@ namespace vm68k
   using namespace instr;
 
   void
-  install_instructions_0(processor &p, unsigned long data)
+  install_instructions_0(processor &p, unsigned long d)
   {
     static const instruction_map inst[]
       = {{     0,     7, &_ori<byte_size, byte_d_register>},
@@ -593,6 +593,6 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
   }
 }
