@@ -26,13 +26,7 @@
 #define _POSIX_C_SOURCE 199506L	// POSIX.1c
 
 #include <vm68k/bus>
-
-#ifdef HAVE_NANA_H
-# include <nana.h>
-#else
-# include <cassert>
-# define I assert
-#endif
+#include <cassert>
 
 namespace vm68k
 {
@@ -56,21 +50,21 @@ namespace vm68k
   using namespace std;
 
   uint32_type
-  bus_target::get_32(uint32_type address, function_code fc) const
-    throw (bus_error)
+  memory_device::load_32(uint32_type address,
+			 function_code fc) const throw (bus_error)
   {
-    I((address & 3) == 0);
-    uint32_type value = uint32_type(get_16(address, fc)) << 16;
-    value |= get_16(address + 2, fc) & 0xffff;
+    assert((address & 3) == 0);
+    uint32_type value = uint32_type(load_16(address, fc)) << 16;
+    value |= load_16(address + 2, fc) & 0xffff;
     return value;
   }
 
   void
-  bus_target::put_32(uint32_type address, uint32_type value, function_code fc)
-    throw (bus_error)
+  memory_device::store_32(uint32_type address, uint32_type value,
+			  function_code fc) throw (bus_error)
   {
-    I((address & 3) == 0);
-    put_16(address,     value >> 16, fc);
-    put_16(address + 2, value,       fc);
+    assert((address & 3) == 0);
+    store_16(address,     value >> 16, fc);
+    store_16(address + 2, value,       fc);
   }
 }

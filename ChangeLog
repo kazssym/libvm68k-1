@@ -1,5 +1,8 @@
 2002-10-01  Kaz Sasayama  <kaz2002@hypercore.co.jp>
 
+	* bus_target.cc: Remove nana support.  Change all renamed types
+	and functions.
+
 	* vm68k/bus (PAGE_SHIFT, PAGE_SIZE, ADDRESS_BIT, NPAGES): Removed.
 	(class memory_device): Renamed from bus_target.
 	(class memory_device): Rename each get and put to load and store
