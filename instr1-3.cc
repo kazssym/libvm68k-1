@@ -77,7 +77,7 @@ namespace vm68k
     _movea(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Source ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tmovea%s %s,%%a%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif

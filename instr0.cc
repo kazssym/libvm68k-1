@@ -135,13 +135,13 @@ namespace vm68k
     _bclr_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tbclr%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
       // This instruction affects only the Z bit of the condition codes.
-      unsigned int value2 = c.regs.d[reg2] % Size::value_bit();
+      int value2 = c.regs.d[reg2] % Size::value_bit();
       typename Size::uvalue_type mask = Size::uvalue(1) << value2;
       typename Size::uvalue_type value1 = ea1.get(c);
       bool value = value1 & mask;
@@ -157,7 +157,7 @@ namespace vm68k
     uint32_type
     _bclr_i(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      unsigned int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
+      int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
       Destination ea1(w & 7, pc + 2 + 2);
 #ifdef L
       L("\tbclr%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
@@ -180,7 +180,7 @@ namespace vm68k
     _bset_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tbset%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
@@ -201,7 +201,7 @@ namespace vm68k
     uint32_type
     _bset_i(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      unsigned int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
+      int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
       Destination ea1(w & 7, pc + 2 + word_size::aligned_value_size());
 #ifdef L
       L("\tbset%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
@@ -225,13 +225,13 @@ namespace vm68k
     _btst_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tbtst%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
       // This instruction affects only the Z bit of the condition codes.
-      unsigned int value2 = c.regs.d[reg2] % Size::value_bit();
+      int value2 = c.regs.d[reg2] % Size::value_bit();
       typename Size::uvalue_type mask = Size::uvalue(1) << value2;
       typename Size::uvalue_type value1 = ea1.get(c);
       bool value = value1 & mask;
@@ -246,7 +246,7 @@ namespace vm68k
     uint32_type
     _btst_i(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      unsigned int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
+      int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
       Destination ea1(w & 7, pc + 2 + word_size::aligned_value_size());
 #ifdef L
       L("\tbtst%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
