@@ -75,7 +75,7 @@ namespace vm68k
       L("\text%s %%d%u\n", Size2::suffix(), reg1);
 #endif
 
-      typename Size2::svalue_type value = Size1::get(c.regs.d[reg1]);
+      typename Size2::svalue_type value = Size1::get_s(c.regs.d[reg1]);
       Size2::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc(value);
 
@@ -111,9 +111,8 @@ namespace vm68k
       // XXX: The condition codes are not affected.
       uint32_type address = ea1.address(c);
       function_code fc = c.data_fc();
-      uint32_type sp = c.regs.a[7] - long_word::aligned_value_size();
-      long_word::put(*c.mem, fc, sp,
-			  pc + 2 + Destination::extension_size());
+      uint32_type sp = c.regs.a[7] - long_word::aligned_size();
+      long_word::put(*c.mem, sp, fc, pc + 2 + Destination::extension_size());
       long_word::put(c.regs.a[7], sp);
 
       return address;
@@ -145,17 +144,17 @@ namespace vm68k
       int reg1 = w & 7;
       word::svalue_type disp = c.fetch_s(word(), pc + 2);
 #ifdef L
-      L("\tlink %%a%u,#%#x\n", reg1, word::uvalue(disp));
+      L("\tlink %%a%u,#%#x\n", reg1, word::normal_u(disp));
 #endif
 
       // XXX: The condition codes are not affected.
       function_code fc = c.data_fc();
-      uint32_type fp = c.regs.a[7] - long_word::aligned_value_size();
-      long_word::put(*c.mem, fc, fp, c.regs.a[reg1]);
+      uint32_type fp = c.regs.a[7] - long_word::aligned_size();
+      long_word::put(*c.mem, fp, fc, c.regs.a[reg1]);
       long_word::put(c.regs.a[7], fp + disp);
       long_word::put(c.regs.a[reg1], fp);
 
-      return pc + 2 + word::aligned_value_size();
+      return pc + 2 + word::aligned_size();
     }
 
     /* Handles a MOVE-from-SR instruction.  */
@@ -234,7 +233,7 @@ namespace vm68k
 	throw privilege_violation_exception(pc);
 
       // This instruction does not affect the condition codes.
-      long_word::put(c.regs.usp, long_word::get(c.regs.a[reg1]));
+      long_word::put(c.regs.usp, long_word::get_u(c.regs.a[reg1]));
 
       return pc + 2;
     }
@@ -258,8 +257,8 @@ namespace vm68k
 	{
 	  if (mask & m)
 	    {
-	      Size::put(*c.mem, fc, address, Size::get(*i));
-	      address += Size::value_size();
+	      Size::put(*c.mem, address, fc, Size::get_s(*i));
+	      address += Size::size();
 	    }
 	  m <<= 1;
 	}
@@ -267,8 +266,8 @@ namespace vm68k
 	{
 	  if (mask & m)
 	    {
-	      Size::put(*c.mem, fc, address, Size::get(*i));
-	      address += Size::value_size();
+	      Size::put(*c.mem, address, fc, Size::get_s(*i));
+	      address += Size::size();
 	    }
 	  m <<= 1;
 	}
@@ -290,14 +289,14 @@ namespace vm68k
       // This instruction does not affect the condition codes.
       uint16_type m = 1;
       function_code fc = c.data_fc();
-      sint32_type address = long_word::get(c.regs.a[reg1]);
+      sint32_type address = long_word::get_s(c.regs.a[reg1]);
       // This instruction iterates registers in reverse.
       for (uint32_type *i = c.regs.a + 8; i != c.regs.a + 0; --i)
 	{
 	  if (mask & m)
 	    {
-	      address -= Size::value_size();
-	      Size::put(*c.mem, fc, address, long_word::get(*(i - 1)));
+	      address -= Size::size();
+	      Size::put(*c.mem, address, fc, long_word::get_s(*(i - 1)));
 	    }
 	  m <<= 1;
 	}
@@ -305,8 +304,8 @@ namespace vm68k
 	{
 	  if (mask & m)
 	    {
-	      address -= Size::value_size();
-	      Size::put(*c.mem, fc, address, long_word::get(*(i - 1)));
+	      address -= Size::size();
+	      Size::put(*c.mem, address, fc, long_word::get_s(*(i - 1)));
 	    }
 	  m <<= 1;
 	}
@@ -321,7 +320,7 @@ namespace vm68k
     _movem_m_r(uint32_type pc, context &c, uint16_type w, void *)
     {
       word::uvalue_type mask = c.fetch_u(word(), pc + 2);
-      Source ea1(w & 7, pc + 2 + word::aligned_value_size());
+      Source ea1(w & 7, pc + 2 + word::aligned_size());
 #ifdef L
       L("\tmovem%s %s,#%#x\n", Size::suffix(), ea1.text(c).c_str(), mask);
 #endif
@@ -334,8 +333,8 @@ namespace vm68k
 	{
 	  if (mask & m)
 	    {
-	      long_word::put(*i, Size::get(*c.mem, fc, address));
-	      address += Size::value_size();
+	      long_word::put(*i, Size::get_s(*c.mem, address, fc));
+	      address += Size::size();
 	    }
 	  m <<= 1;
 	}
@@ -343,13 +342,13 @@ namespace vm68k
 	{
 	  if (mask & m)
 	    {
-	      long_word::put(*i, Size::get(*c.mem, fc, address));
-	      address += Size::value_size();
+	      long_word::put(*i, Size::get_s(*c.mem, address, fc));
+	      address += Size::size();
 	    }
 	  m <<= 1;
 	}
 
-      return pc + 2 + word::aligned_value_size()
+      return pc + 2 + word::aligned_size()
 	+ Source::extension_size();
     }
 
@@ -367,14 +366,14 @@ namespace vm68k
       // This instruction does not affect the condition codes.
       uint16_type m = 1;
       function_code fc = c.data_fc();
-      sint32_type address = long_word::get(c.regs.a[reg1]);
+      sint32_type address = long_word::get_s(c.regs.a[reg1]);
       // This instruction sign-extends words to long words.
       for (uint32_type *i = c.regs.d + 0; i != c.regs.d + 8; ++i)
 	{
 	  if (mask & m)
 	    {
-	      long_word::put(*i, Size::get(*c.mem, fc, address));
-	      address += Size::value_size();
+	      long_word::put(*i, Size::get_s(*c.mem, address, fc));
+	      address += Size::size();
 	    }
 	  m <<= 1;
 	}
@@ -382,8 +381,8 @@ namespace vm68k
 	{
 	  if (mask & m)
 	    {
-	      long_word::put(*i, Size::get(*c.mem, fc, address));
-	      address += Size::value_size();
+	      long_word::put(*i, Size::get_s(*c.mem, address, fc));
+	      address += Size::size();
 	    }
 	  m <<= 1;
 	}
@@ -403,7 +402,7 @@ namespace vm68k
 #endif
 
       typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value = Size::svalue(-value1);
+      typename Size::svalue_type value = Size::normal_s(-value1);
       ea1.put(c, value);
       c.regs.ccr.set_cc_sub(value, 0, value1);
 
@@ -433,7 +432,7 @@ namespace vm68k
 #endif
 
       typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value = Size::svalue(~Size::uvalue(value1));
+      typename Size::svalue_type value = Size::normal_s(~Size::normal_u(value1));
       ea1.put(c, value);
       c.regs.ccr.set_cc(value);
 
@@ -454,8 +453,8 @@ namespace vm68k
       // XXX: The condition codes are not affected.
       uint32_type address = ea1.address(c);
       function_code fc = c.data_fc();
-      uint32_type sp = c.regs.a[7] - long_word::aligned_value_size();
-      long_word::put(*c.mem, fc, sp, address);
+      uint32_type sp = c.regs.a[7] - long_word::aligned_size();
+      long_word::put(*c.mem, sp, fc, address);
       long_word::put(c.regs.a[7], sp);
 
       return pc + 2 + Destination::extension_size();
@@ -474,8 +473,8 @@ namespace vm68k
 	throw privilege_violation_exception(pc);
 
       function_code fc = c.data_fc();
-      uint16_type status = word::uget(*c.mem, fc, c.regs.a[7] + 0);
-      uint32_type address = long_word::uget(*c.mem, fc, c.regs.a[7] + 2);
+      uint16_type status = word::get_u(*c.mem, c.regs.a[7], fc);
+      uint32_type address = long_word::get_u(*c.mem, c.regs.a[7] + 2, fc);
       c.regs.a[7] += 6;
       c.set_sr(status);
 
@@ -492,7 +491,7 @@ namespace vm68k
 
       // XXX: The condition codes are not affected.
       function_code fc = c.data_fc();
-      sint32_type address = long_word::get(*c.mem, fc, c.regs.a[7]);
+      sint32_type address = long_word::get_s(*c.mem, c.regs.a[7], fc);
       long_word::put(c.regs.a[7], c.regs.a[7] + 4);
 
       return address;
@@ -507,11 +506,10 @@ namespace vm68k
       L("\tswap%s %%d%u\n", word::suffix(), reg1);
 #endif
 
-      long_word::svalue_type value1 = long_word::get(c.regs.d[reg1]);
+      long_word::svalue_type value1 = long_word::get_s(c.regs.d[reg1]);
       long_word::svalue_type value
-	= long_word::svalue(long_word::uvalue(value1) << 16
-				 | (long_word::uvalue(value1) >> 16
-				    & 0xffff));
+	= long_word::normal_s(long_word::normal_u(value1) << 16
+			      | long_word::normal_u(value1) >> 16);
       long_word::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc(value);
 
@@ -547,9 +545,8 @@ namespace vm68k
       // XXX: The condition codes are not affected.
       function_code fc = c.data_fc();
       uint32_type fp = c.regs.a[reg1];
-      long_word::put(c.regs.a[reg1], long_word::get(*c.mem, fc, fp));
-      long_word::put(c.regs.a[7],
-			  fp + long_word::aligned_value_size());
+      long_word::put(c.regs.a[reg1], long_word::get_s(*c.mem, fp, fc));
+      long_word::put(c.regs.a[7], fp + long_word::aligned_size());
 
       return pc + 2;
     }
