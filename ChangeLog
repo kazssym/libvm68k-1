@@ -1,5 +1,7 @@
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* configure.in: Set _GNU_SOURCE to 1.
+
 	* vm68k/memory.h: Remove #include <vm68k/iterator.h>.
 	(__VM68K_MEMORY_H): Renamed _VM68k_MEMORY_H.
 
