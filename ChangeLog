@@ -1,5 +1,13 @@
 2003-03-25  Kaz Sasayama  <kaz2003@hypercore.co.jp>
 
+	* configure.ac: Renamed from configure.in, and updated for
+	autoconf 2.50 and later.
+	* configure: Regenerated.
+	* aclocal.m4: Regenerated.
+	* config.h.in: Regenerated.
+	* Makefile.in: Regenerated.
+	* vm68k/Makefile.in: Regenerated.
+
 	* Upgrade to GNU automake 1.5.  Also regenerate aclocal.m4,
 	configure, and all Makefile.in's.
 	* depcomp: New file.

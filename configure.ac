@@ -1,6 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(context.cc)
-AM_INIT_AUTOMAKE(libvm68k, 1.0.6)
+AC_INIT([Libvm68k], 1.0.6, [vx68k@lists.hypercore.co.jp], libvm68k)
+AC_CONFIG_SRCDIR(context.cc)
+AM_INIT_AUTOMAKE(AC_PACKAGE_TARNAME, AC_PACKAGE_VERSION)
+AM_CONFIG_HEADER(config.h)
 LTLIBRELEASE="-release 1.0"
 AC_SUBST(LTLIBRELEASE)dnl
 AC_PROG_CC
@@ -34,5 +36,5 @@ if test "$ac_cv_cxx_namespaces" != yes; then
   AC_MSG_WARN([this program cannot be built without namespaces])
 fi
 
-AM_CONFIG_HEADER(config.h)
-AC_OUTPUT(Makefile vm68k/Makefile)
+AC_CONFIG_FILES(Makefile vm68k/Makefile)
+AC_OUTPUT
