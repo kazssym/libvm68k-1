@@ -1,0 +1,476 @@
+これは libvm68k.info、libvm68k.texi より makeinfo バージョン 4.1
+によって作成されました。
+
+INFO-DIR-SECTION Miscellaneous packages
+START-INFO-DIR-ENTRY
+* Libvm68k: (libvm68k).         M68000 virtual machine library.
+END-INFO-DIR-ENTRY
+
+   This file documents the usage and the internals of Libvm68k.
+
+   Copyright 1999-2001 Hypercore Software Design, Ltd.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+
+File: libvm68k.info,  Node: Top,  Next: M68000 Architecture Basics,  Prev: (dir),  Up: (dir)
+
+Libvm68k
+********
+
+   Libvm68k is an M68000 virtual machine library written in C++.
+
+   This is Revision 1.1 of the Libvm68k Reference Manual, updated Sat,
+16 Jun 2001 23:17:03 +0900.  This manual applies to Version 1.0 of
+Libvm68k.
+
+* Menu:
+
+* M68000 Architecture Basics::  M68000 architecture in brief.
+* Using Libvm68k::              How to use Libvm68k in a program.
+* Function Index::              Index for functions.
+* Object Index::                Index for objects.
+* Type Index::                  Index for types.
+* Concept Index::               Index for concepts.
+
+ --- The Detailed Node Listing ---
+
+M68000 Architecture Basics
+
+* Data Size::                   Data size description.
+
+Using Libvm68k
+
+* Basic Types::                 Definitions of Basic Types.
+* Memory Interface::            Basics of the memory subsystem.
+* Processor::                   How is a processor constructed?
+
+Memory Interface
+
+* Memory Exceptions::           Exceptions on memory.
+* Memory::                      Memory objects.
+* Memory Map::                  Memory maps.
+
+Processor
+
+* Context::                     Context of execution.
+* Processor Class::             Processor core.
+
+Processor Class
+
+* Instructions::                Handling instructions.
+
+
+File: libvm68k.info,  Node: M68000 Architecture Basics,  Next: Using Libvm68k,  Prev: Top,  Up: Top
+
+M68000 Architecture Basics
+**************************
+
+   Before describing internals of Libvm68k, let's review the M68000
+architecture.
+
+   Readers who is familiar with this architecture can skip this chapter.
+
+* Menu:
+
+* Data Size::                   Data size description.
+
+
+File: libvm68k.info,  Node: Data Size,  Prev: M68000 Architecture Basics,  Up: M68000 Architecture Basics
+
+Data Size
+=========
+
+   In M68000 architecture, a "byte" is 8-bit long.  A "word" is two
+bytes.  A "long word" is two words, or four bytes.
+
+
+File: libvm68k.info,  Node: Using Libvm68k,  Next: Function Index,  Prev: M68000 Architecture Basics,  Up: Top
+
+Using Libvm68k
+**************
+
+   This chapter describes the application program interface of Libvm68k.
+
+   They are declared in the namespace `vm68k'.
+
+* Menu:
+
+* Basic Types::                 Definitions of Basic Types.
+* Memory Interface::            Basics of the memory subsystem.
+* Processor::                   How is a processor constructed?
+
+
+File: libvm68k.info,  Node: Basic Types,  Next: Memory Interface,  Prev: Using Libvm68k,  Up: Using Libvm68k
+
+Definitions of Basic Types.
+===========================
+
+   Libvm68k defines several basic types as typedefs to keep the program
+as portable as possible.  These types are defined in the namespace
+`vm68k::types' and imported in the namespace `vm68k' in the header
+`<vm68k/types.h>'.  Note that there is neither `uint8_type' nor
+`sint8_type', since `int' can always hold either 8-bit-long whole
+number.
+
+ - Typedef: uint16_type
+     This is a most natural integer type on the host architecture that
+     can hold an unsigned 16-bit-long whole number.  It can be `int' if
+     `int' is longer than 16 bits, or `unsigned int' otherwise.  Note
+     that this type is not necessarily 16 bits long.
+
+ - Typedef: uint32_type
+     This is a most natural integer type on the host architecture that
+     can hold an unsigned 32-bit-long whole number.  It can be `int' if
+     `int' is longer than 32 bits, `unsigned int' if `unsigned int' is
+     32 bits long, `long' if `long' is longer than 32 bits, or
+     `unsigned long' otherwise.  Note that this type is not necessarily
+     32 bits long.
+
+ - Typedef: sint16_type
+     This is a most natural integer type on the host architecture that
+     can hold a signed 16-bit-long whole number.  It can be `int' if
+     `int' can hold a -0x8000, or `long' otherwise(1).  Note that this
+     type is not necessarily 16 bits long.
+
+ - Typedef: sint32_type
+     This is a most natural integer type on the host architecture that
+     can hold a signed 32-bit-long whole number.  It can be `int' if
+     `int' is at least 32 bits long and can hold a -0x80000000, `long'
+     if `long' can hold a -0x80000000, or `long long' if the compiler
+     is GCC(2).  If there is no type that can hold -0x80000000 on the
+     host architecture, the compilation will fail with an error.  Note
+     that this type is not necessarily 32 bits long.
+
+   ---------- Footnotes ----------
+
+   (1) This case must be quite rare these days, but it is permitted by
+the language standard.
+
+   (2) This case must also be quite rare these days, but it is
+permitted by the language standard.
+
+
+File: libvm68k.info,  Node: Memory Interface,  Next: Processor,  Prev: Basic Types,  Up: Using Libvm68k
+
+Memory Interface
+================
+
+   Memory is an object that can be mapped in an address space.  The
+class `memory' is the abstract base class for all memory.
+
+   Libvm68k uses a single address space to access memory and peripheral
+devices.
+
+* Menu:
+
+* Memory Exceptions::           Exceptions on memory.
+* Memory::                      Memory objects.
+* Memory Map::                  Memory maps.
+
+
+File: libvm68k.info,  Node: Memory Exceptions,  Next: Memory,  Prev: Memory Interface,  Up: Memory Interface
+
+Memory Exceptions
+-----------------
+
+ - Abstract Class: memory_exception
+
+ - Class: bus_error_exception
+
+ - Class: address_error_exception
+
+
+File: libvm68k.info,  Node: Memory,  Next: Memory Map,  Prev: Memory Exceptions,  Up: Memory Interface
+
+Memory
+------
+
+ - Abstract Class: memory
+     Abstract base class for memory components.
+
+ - Enumeration in `memory': function_code
+     Classifies memory references.  These values are defined:
+
+    `USER_DATA'
+          User data reference.  The processor uses this value in the
+          user state for reading and writing data.
+
+    `USER_PROGRAM'
+          User program reference.  The processor uses this value in the
+          user state for reading instructions.
+
+    `SUPER_DATA'
+          Supervisor data reference.  The processor uses this value in
+          the supervisor state for reading and writing data.
+
+    `SUPER_PROGRAM'
+          Supervisor program reference.  The processor uses this value
+          in the supervisor state for reading instructions.
+
+ - Abstract Method on memory: int get_8 (uint32_type ADDRESS,
+          function_code FC) const
+     Reads an 8-bit data from this memory.  The return value is
+     unsigned.
+
+ - Abstract Method on memory: uint16_type get_16 (uint32_type ADDRESS,
+          function_code FC) const
+     Reads a 16-bit data from this memory.  ADDRESS must be a multiple
+     of 2.  The return value is unsigned.
+
+ - メソッド on memory: uint32_type get_32 (uint32_type ADDRESS,
+          function_code FC) const
+     Reads a 32-bit data from this memory.  ADDRESS must be a multiple
+     of 4.  The return value is unsigned.
+
+     This method is just implemented using two `get_16' calls for
+     convenience, but can be overridden by a derived class for a
+     slightly better performance.
+
+ - Abstract Method on memory: void put_8 (uint32_type ADDRESS, int
+          VALUE, function_code FC)
+     Writes an 8-bit value to this memory.  VALUE may be signed or
+     unsigned.  FC must be one of the data references.
+
+ - Abstract Method on memory: void put_16 (uint32_type ADDRESS,
+          uint16_type VALUE, function_code FC)
+     Writes a 16-bit value to this memory.  ADDRESS must be a multiple
+     of 2.  VALUE may be signed or unsigned.  FC must be one of the
+     data references.
+
+ - メソッド on memory: void put_32 (uint32_type ADDRESS, uint32_type
+          VALUE, function_code FC)
+     Writes a 32-bit value to this memory.  ADDRESS must be a multiple
+     of 4.  VALUE may be signed or unsigned.  FC must be one of the
+     data references.
+
+     This method is just implemented using two `put_16' calls for
+     convenience, but can be overridden by a derived class for a
+     slightly better performance.
+
+
+File: libvm68k.info,  Node: Memory Map,  Prev: Memory,  Up: Memory Interface
+
+Memory Map
+----------
+
+ - Class: memory_map
+     This is a class of address spaces for memory.
+
+ - Typedef in `memory_map': function_code
+     Alias of `memory::function_code'.
+
+ - メソッド on memory_map: int get_8 (uint32_type ADDRESS,
+          function_code FC) const
+
+ - メソッド on memory_map: uint16_type get_16 (uint32_type ADDRESS,
+          function_code FC) const
+
+ - メソッド on memory_map: uint16_type get_16_unchecked (uint32_type
+          ADDRESS, function_code FC) const
+
+ - メソッド on memory_map: uint32_type get_32 (uint32_type ADDRESS,
+          function_code FC) const
+
+ - メソッド on memory_map: void put_8 (uint32_type ADDRESS, int VALUE,
+          function_code FC)
+
+ - メソッド on memory_map: void put_16 (uint32_type ADDRESS,
+          uint16_type VALUE, function_code FC)
+
+ - メソッド on memory_map: void put_16_unchecked (uint32_type ADDRESS,
+          uint16_type VALUE, function_code FC)
+
+ - メソッド on memory_map: void put_32 (uint32_type ADDRESS,
+          uint32_type VALUE, function_code FC)
+
+
+File: libvm68k.info,  Node: Processor,  Prev: Memory Interface,  Up: Using Libvm68k
+
+Processor
+=========
+
+   A processor is made of a pair of a context and an execution unit. A
+context represents the dynamic state, which is updated by program
+execution. An execution unit represents the static setting that is not
+changed while program execution.
+
+* Menu:
+
+* Context::                     Context of execution.
+* Processor Class::             Processor core.
+
+
+File: libvm68k.info,  Node: Context,  Next: Processor Class,  Prev: Processor,  Up: Processor
+
+Context
+-------
+
+   The state of the processor is stored in a context. Major components
+of a context are a set of registers and a reference to an address space.
+
+ - Class: context
+     This class represents the dynamic part of a processor.
+
+ - インスタンス変数 of context: registers regs
+     This variable keeps values of the processor registers.
+
+ - メソッド on context: bool supervisor_state () const
+     This method returns true if this context is in the supervisor
+     state.
+
+ - メソッド on context: void set_supervisor_state (bool STATE)
+     This method sets the supervisor state to STATE.
+
+ - メソッド on context: memory::function_code data_fc () const
+     This method returns the function code for data.
+
+ - メソッド on context: memory::function_code program_fc () const
+     This method returns the function code for programs.
+
+
+File: libvm68k.info,  Node: Processor Class,  Prev: Context,  Up: Processor
+
+Processor Class
+---------------
+
+   Libvm68k encapsulates non-dynamic aspects of a M68000 processor into
+an execution unit.
+
+ - Class: processor
+     This class decodes and executes an instruction sequence.  A
+     processor does not change its state while normal execution.
+
+ - メソッド on processor: instruction_type set_instruction (uint16_type
+          OP, const instruction_type &I)
+     This method sets an instruction for operation word OP to I and
+     returns the previous value.
+
+ - メソッド on processor: void step (context &C) const
+     This method executes a single instruction in context C.
+
+ - メソッド on processor: void run (context &C) const
+     This method executes instructions in context C.
+
+* Menu:
+
+* Instructions::                Handling instructions.
+
+
+File: libvm68k.info,  Node: Instructions,  Prev: Processor Class,  Up: Processor Class
+
+Instructions
+............
+
+   An instruction is defined by a function.  This function is called
+"instruction handler".
+
+
+File: libvm68k.info,  Node: Function Index,  Next: Object Index,  Prev: Using Libvm68k,  Up: Top
+
+Function Index
+**************
+
+* Menu:
+
+* data_fc on context:                    Context.
+* get_16 on memory:                      Memory.
+* get_16 on memory_map:                  Memory Map.
+* get_16_unchecked on memory_map:        Memory Map.
+* get_32 on memory:                      Memory.
+* get_32 on memory_map:                  Memory Map.
+* get_8 on memory:                       Memory.
+* get_8 on memory_map:                   Memory Map.
+* program_fc on context:                 Context.
+* put_16 on memory:                      Memory.
+* put_16 on memory_map:                  Memory Map.
+* put_16_unchecked on memory_map:        Memory Map.
+* put_32 on memory:                      Memory.
+* put_32 on memory_map:                  Memory Map.
+* put_8 on memory:                       Memory.
+* put_8 on memory_map:                   Memory Map.
+* run on processor:                      Processor Class.
+* set_instruction on processor:          Processor Class.
+* set_supervisor_state on context:       Context.
+* step on processor:                     Processor Class.
+* supervisor_state on context:           Context.
+
+
+File: libvm68k.info,  Node: Object Index,  Next: Type Index,  Prev: Function Index,  Up: Top
+
+Object Index
+************
+
+* Menu:
+
+* regs of context:                       Context.
+* SUPER_DATA:                            Memory.
+* SUPER_PROGRAM:                         Memory.
+* USER_DATA:                             Memory.
+* USER_PROGRAM:                          Memory.
+
+
+File: libvm68k.info,  Node: Type Index,  Next: Concept Index,  Prev: Object Index,  Up: Top
+
+Type Index
+**********
+
+* Menu:
+
+* <vx68k/types.h>:                       Basic Types.
+* address_error_exception:               Memory Exceptions.
+* bus_error_exception:                   Memory Exceptions.
+* context:                               Context.
+* function_code <1>:                     Memory Map.
+* function_code:                         Memory.
+* memory:                                Memory.
+* memory_exception:                      Memory Exceptions.
+* memory_map:                            Memory Map.
+* processor:                             Processor Class.
+* sint16_type:                           Basic Types.
+* sint32_type:                           Basic Types.
+* uint16_type:                           Basic Types.
+* uint32_type:                           Basic Types.
+* vm68k::types:                          Basic Types.
+
+
+File: libvm68k.info,  Node: Concept Index,  Prev: Type Index,  Up: Top
+
+Concept Index
+*************
+
+* Menu:
+
+* coding convention:                     Using Libvm68k.
+* context:                               Context.
+* instruction handler:                   Instructions.
+* memory:                                Memory Interface.
+* processor <1>:                         Processor Class.
+* processor:                             Processor.
+
+
+
+Tag Table:
+Node: Top523
+Node: M68000 Architecture Basics1874
+Node: Data Size2254
+Node: Using Libvm68k2504
+Node: Basic Types2969
+Ref: Basic Types-Footnote-14982
+Ref: Basic Types-Footnote-25077
+Node: Memory Interface5177
+Node: Memory Exceptions5685
+Node: Memory5937
+Node: Memory Map8519
+Node: Processor9627
+Node: Context10089
+Node: Processor Class11028
+Node: Instructions11888
+Node: Function Index12098
+Node: Object Index13331
+Node: Type Index13710
+Node: Concept Index14654
+
+End Tag Table
