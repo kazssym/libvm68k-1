@@ -1,5 +1,5 @@
-/* Virtual X68000 - X68000 virtual machine
-   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
+/* Libvm68k - M68000 virtual machine library
+   Copyright (C) 1998-2001 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -35,16 +35,7 @@
 #else
 # include <cassert>
 # define I assert
-# define VL(EXPR)
 #endif
-
-using vm68k::processor;
-using vm68k::byte_size;
-using vm68k::word_size;
-using vm68k::long_word_size;
-using namespace vm68k::types;
-using namespace vm68k::conditional;
-using namespace vm68k::addressing;
 
 #ifdef HAVE_NANA_H
 extern bool nana_instruction_trace;
@@ -52,106 +43,115 @@ extern bool nana_instruction_trace;
 # define L_DEFAULT_GUARD nana_instruction_trace
 #endif
 
-namespace
+namespace vm68k
 {
-  using vm68k::memory;
-  using vm68k::context;
-
-  /* Handles a Bcc instruction.  */
-  template <class Condition> void 
-  m68k_b(uint16_type op, context &c, unsigned long data)
+  namespace instr
   {
-    word_size::svalue_type disp = op & 0xff;
-    size_t extsize;
-    if (disp == 0)
-      {
-	disp = c.fetch(word_size(), 2);
-	extsize = 2;
-      }
-    else
-      {
+    using namespace conditional;
+    using namespace addressing;
+
+    /* Handles a Bcc instruction.  */
+    template <class Condition>
+    uint32_type 
+    _b(uint32_type pc, context &c, uint16_type w, unsigned long)
+    {
+      word_size::svalue_type disp = w & 0xff;
+      size_t extsize;
+      if (disp == 0)
+	{
+	  disp = c.fetch_s(word_size(), pc + 2);
+	  extsize = 2;
+	}
+      else
+	{
+	  disp = byte_size::svalue(disp);
+	  extsize = 0;
+	}
+#ifdef L
+      L("\tb%s %#lx\n", Condition::text(),
+	long_word_size::uvalue(pc + 2 + disp) + 0UL);
+#endif
+
+      // This instruction does not affect the condition codes.
+      Condition cond;
+      if (cond(c))
+	return pc + 2 + disp;
+
+      return pc + 2 + extsize;
+    }
+
+    /* Handles a BRA instruction.  */
+    uint32_type
+    _bra(uint32_type pc, context &c, uint16_type w, unsigned long)
+    {
+      word_size::svalue_type disp = w & 0xff;
+      size_t len = 0;
+      if (disp == 0)
+	{
+	  disp = c.fetch_s(word_size(), pc + 2);
+	  len = word_size::aligned_value_size();
+	}
+      else
 	disp = byte_size::svalue(disp);
-	extsize = 0;
-      }
 #ifdef L
-    L("\tb%s %#lx\n", Condition::text(),
-      long_word_size::uvalue(c.regs.pc + 2 + disp) + 0UL);
+      L("\tbra %#lx\n", long_word_size::uvalue(pc + 2 + disp) + 0UL);
 #endif
 
-    // This instruction does not affect the condition codes.
-    Condition cond;
-    c.regs.pc += 2 + (cond(c) ? disp : extsize);
-  }
+      // XXX: The condition codes are not affected.
+      return pc + 2 + disp;
+    }
 
-  /* Handles a BRA instruction.  */
+    /* Handles a BSR instruction.  */
+    uint32_type
+    _bsr(uint32_type pc, context &c, uint16_type w, unsigned long)
+    {
+      word_size::svalue_type disp = w & 0xff;
+      size_t len = 0;
+      if (disp == 0)
+	{
+	  disp = c.fetch_s(word_size(), pc + 2);
+	  len = word_size::aligned_value_size();
+	}
+      else
+	disp = byte_size::svalue(disp);
+#ifdef L
+      L("\tbsr %#lx\n", long_word_size::uvalue(pc + 2 + disp) + 0UL);
+#endif
+
+      // XXX: The condition codes are not affected.
+      memory::function_code fc = c.data_fc();
+      long_word_size::put(*c.mem, fc,
+			  c.regs.a[7] - long_word_size::aligned_value_size(),
+			  pc + 2 + len);
+      c.regs.a[7] -= long_word_size::aligned_value_size();
+
+      return pc + 2 + disp;
+    }
+  }
+  
+  using namespace instr;
+
   void
-  m68k_bra(uint16_type op, context &c, unsigned long data)
+  install_instructions_6(processor &p, unsigned long d)
   {
-    word_size::svalue_type disp = op & 0xff;
-    size_t len = 0;
-    if (disp == 0)
-      {
-	disp = c.fetch(word_size(), 2);
-	len = word_size::aligned_value_size();
-      }
-    else
-      disp = byte_size::svalue(disp);
-#ifdef L
-    L("\tbra %#lx\n", long_word_size::uvalue(c.regs.pc + 2 + disp) + 0UL);
-#endif
+    static const instruction_map inst[]
+      = {{0x6000,  0xff, &_bra},
+	 {0x6100,  0xff, &_bsr},
+	 {0x6200,  0xff, &_b<hi>},
+	 {0x6300,  0xff, &_b<ls>},
+	 {0x6400,  0xff, &_b<cc>},
+	 {0x6500,  0xff, &_b<cs>},
+	 {0x6600,  0xff, &_b<ne>},
+	 {0x6700,  0xff, &_b<eq>},
+	 {0x6a00,  0xff, &_b<pl>},
+	 {0x6b00,  0xff, &_b<mi>},
+	 {0x6c00,  0xff, &_b<ge>},
+	 {0x6d00,  0xff, &_b<lt>},
+	 {0x6e00,  0xff, &_b<gt>},
+	 {0x6f00,  0xff, &_b<le>}};
 
-    // XXX: The condition codes are not affected.
-    c.regs.pc += 2 + disp;
+    for (const instruction_map *i = inst + 0;
+	 i != inst + sizeof inst / sizeof inst[0]; ++i)
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
   }
-
-  /* Handles a BSR instruction.  */
-  void
-  m68k_bsr(uint16_type op, context &c, unsigned long data)
-  {
-    word_size::svalue_type disp = op & 0xff;
-    size_t len = 0;
-    if (disp == 0)
-      {
-	disp = c.fetch(word_size(), 2);
-	len = word_size::aligned_value_size();
-      }
-    else
-      disp = byte_size::svalue(disp);
-#ifdef L
-    L("\tbsr %#lx\n", long_word_size::uvalue(c.regs.pc + 2 + disp) + 0UL);
-#endif
-
-    // XXX: The condition codes are not affected.
-    memory::function_code fc = c.data_fc();
-    long_word_size::put(*c.mem, fc,
-			c.regs.a[7] - long_word_size::aligned_value_size(),
-			c.regs.pc + 2 + len);
-    c.regs.a[7] -= long_word_size::aligned_value_size();
-
-    c.regs.pc += 2 + disp;
-  }
-}
-
-void
-vm68k::install_instructions_6(processor &eu, unsigned long data)
-{
-  static const instruction_map inst[]
-    = {{0x6000,  0xff, &m68k_bra},
-       {0x6100,  0xff, &m68k_bsr},
-       {0x6200,  0xff, &m68k_b<hi>},
-       {0x6300,  0xff, &m68k_b<ls>},
-       {0x6400,  0xff, &m68k_b<cc>},
-       {0x6500,  0xff, &m68k_b<cs>},
-       {0x6600,  0xff, &m68k_b<ne>},
-       {0x6700,  0xff, &m68k_b<eq>},
-       {0x6a00,  0xff, &m68k_b<pl>},
-       {0x6b00,  0xff, &m68k_b<mi>},
-       {0x6c00,  0xff, &m68k_b<ge>},
-       {0x6d00,  0xff, &m68k_b<lt>},
-       {0x6e00,  0xff, &m68k_b<gt>},
-       {0x6f00,  0xff, &m68k_b<le>}};
-
-  for (const instruction_map *i = inst + 0;
-       i != inst + sizeof inst / sizeof inst[0]; ++i)
-    eu.set_instruction(i->base, i->mask, make_pair(i->handler, data));
 }
