@@ -20,7 +20,7 @@
 #ifndef __VM68K_ITERATOR_H
 #define __VM68K_ITERATOR_H 1
 
-#include <vm68k/types.h>
+#include <vm68k/type>
 #include <iterator>
 
 namespace vm68k
