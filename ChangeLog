@@ -1,3 +1,9 @@
+2003-03-25  Kaz Sasayama  <kaz2003@hypercore.co.jp>
+
+	* Upgrade to GNU automake 1.5.  Also regenerate aclocal.m4,
+	configure, and all Makefile.in's.
+	* depcomp: New file.
+
 2002-10-02  Kaz Sasayama  <kaz2002@hypercore.co.jp>
 
 	* instr1-3.cc (m68k_move): Replace _move.
