@@ -1,3 +1,13 @@
+2001-06-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* Makefile.am (libvm68k_la_SOURCES): Add version.cc.
+
+	* version.cc: New file.
+
+	* vm68k/Makefile.am (vm68kinclude_HEADERS): Add misc.h.
+
+	* vm68k/misc.h: New file.
+
 2001-06-17  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Version 1.0.2.
