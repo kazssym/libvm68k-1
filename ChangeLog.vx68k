@@ -1,0 +1,5052 @@
+2000-12-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/memory.h (class memory_map): Add throw specs to
+	methods: get_8, get_16, get_16_unchecked, get_32, put_8, put_16,
+	put_16_unchecked, and put_32.
+
+	* libvx68k/machine.cc (boot): Use memory_exception instead of
+	special_exception.
+	* libvx68k/doscontext.cc (start): Likewise.
+	* bin/main.cc (run_boot): Likewise.
+
+	* include/vm68k/processor.h: Add include of <vm68k/except.h>.
+
+	* include/vm68k/except.h (struct special_exception): Removed.
+	(struct bus_error_exception): Moved to memory.h.
+	(struct address_error_exception): Likewise.
+
+	* include/vm68k/memory.h (struct memory_exception): New class.
+	(struct bus_error_exception): Moved from except.h.  Change the
+	base class to memory_exception.
+	(struct address_error_exception): Likewise.
+
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Remove
+	defaultmem.cc.
+
+	* libvm68k/defaultmem.cc: Removed.
+
+	* libvm68k/memory_map.cc (class default_memory): New class.
+
+	* include/vm68k/memory.h: Modify comments.
+	(class default_memory): Removed.
+
+	* libvm68k/execunit.cc: Remove includes of <vm68k/addressiong.h>
+	and <vm68k/conditional.h>.
+
+	* include/vm68k/Makefile.am (vm68kinclude_HEADERS): Replace
+	condition.h with conditional.h.
+
+	* include/vm68k/conditional.h: Renamed from condition.h.  Also
+	change all users.  Modify comments.
+	(namespace conditional): Renamed from condition.  Also change all
+	users.
+
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Replace statusreg.cc
+	with condition_code.cc.
+
+	* libvm68k/condition_code.cc: Renamed from statusreg.cc.
+
+	* libvm68k/Makefile.am (noinst_HEADERS): Replace inst.h with
+	instr.h.
+
+	* libvm68k/instr.h: Renamed from inst.h.  Also change all users.
+
+	* include/vm68k/processor.h: Renamed from cpu.h.  Also change all
+	users.
+
+2000-12-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/memory_map.cc: Move null_memory.
+	(get_16, get_32, put_16, put_32): Modify test for an address
+	error.
+	(get_32, put_32): Modify the alignment test.
+	(get_32): Return in one place.
+
+	* libvm68k/memory.cc (get_32): Rewrite using an intermediate
+	variable.
+
+	* Makefile.am (SUBDIRS): Replace libvx68kgtk with vx68kui.
+	* bin/Makefile.am (vx68k_LDADD): Likewise.
+	* configure.in (AC_OUTPUT): Likewise.
+
+	* vx68kui: Renamed from libvx68kgtk.
+
+	* bin/Makefile.am (vx68k_LDADD): Replace libvx68kgtk.a with
+	libvx68kui_gtk.a.
+
+	* libvx68kgtk/Makefile.am (noinst_LIBRARIES): Rename libvx68kgtk.a
+	to libvx68kui_gtk.a.
+	(libvx68kui_gtk_a_SOURCES): Renamed.
+
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Replace addrspace.cc
+	with memory_map.cc.
+	(libvm68k_la_LDFLAGS): Modified.
+
+	* libvm68k/memory_map.cc: Renamed from addrspace.cc.
+
+	* libvm68k/inst0.cc [0] (cmpib, cmpiw, cmpil, eoriw, orib, oriw,
+	oril): Removed.
+
+	* libvm68k/inst11.cc [0] (cmpb, cmpw, cmpl, cmpaw, cmpal, eorb_r,
+	eorw_r, eorl_r): Removed.
+
+	* libvm68k/inst14.cc [0] (asrl_r, lslw_r, lsll_r, lslb_i, lslw_i,
+	lsll_i, lsrw_r, lsrl_r, lsrb_i, lsrw_i, lsrl_i, rolb_r, rolw_i,
+	roll_i, roxrw_i, roxrl_i): Removed.
+
+	* libvm68k/inst4.cc [0] (extw, extl, negb, negw, negl): Removed.
+
+	* libvm68k/inst5.cc [0] (dbf): Removed.
+
+	* libvm68k/inst8.cc [0] (orb, orw, orl): Removed.
+
+	* libvm68k/inst9.cc [0] (subb, subw, subl): Removed.
+
+	* libvm68k/Makefile.am (INCLUDES): Remove
+	-DVM68K_ENABLE_DEPRECATED.
+
+	* include/vm68k/cpu.h [VM68K_ENABLE_DEPRECATED] (extsb, extsw,
+	extsl): Removed.
+
+	* libvm68k/defaultmem.cc (get_8, get_16, put_8, put_16): Remove
+	address masking.
+	(get_16, put_16): Add assertion checking.
+
+	* libvx68k/mainmem.cc (get_16, get_8, get_32, put_16, put_8,
+	put_32): Remove address masking.  Add assertion checks.
+
+	* libvm68k/memory.cc (get_32, put_32): Add assertion check.
+
+	* include/vm68k/memory.h (class memory): Move the function_code
+	argument to the end.  Also change all users and derived classes.
+
+2000-12-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/inst14.cc (m68k_roxl_i): New function.
+	(install_instructions_14): Use the new handler.
+
+	* Version 1.1.4.
+
+	* configure.in: Set VERSION to 1.1.4.
+
+	* TODO: Updated.
+
+	* NEWS: New version.
+
+2000-12-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (initialize_iocs_calls): Add new argument
+	data.  Pass data to set_iocs_call.
+	(system_rom): Add the second argument.
+
+2000-12-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/inst4.cc (m68k_rte): Avoid direct memory_map method calls.
+
+	* libvm68k/inst6.cc (m68k_bsr): Avoid direct memory_map method calls.
+
+	* bin/main.cc (run_boot): Avoid direct memory_map method calls.
+
+	* include/vm68k/memory.h (class memory_map): Renamed from
+	memory_address_space.  Also change all users.
+	(class memory_map): Add typedef function_code.
+	(class memory_map): Move the function_code arguments to the end
+	for methods: get_8, get_16, get_16_unchecked, get_32, get_string,
+	read, put_8, put_16, put_16_unchecked, put_32, put_string, and
+	write.  Also change all users.
+
+2000-12-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/Makefile.am (lib_LTLIBRARIES): Exchange the order of
+	libvx68k.la and libvx68kdos.la.
+
+	* libvx68k/systemrom.cc (initialize_iocs_calls): Renamed from
+	initialize_iocs_handlers.  Also change all users.
+
+	* include/vx68k/memory.h (class system_rom): Rename
+	iocs_handler_function to iocs_call_handler.  Rename
+	iocs_handler_type to iocs_call_type.
+	(class system_rom): Rename member invalid_iocs_function to
+	invalid_iocs_call.  Also change all users.
+	(class system_rom): Rename member iocs_handlers to iocs_calls.
+	Also change all users.
+	(class system_rom): Rename member set_iocs_handler to
+	set_iocs_call.
+
+	* libvx68k/textvram.cc (fill_plane): New function.
+	(iocs_txfill): Write code.
+
+	* include/vx68k/memory.h (class text_video_memory): Add member
+	fill_plane.
+
+2000-12-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.texi (Text Video Memory): New node.
+	(Graphic Video Memory): New node.
+	(Memory Management): New node.
+	(Filesystem): New node.
+
+	* bin/Makefile.am (vx68k_LDADD): Add libvx68kdos.la.
+
+	* libvx68k/Makefile.am (lib_LTLIBRARIES): Add libvx68kdos.la.
+	(libvx68kdos_la_LDFLAGS): New macro.
+	(libvx68kdos_la_SOURCES): New macro.
+	(libvx68k_la_SOURCES): Remove the DOS-emulation files.
+
+	* doc/vx68k.texi (Human68k Emulation): Renamed from Human68k.
+	(Human68k Emulation): Raise the level.
+
+	* libvx68k/systemrom.cc (initialize_iocs_handlers): Renamed from
+	initialize_iocs_functions.  Also change all callers.
+	(initialize_iocs_handlers, system_rom): Use make_pair.
+
+	* include/vx68k/memory.h (class system_rom): Rename
+	iocs_function_handler to iocs_handler_function.  Rename
+	iocs_function_type to iocs_handler_type.
+	(class system_rom): Rename member iocs_functions to iocs_handlers.
+	Also change all users.
+	(class system_rom): Rename member set_iocs_function to
+	set_iocs_handler.  Also change all users.
+
+	* doc/vx68k.texi (X68000 Components): Removed.  Raise children's
+	levels.
+	(IOCS and System ROM): Rename the title and add documentation.
+
+2000-12-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.texi: Merge the variable index to the function index.
+	(Top): Update the menu.
+	(X68000 Emulation): Rename the title.  Add documentation.
+	(Class machine): Merge into the parent.
+	(Machine): Add documentation.
+	(X68000 Components, Main Memory, System ROM): New node.
+	(Function and Variable Index): Rename the title.
+
+2000-12-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.texi: Add @direntry commands.  Sets flags VERSION,
+	REVISION, and DATE.  Update text.  Insert blank lines after node
+	headings.
+	(SCC): Update documentation.
+	(Top): Change the title and update text.
+	(Instructions): Move @cindex to the head of the paragraph.
+
+	* bin/Makefile.am (noinst_LIBRARIES): Moved after bin_PROGRAMS.
+	(vx68k_SOURCES): Change the order of files.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Change the order of
+	files.
+
+2000-12-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Change the order.
+
+2000-12-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.texi: Fix misspelling.  Put @contents in @ifnothtml.
+	(Top): Move @menu out of @ifnottex.
+	(Introduction): Modify documentation.
+	(Command Reference): Modify documentation.
+	(Invoking vx68k): Modify documentation.
+	(Class memory): Fix misspelling.
+	(Context): Modify documentation.
+	(Execution Unit): Modify documentation.
+	(Class machine): New node.
+
+2000-09-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_contrast): New function.
+	(initialize_iocs_functions): Add new handler.
+
+2000-09-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68kgtk/gtkconsole.cc: Change timeout parameters.
+
+	* libvx68k/sccmem.cc (iocs_ms_curof, iocs_ms_curon, iocs_ms_stat):
+	New function.
+	(install_iocs_calls): Add new handlers.
+
+	* libvx68k/systemrom.cc (iocs_trap): Push the next instruction's
+	address for a trap.
+
+	* libvx68k/machine.cc (configure): Map adpcm and fdc into the
+	address space.
+	(machine): Call install_iocs_calls on adpcm and fdc.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add msm6258vmem.cc
+	and fdcmem.cc.
+	(libvx68k.gdb): Removed.
+	(SUFFIXES): New macro.
+	(.cc.gdb): New rule.
+
+	* libvx68k/fdcmem.cc: New file.
+	(install_iocs_calls, get_8, get_16, put_8, put_16): New function.
+
+	* libvx68k/msm6258vmem.cc: New file.
+	(install_iocs_calls, get_8, get_16, put_8, put_16): New function.
+
+	* include/vx68k/machine.h (class machine): Add members adpcm and
+	fdc.
+
+	* include/vx68k/memory.h (class msm6258v_memory): New class.
+	(class fdc_memory): New class.
+
+2000-09-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+	
+	* include/vm68k/types.h: Add new types uint16_type and
+	sint16_type.  Use int or long for uint32_type if possible.  Also
+	change types for 16-bit and smaller values.
+
+	* libvm68k/inst0.cc (m68k_andi_to_ccr, m68k_andi_to_sr,
+	m68k_bclr_i, m68k_bset_i, m68k_btst_i m68k_ori_to_ccr,
+	m68k_ori_to_sr): Use ufetch.
+
+	* libvm68k/inst4.cc (m68k_movem_r_m, m68k_movem_r_predec,
+	m68k_movem_m_r, m68k_movem_postinc_r): Use ufetch.
+
+	* include/vm68k/addressing.h [basic_index_indirect,
+	basic_index_pc_indirect] (address, text): Use ufetch for the
+	extention word.
+
+	* include/vm68k/cpu.h (class exec_unit): Move inline definition of
+	step out of the class definition.  Use ufetch.
+
+2000-09-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_b_recali): Print message only once.
+
+	* libvx68k/textvram.cc (draw_char): Modify the kanji handling.
+
+	* libvx68k/machine.cc (machine): Call install_iocs_calls on dmac
+	and font.
+
+	* libvx68k/systemrom.cc: Remove functions moved to fontrom.cc.
+	(initialize_iocs_functions): Remove the calls to removed
+	functions.
+
+	* libvx68k/fontrom.cc (iocs_defchr, iocs_fntadr, iocs_fntget):
+	Moved from systemrom.cc.
+	(install_iocs_calls): New function.
+
+	* libvx68k/dmacmem.cc (install_iocs_calls): Changed to member
+	function.
+	(dmac_memory): Remove call to install_iocs_calls.
+
+	* include/vx68k/memory.h (class dmac_memory): Remove argument of
+	the constructor.  Add member install_iocs_calls.
+	(class font_rom): Change the value types of get_8 and put_8.  Add
+	member install_iocs_calls.
+
+	* libvx68k/machine.cc (machine): Call install_iocs_calls on scc.
+
+	* libvx68k/sccmem.cc (install_iocs_calls): Changed to member
+	function.
+	(scc_memory): Remove call to install_iocs_calls.
+
+	* include/vx68k/memory.h (class scc_memory): Remove argument from
+	the constructor.  Add member install_iocs_calls.
+
+	* libvx68k/machine.cc (machine): Call install_iocs_calls for
+	tvram.
+
+	* libvx68k/systemrom.cc: Removed functions moved to textvram.cc.
+	(initialize_iocs_functions): Remove calls to removed functions.
+
+	* libvx68k/textvram.cc: Include cstdio unconditionally.
+	(iocs_b_clr_st, iocs_b_color, iocs_b_consol, iocs_b_curoff,
+	iocs_b_curon, iocs_b_locate, iocs_b_putmes, iocs_textput,
+	iocs_txfill): Moved from systemrom.cc.
+	(install_iocs_calls): New function.
+
+	* include/vx68k/memory.h (class text_video_memory): Change value
+	types for get_8 and put_8.  Add member install_iocs_calls.
+
+	* libvm68k/execunit.cc: Include cstdio unconditionally.  Remove
+	moved functions.
+	(exec_unit): Install instructions using new functions.
+
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Add inst0.cc,
+	inst1to3.cc, inst4.cc, inst5.cc, inst6.cc, inst7.cc, inst8.cc,
+	inst9.cc, inst11.cc, inst12.cc, inst13.cc, and inst14.cc.
+	(noinst_HEADERS): New macro.
+
+	* libvm68k/inst14.cc: New file.
+	(m68k_asl_r, m68k_asl_i, m68k_asr_r, m68k_asr_i, m68k_lsl_r,
+	m68k_lsl_i, m68k_lsr_r, m68k_lsr_i, m68k_lsr_m, m68k_rol_r,
+	m68k_rol_i, m68k_ror_i, m68k_roxr_i): Moved from execunit.cc.
+	[0] (asrl_r, lslw_r, lsll_r, lslb_i, lslw_i, lsll_i, lsrw_r,
+	lsrl_r, lsrb_i, lsrw_i, lsrl_i, rolb_r, rolw_i, roll_i, roxrw_i,
+	roxrl_i): Moved from execunit.cc.
+	(install_instructions_14): New function.
+
+	* libvm68k/inst13.cc: New file.
+	(m68k_add, m68k_add_m, m68k_adda, m68k_addx_r): Moved from
+	execunit.cc.
+	(install_instructions_13): New function.
+
+	* libvm68k/inst12.cc: New file.
+	(m68k_and, m68k_and_m, m68k_exg_d_d, m68k_exg_a_a, m68k_exg_d_a,
+	m68k_muls, m68k_mulu): Moved from execunit.cc.
+	[0] (exgl): Moved from execunit.cc.
+	(install_instructions_12): New function.
+
+	* libvm68k/inst11.cc: New file.
+	(m68k_cmp, m68k_cmpa, m68k_cmpm, m68k_eor_m): Moved from
+	execunit.cc.
+	[0] (cmpb, cmpw, cmpl, cmpaw, cmpal, eorb_r, eorw_r, eorl_r):
+	Moved from execunit.cc.
+	(install_instructions_11): New function.
+
+	* libvm68k/inst9.cc: New file.
+	(m68k_sub, m68k_sub_m, m68k_suba): Moved from execunit.cc.
+	[0] (subb, subw, subl): Moved from execunit.cc.
+	(install_instructions_9): New function.
+
+	* libvm68k/inst8.cc: New file.
+	(m68k_divu, m68k_or, m68k_or_m): Moved from execunit.cc.
+	[0] (orb, orw, orl): Moved from execunit.cc.
+	(install_instructions_8): New function.
+
+	* libvm68k/inst7.cc: New file.
+	(m68k_moveq): Moved from execunit.cc.
+	(install_instructions_7): New function.
+
+	* libvm68k/inst6.cc: New file.
+	(m68k_b, m68k_bra, m68k_bsr): Moved from execunit.cc.
+	(install_instructions_6): New function.
+
+	* libvm68k/inst5.cc: New file.
+	(m68k_addq, m68k_addq_a, m68k_db, m68k_s, m68k_subq, m68k_subq_a):
+	Moved from execunit.cc.
+	[0] (dbf): Moved from execunit.cc.
+	(install_instructions_5): New function.
+
+	* libvm68k/inst4.cc: New file.
+	(m68k_clr, m68k_ext, m68k_jmp, m68k_jsr, m68k_lea, m68k_link,
+	m68k_move_from_sr, m68k_move_to_sr, m68k_move_from_usp,
+	m68k_move_to_usp, m68k_movem_r_m, m68k_movem_r_predec,
+	m68k_movem_m_r, m68k_movem_postinc_r, m68k_neg, m68k_nop,
+	m68k_not, m68k_pea, m68k_rte, m68k_rts, m68k_swap, m68k_tst,
+	m68k_unlk): Moved from execunit.cc.
+	[0] (clrb, clrw, clrl, extw, extl, moveml_mr, negb, negw, negl,
+	tstb, tstw, tstl): Moved from execunit.cc.
+	(install_instructions_4): New function.
+
+	* libvm68k/inst1to3.cc: New file.
+	(m68k_move, m68k_movea): Moved from execunit.cc.
+	(install_instructions_1, install_instructions_2,
+	install_instructions_3): New function.
+
+	* libvm68k/inst0.cc: New file.
+	(m68k_addi, m68k_andi, m68k_andi_to_ccr, m68k_andi_to_sr,
+	m68k_bclr_r, m68k_bclr_i, m68k_bset_r, m68k_bset_i, m68k_btst_r,
+	m68k_btst_i, m68k_cmpi, m68k_eori, m68k_ori, m68k_ori_to_ccr,
+	m68k_ori_sr, m68k_subi): Moved from execunit.cc.
+	[0] (btstb_i, btstl_i, cmpib, cmpiw, cmpil, eoriw, orib, oriw,
+	oril): Moved from execunit.cc.
+	(install_instructions_0): New function.
+
+	* libvm68k/inst.h: New file.
+	(struct instruction_map): New struct.
+
+	* libvx68k/systemrom.cc (iocs_trap): Call sched_yield.
+
+	* libvx68k/textvram.cc (row_changed): New function.
+
+	* include/vx68k/memory.h: Include pthread.h.
+	(class text_video_memory): Add member row_changed.
+
+	* libvx68kgtk/gtkconsole.cc: Change TIMEOUT_INTERVAL to 50.
+	(handle_expose_event): Cast width and height for comparison.
+	(handle_timeout): Rewrite using scan_row.
+	(counter): Initialize counter to 1.
+
+	* include/vx68k/gtk.h (class gtk_console): Add member counter.
+
+	* libvx68k/machine.cc (update_image): #if out.
+
+	* include/vx68k/machine.h (class machine): Remove struct
+	rectangle.  Add member screen_changed, row_changed, and scan_row.
+	Remove member update_image.
+	(update_image): Removed.
+	(scan_row): New function.
+
+2000-09-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.texi: Update.
+
+	* include/vm68k/cpu.h (struct byte_size): Add members value_type
+	and uget.
+	(struct word_size): Add members value_type, uget, uget_unchecked,
+	and get_unchecked.
+	(struct long_word_size): Likewise.
+	(class context): Add member ufetch.  Make member fetch inline and
+	use Size::get_unchecked.
+
+2000-09-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Version 1.1.3.
+
+	* configure.in: Set VERSION to 1.1.3.
+
+	* NEWS: Updated.
+
+	* doc/vx68k.texi (SCC): New node.
+	(Machine): Add menu.
+
+	* libvx68k/sccmem.cc (set_mouse_position): Limit mouse position in
+	bounds.
+	(mouse_motion): Remove call to sched_yield and pthread_testcancel.
+	(mouse_motion): Return member _mouse_motion.
+	(track_mouse): Update member _mouse_motion.
+	(set_mouse_bounds, initialize_mouse): New function.
+	(iocs_ms_init): Call m->initialize_mouse.
+	(iocs_ms_limit): Call m->set_mouse_bounds.
+	(scc_memory): Initialize new members.
+
+	* include/vx68k/memory.h (class scc_memory): Add members
+	mouse_left, mouse_top, mouse_right, mouse_bottom, _mouse_motion,
+	initialize_mouse, and set_mouse_bounds.
+
+2000-09-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/addressing.h (class data_register): Removed.
+	(class address_register): Removed.
+	(class indirect): Removed.
+	(class postinc_indirect): Removed.
+	(class predec_indirect): Removed.
+	(class disp_indirect): Removed.
+	(class indexed_indirect): Removed.
+	(class absolute_short): Removed.
+	(class absolute_long): Removed.
+	(class disp_pc): Removed.
+	(class indexed_pc_indirect): Removed.
+	(class immediate): Removed.
+
+	* include/vm68k/cpu.h (struct registers): Replace status_register
+	with condition_code.
+	(struct registers): Add members data_register, set_data_register,
+	set_pc, and advance_pc.
+
+	* libvm68k/execunit.cc: Modify log messages.
+	(m68k_add, m68k_add_m, m68k_adda): Avoid typedefs.
+	(m68k_add, m68k_add_m, m68k_adda): Modify for new Size::get and
+	Size::svalue.
+	(m68k_add, m68k_add_m): Refer extension_size via class.
+	(andib, andiw, andil, asll_i, asll_r, asrl_i, asrl_r, bcc, beq,
+	bge, bmi, bne, bclrl_i, bsetl_i, moveb, movew, movel, moveaw,
+	moveal, moveql_d, rorw_i, subl_r, subal, subib, subil, subqw,
+	subql): Removed.
+	(m68k_andi_to_sr, m68k_asr_r, m68k_btst_i, m68k_clr, m68k_cmpa,
+	m68k_cmpi, m68k_eor_m, m68k_exg_d_d, m68k_exg_a_a, m68k_exg_d_a,
+	m68k_ext, m68k_lsl_i, m68k_lsl_r, m68k_lsr_i, m68k_lsr_r,
+	m68k_lsr_m, m68k_movem_m_r, m68k_moveq, m68k_neg, m68k_or,
+	m68k_ori, m68k_rol_i, m68k_roxr_i, m68k_sub, m68k_subi, m68k_tst):
+	New function.
+	(btstb_i, btstl_i, clrb, clrw, clrl, cmpaw, cmpal, cmpib, cmpiw,
+	cmpil, eorb_r, eorw_r, eorl_r, exgl, extw, extl, lslb_i, lslw_i,
+	lslw_r, lsll_i, lsll_r, lsrb_i, lsrw_i, lsrw_r, lsrl_i, lsrl_r,
+	moveml_mr, negb, negw, negl, orb, orw, orl, rolw_i, roll_i,
+	roxrw_i, subb, subw, subl, tstb, tstw, tstl): #if'd out.
+	(m68k_bra): Modified from bra.
+	(m68k_bsr): Modified from bsr.
+	(m68k_divu): Modified from divuw.
+	(m68k_jmp): Modified from jmp.
+	(m68k_jsr): Modified from jsr.
+	(m68k_lea): Modified from lea.
+	(m68k_link): Modified from link_a.
+	(m68k_muls): Modified from mulsw.
+	(m68k_mulu): Modified from muluw.
+	(m68k_pea): Modified from pea.
+	(m68k_rts): Modified from rts.
+	(m68k_s): Modified from s_b.
+	(m68k_swap): Modified from swapw.
+	(m68k_unlk): Modified from unlk_a.
+	(initialize_instructions): Update for new handlers.
+
+	* libvx68k/dmacmem.cc: Include cstdio always.
+
+	* libvx68k/crtcmem.cc: Include cstdio always.
+
+	* libvx68k/systemrom.cc (iocs_fntadr): Modify test for JIS X 0208
+	charset.
+
+2000-09-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68kgtk/gtkconsole.cc: Change update timeout to 100ms.
+	(~gtk_console, gtk_console): Use timeouts for screen update again.
+	(pvalue): Do not compile if not GDK_IMAGE.
+	(class pixel_iterator): Change argument type of operator=.
+	(class pixel_iterator) [!GDK_IMAGE]: Use precomputed table to get
+	a RGB value.
+	(gtk_console) [!GDK_IMAGE]: Precompute a RGB table.
+
+2000-08-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_trap): Make the IOCS call number
+	unsigned.
+	(iocs_trap): Fix stack frames for IOCS call handlers.
+
+	* libvx68kgtk/gtkconsole.cc (handle_expose_event): Test the expose
+	area to avoid drawing outside of the screen area.
+
+	* doc/vx68k.texi (Human68k): Updated.
+
+2000-08-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/Makefile.am (${srcdir}/vx68k.texi): Removed.
+	(EXTRA_DIST): Removed.
+	(MAINTAINERCLEANFILES): Removed.
+	(DOCBOOK2TEXI): Removed.
+
+	* include/vx68k/gtk.h (class gtk_console): Replace #if conditions
+	using GDK_IMAGE.
+	* libvx68kgtk/gtkconsole.cc (handle_expose_event): Likewise.
+	(class pixel_iterator): Remove nested class ref.  Modified for new
+	GdkRgb code.
+	(class row): Likewise.
+	(class row_iterator): Likewise.
+	(handle_timeout, ~gtk_console, gtk_console): Likewise.
+
+	* libvx68k/textvram.cc (put_16, put_8): Mark update area only if
+	really changed.
+
+2000-08-29  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/palettemem.cc (put_16): Set text_color_modified only if
+	the value really changes.
+
+2000-08-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68kgtk/gtkconsole.cc (handle_expose_event): Use GdkImage.
+	(handle_timeout): Likewise.
+	(~gtk_console, gtk_console): Handle GdkImage.
+	(gtk_console): Use handle_timeout as an idle handler.
+
+	* libvx68k/palettemem.cc (get_text_colors): New function.
+
+	* include/vx68k/gtk.h (class gtk_console): Add members for
+	GdkImage.
+
+	* include/vx68k/memory.h (class palettes_memory): Add an overload
+	to get_text_colors.
+
+	* include/vx68k/machine.h (update_image): Process in one pass.
+
+	* libvx68k/sram.cc: Include <vx68k/memory.h> instead of
+	<vx68k/machine.h>.
+
+	* include/vx68k/machine.h (class machine): Add new template
+	update_image.
+
+2000-08-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/addressing.h: Return string from member text.
+
+	* libvm68k/statusreg.cc: Switch status_register to condition_code.
+
+	* libvm68k/execunit.cc: Modify debug outputs.
+	(run): Remove C-style cast.
+	(bsetl_i): #if'd out.
+	(m68k_bset_i): New function template.
+	(initialize_instructions): Add new handlers.
+
+	* include/vm68k/cpu.h (struct byte_size): Add member uvalue.
+	(struct word_size): Likewise.
+	(struct long_word_size): Likewise.
+	(class condition_tester): Move function definitions out of the
+	class definition.  Add member x.
+	(class condition_code): Renamed from status_register.  Typedef
+	status_register as condition_code.  Reformat inline functions.
+	(struct exception_listener): Removed.
+	(context::fetch<byte_size>): Use byte_size::svalue.
+
+	* libvx68k/sccmem.cc (mouse_motion): Call sched_yield and
+	pthread_testcancel.
+
+	* libvx68k/mainmem.cc (get_16, get_8, get_32, put_16, put_8,
+	put_32): Use only lower 24 bits of the address.
+
+	* libvx68k/systemrom.cc (iocs_txfill): New function.
+	(initialize_iocs_functions): Add new handler.
+
+	* libvm68k/addrspace.cc: Move functions.
+	(fill): New functions.
+	(memory_address_space): Change initialization.
+
+	* libvm68k/defaultmem.cc (get_16, get_8, put_16, put_8): Mask the
+	address value.
+
+	* libvm68k/memory.cc (generate_bus_error): Removed.
+
+	* include/vm68k/addressing.h: Add comment output to text.  Remove
+	C-style casts.  Move some functions out of the class definitions.
+	Make extension_size static.
+
+	* include/vm68k/cpu.h (class byte_size): Make svalue to accept a
+	signed value.  Make return values of get signed.  Move some inline
+	functions out of the class definition.
+	(class word_size): Likewise.
+	(class long_word_size): Likewise.
+	(class context): Change types of pfc_cache and dfc_cache.  Change
+	return types of program_fc and data_fc.
+	(class context): Change return type of member fetch to signed.
+
+	* include/vm68k/memory.h (class basic_uint16_iterator): Change
+	parameter T for pointer type.  Also change all users.
+	(class basic_uint32_iterator): Change parameter T for pointer
+	type.  Also change all users.
+	[basic_uint16_iterator::ref, basic_uint32_iterator::ref]
+	(operator=): Remove bit masking.
+	[basic_uint16_iterator::ref] (operator uint_type): Add bit
+	masking.
+	[basic_uint32_iterator::ref] (operator uint32_type): Likewise.
+	(class memory): Remove member generate_bus_error.
+	(class memory): Change types for function codes.  Also change all
+	derived classes and all function definitions.
+	(class memory_address_space): Remove member canonical_address.
+	Change page_table to a vector.  Remove unused struct iterator.
+	Move some inline functions out of the class definition.
+	(class memory_address_space): Change return type of find_memory.
+	Also change all users.
+	(class memory_address_space): Add new member fill replacing
+	set_pages.  Also change all users.
+	(class memory_address_space): Rename member getw_aligned and
+	putw_aligned to get_16_unchecked and put_16_unchecked.  Rename
+	getb, getw, getl, gets, putb, putw, putl, and puts to get_8,
+	get_16, get_32, get_string, put_8, put_16, put_32, and put_string.
+	Also change all users.
+
+2000-08-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/memory.cc (getw, getl, putw, putl): Removed.
+
+	* include/vm68k/memory.h (class basic_uint16_iterator): New class
+	template replacing class uint16_iterator.  Typedef uint16_iterator
+	and const_uint16_iterator.
+	(class basic_uint32_iterator): New class template.  Typedef
+	uint32_iterator and const_uint32_iterator.
+	(getw, getl, putw, putl): Rewrote inline using new iterators.
+
+	* libvx68k/sccmem.cc (mouse_position): New function.
+	(mouse_motion): Moved after set_mouse_position.
+	(iocs_ms_curgt): Implemented.
+
+	* libvx68k/ppimem.cc: Change header comments.  Include <cstdio>
+	always.
+	(get_8, put_8): Change the value type.
+
+	* include/vx68k/memory.h (class scc_memory): Add members
+	mouse_position.  Change the value type for 8-bit data.
+
+2000-08-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68kgtk/gtkconsole.cc (handle_motion_event,
+	handle_button_event): New function.
+	(create_widget): Add new signal handlers.
+
+	* libvx68k/machine.cc (check_timers): Call scc.track_mouse.
+
+	* libvx68k/sccmem.cc (mouse_state, set_mouse_state, mouse_motion,
+	set_mouse_position, track_mouse): New function.
+	(iocs_ms_getdt): Implemented.
+	(~scc_memory): Destroy mutex.
+	(scc_memory): Initialize new members.
+
+	* include/vx68k/gtk.h (class gtk_console): Add members
+	set_mouse_state, and set_mouse_position.
+
+	* include/vx68k/machine.h (class machine): Add members
+	set_mouse_state, and set_mouse_position.
+
+	* include/vx68k/memory.h (class scc_memory): Add new members
+	mouse_states, _mouse_position, old_mouse_position, mutex,
+	mouse_state, set_mouse_state, mouse_motion, set_mouse_position,
+	and track_mouse.  Add type point.
+
+2000-08-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Reorder files.
+	(SUFFIXES): New macro.
+	(.cc.gdb): New rule.
+	(libvm68k.gdb): Removed.
+
+	* include/vm68k/memory.h: Remove C-style casts.  Change PAGE_SHIFT
+	and ADDRESS_BIT to unsigned.  Change PAGE_MASK and NPAGES to
+	uint32_type.
+	(enum function_code): Moved into class memory.  Also change all
+	users.
+	(class uint16_iterator): New class.
+
+2000-08-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/mutex.h (class mutex_lock): New class replacing
+	auto_lock.  Also change all users.
+
+	* libvx68k/textvram.cc: Add using auto_lock.
+	* libvx68k/crtcmem.cc: Likewise.
+	* libvx68k/palettemem.cc: Likewise.
+	* libvx68k/opmmem.cc: Likewise.
+
+	* include/vx68k/utility.h: Removed.
+
+	* include/vm68k/mutex.h: Moved from vx68k/utility.h.  Also change
+	macro names and all users.
+
+2000-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (run_boot): Set status text on exception.
+
+	* bin/gtkconwin.cc (set_status_text): New function.
+	(gtk_console_window): Initialize status_context.
+
+	* bin/gtkapp.h (class gtk_console_window): Add new member
+	status_context and set_status_text.
+
+	* libvx68k/sccmem.cc (iocs_ms_curst, iocs_ms_init, iocs_ms_limit,
+	iocs_set232c): Print a FIXME message only once.
+
+	* libvx68k/fontrom.cc (get_16, get_8, put_16, put_8): Use DL
+	instead of L.
+	(put_16, put_8): Print a FIXME message only once.
+	(get_8, put_8): Change the value type.
+
+	* libvx68k/systemrom.cc (iocs_trap): Call pthread_testcancel.
+	(get_16, get_8, put_16, put_8): Print a FIXME message only once.
+
+	* libvx68k/sccmem.cc (get_16, get_8, put_16, put_8): Use DL
+	instead of L.  Print a FIXME message only once.
+	(get_8, put_8): Change the value type.
+
+	* libvx68k/machine.cc (configure): Map DMAC.
+	(machine): Initialize member dmac.
+
+	* libvx68k/systemrom.cc (iocs_dmamove): Removed.
+	(initialize_iocs_functions): Remove installation of the removed
+	handler.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add dmacmem.cc.
+
+	* libvx68k/dmacmem.cc: New file.
+	(get_16, get_8, put_16, put_8, ~dmac_memory, dmac_memory): New
+	function.
+	(iocs_dmamove, install_iocs_calls): New function.
+
+	* include/vx68k/machine.h (class machine): Add new member dmac.
+
+	* include/vx68k/memory.h (class dmac_memory): New class.
+
+	* libvx68k/sccmem.cc (install_iocs_calls): Add comments about
+	missing IOCS calls.
+
+	* libvx68k/machine.cc (machine): Add initialization of member scc.
+
+	* libvx68k/systemrom.cc (iocs_ms_curgt, iocs_ms_curst,
+	iocs_ms_getdt, iocs_ms_init, iocs_ms_limit, iocs_set232c):
+	Removed.
+	(initialize_iocs_functions): Remove installation of removed
+	handlers.
+
+	* libvx68k/sccmem.cc (~scc_memory, scc_memory): New function.
+	(install_iocs_calls): New function.
+	(iocs_ms_curgt, iocs_ms_curst, iocs_ms_getdt, iocs_ms_init,
+	iocs_ms_limit, iocs_set232c): Moved from systemrom.cc
+
+	* include/vx68k/machine.h (class machine): Move member rom before
+	other components.
+
+	* include/vx68k/memory.h (class sram): Moved from machine.h.
+	(class system_rom): Likewise.
+	(class scc_memory): Add constructor and destructor.
+
+	* include/vx68k/machine.h (class graphics_vram): Removed.
+	(class sram): Removed.
+	(class system_rom): Removed.
+
+2000-08-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/machine.cc (read_disk): Remove debug message.
+
+	* libvx68k/mfpmem.cc (get_16, get_8, put_16, put_8): Use DL
+	instead of L.  Print a FIXME message only once.
+
+	* libvx68k/sysportmem.cc (get_16, get_8, put_16, put_8): Use DL
+	instead of L.  Print a FIXME message only once.
+
+	* libvx68k/opmmem.cc (get_8, get_16, put_8, put_16): Use DL
+	instead of L.
+
+	* libvx68k/palettemem.cc (get_16, put_16): Use DL instead of L at
+	the begining of the function.
+	(get_8): Use DL instead of L.
+	(put_8): Implemented using get_16 and put_16.
+
+	* libvx68k/crtcmem.cc (get_16, get_8): Use DL instead of L.
+	(put_16, put_8): Print a FIXME message once by fprintf.
+
+	* libvx68k/ppimem.cc (get_16, get_8): Use DL instead of L.
+	(put_16, put_8): Print a FIXME message once by fprintf.
+
+	* libvx68k/systemrom.cc (iocs_b_putmes): Modify comments.  Remove
+	C-style cast.  Print the FIXME message only once.
+	(iocs_bitsns, iocs_joyget, iocs_ms_curgt, iocs_ms_getdt,
+	iocs_b_eject): Modify comments.  Print the FIXME message only
+	once.
+
+	* include/vm68k/cpu.h (class status_register): Set member value on
+	assignment.
+
+	* libvx68k/systemrom.cc (get_16): Returns 0xf84f for IOCS area.
+	(call_iocs): New function.
+	(dispatch_iocs_function): Removed.
+	(iocs_trap): Handle program-supplied IOCS call handlers.
+	(x68k_iocs): New function.
+	(attach): Use x68k_iocs.
+
+	* include/vx68k/machine.h (class system_rom): Remove member
+	dispatch_iocs_function.  Add member call_iocs.
+
+	* libvm68k/execunit.cc (m68k_cmpm): New function template
+	replacing cmpmb.
+	(initialize_instructions): Install new handlers.
+
+	* TODO: Modified.
+
+	* libvm68k/execunit.cc (run): Step execution even if an interrupt
+	is handled.
+
+	* libvx68k/systemrom.cc (iocs_dmamove, iocs_fntadr, iocs_fntget):
+	New function.
+	(initialize_iocs_functions): Add new handlers.
+
+	* libvx68k/fontrom.cc (linear_jisx0208): New function.
+	(jisx0201_16_offset, jisx0201_24_offset, jisx0208_16_offset,
+	jisx0208_24_offset): New function.
+	(copy_data): Copy JIS X0208 data too.  Use the new functions.
+
+	* include/vx68k/machine.h (class machine): Add new static members
+	jisx0201_16_address, jisx0201_24_address, jisx0208_16_address, and
+	jisx0208_24_address.
+
+	* include/vx68k/memory.h (class font_rom): Add new static members
+	jisx0201_16_offset, jisx0201_24_offset, jisx0208_16_offset, and
+	jisx0208_24_offset.
+
+2000-08-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_bitsns, iocs_joyget, iocs_ms_curgt):
+	New function.
+	(initialize_iocs_functions): Add new handlers.
+
+	* TODO: Modified.
+
+	* libvx68k/palettemem.cc (palettes_memory): Initialize more
+	entries in the text palette.
+
+	* libvx68k/systemrom.cc (iocs_ms_getdt): New function.
+	(initialize_iocs_functions): Add new handler.
+
+	* include/vm68k/addressing.h (class basic_index_indirect): Fix a
+	bug by operators' priority.
+	(class basic_index_pc_indirect): Likewise.
+
+	* libvm68k/execunit.cc (moveml_mr): Add parens around bitwise and
+	operator.
+
+	* libvx68k/systemrom.cc: Replace nana::iocs_call_trace with
+	nana_iocs_call_trace.  Also change all users.
+
+	* libvm68k/execunit.cc: Replace nana::instruction_trace with
+	nana_instruction_trace.  Also change all users.
+
+2000-08-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Modified.
+
+	* libvx68k/systemrom.cc (iocs_vdispst): Set the VDISP counter
+	properly.
+
+	* libvx68k/crtcmem.cc (check_timeouts): Implement the VDISP
+	counter.
+	(set_vdisp_interrupt_enabled): Removed.
+	(set_vdisp_counter_data): New function.
+	(crtc_memory): Change initialization.
+
+	* include/vx68k/machine.h (class machine): Replace member
+	set_vdisp_interrupt_enabled with set_vdisp_counter_data.
+
+	* include/vx68k/memory.h (class crtc_memory): Add members
+	vdisp_counter_data, vdisp_counter_value, and
+	set_vdisp_counter_data.  Remove members _vdisp_interrupt_enabled,
+	and set_vdisp_interrupt_enabled.  Modify inline definition of
+	member vdisp_interrupt_enabled.
+
+	* TODO: Modified.
+
+	* libvx68k/gvideomem.cc: Fix erroneous casts in DL.
+
+	* libvx68k/systemrom.cc: Fix erroneous casts in DL.  Add variable
+	iocs_call_trace to switch IOCS call trace.
+
+	* libvm68k/execunit.cc: Add variable instruction_trace to switch
+	instruction trace.
+
+	* libvx68k/crtcmem.cc (check_timeouts): Change interrupt vector to
+	0x4d.
+	* libvx68k/systemrom.cc (iocs_vdispst): Likewise.
+
+	* libvx68k/systemrom.cc (iocs_b_drvchk): Print FIXME message only
+	once.
+
+	* Version 1.1.2.
+
+	* bin/gtkconwin.cc: Include <cstdlib>.
+
+2000-08-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* configure.in: Set VERSION to 1.1.2.
+
+	* NEWS: Updated.
+
+	* TODO: Updated.
+
+	* libvx68k/systemrom.cc (invalid_iocs_function): Use fprintf for
+	debug output.
+
+	* libvm68k/execunit.cc (m68k_movem_r_predec): Replace
+	moveml_r_predec.
+	(m68k_movem_postinc_r): Replace moveml_mr<postinc_indirect>.
+	(initialize_instructions): Add new handlers.
+
+	* libvx68k/gvideomem.cc: Use DL instead of L.
+
+	* libvm68k/Makefile.am (CLEANFILES): New macro.
+	(libvm68k.gdb): New target.
+
+	* libvx68k/opmmem.cc (check_timeouts, set_reg,
+	set_interrupt_enabled): Lock mutex.
+	(check_timeouts): Use function interrupt_enabled.
+	(~opm_memory): Destroy mutex.
+	(opm_memory): Initialize mutex.
+
+	* libvx68k/palettemem.cc (check_text_colors_modified,
+	get_text_colors, put_16): Lock mutex.
+	(~palettes_memory): New function.
+	(palettes_memory): Initialize mutex.
+
+	* libvx68k/crtcmem.cc (check_timeouts,
+	set_vdisp_interrupt_enabled): Lock mutex.
+	(~crtc_memory): Destroy mutex.
+	(crtc_memory): Initialize mutex.
+
+	* libvx68k/textvram.cc (mark_update_area, poll_update): Lock
+	mutex.
+	(~text_video_memory): Destroy mutex.
+	(text_video_memory): Initialize mutex.
+
+	* include/vx68k/memory.h (class text_video_memory): Add member
+	mutex.  Update comments.
+	(class crtc_memory): Add member mutex.  Update comments.
+	(class palettes_memory): Add member mutex and destructor.  Update
+	comments.
+	(class opm_memory): Add member mutex.  Update comments.
+
+	* include/vx68k/machine.h (class machine): Update comments.
+
+	* libvx68k/systemrom.cc: Use DL instead of L.  Modify debug
+	strings.
+
+	* libvx68k/iocsdisk.cc (image_file_floppy_disk): Use I instead of
+	DI.
+
+	* libvx68k/Makefile.am (CLEANFILES): New macro.
+	(libvx68k.gdb): New target.
+
+	* TODO: Modified.
+
+	* libvx68k/textvram.cc (scroll): Scroll the second plane too.
+
+2000-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/gvideomem.cc (get_16, get_8, put_16, put_8): Print `not
+	implemented' message only once.
+
+	* libvx68k/machine.cc (update_image): Support text palette
+	changes.
+
+	* libvx68k/palettemem.cc (check_text_colors_modified,
+	get_text_colors): New function.
+	(put_16): Set text_colors_modified.
+	(palettes_memory): Initialize the new member.
+	(palettes_memory): Reset some initial values.
+
+	* include/vx68k/memory.h (class palettes_memory): Add new member
+	text_colors_modified, check_text_colors_modified, and
+	get_text_colors.
+	(class palettes_memory): Change value types for put_8, get_8.
+
+	* libvm68k/execunit.cc (initialize_instructions): Add new
+	handlers.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add gvideomem.cc.
+
+	* libvx68k/gvideomem.cc: New file.
+	(get_16, get_8, put_16, put_8): New function.
+
+	* libvx68k/machine.cc (configure): Map gv.
+
+	* include/vx68k/machine.h (class machine): Add new member gv.
+
+	* include/vx68k/memory.h (class graphics_video_memory): New class.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add mfpmem.cc.
+
+	* libvx68k/mfpmem.cc: New file.
+	(get_16, get_8, put_16, put_8): New function.
+
+	* libvx68k/machine.cc (configure): Map mfp.
+
+	* include/vx68k/machine.h (class machine): Add new member mfp.
+
+	* include/vx68k/memory.h (class mfp_memory): New class.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add sysportmem.cc.
+
+	* libvx68k/sysportmem.cc: New file.
+	(get_16, get_8, put_16, put_8): New function.
+
+	* libvx68k/machine.cc (configure): Map system_ports.
+
+	* include/vx68k/machine.h (class machine): Add member
+	system_ports;
+
+	* include/vx68k/memory.h (class system_ports_memory): New class.
+
+	* libvx68k/areaset.cc: Modify comments.
+	(put_8): Moved before put_16.
+	(put_8): Set the supervisor area in _mm.
+	(put_16): Implement.
+
+	* libvx68k/mainmem.cc (set_super_area): New function.
+	(put_16, put_8, put_32): Add a test for the supervisor area.
+
+	* TODO: Modified.
+
+	* libvx68k/mainmem.cc: Use GNU Nana.  Include <vx68k/memory.h>
+	instead.
+	(get_16): Moved before get_8.
+	(put_16): Moved before put_8.
+	(get_16, get_8, get_32, put_16, put_8, put_32): Reconstruct code.
+	(main_memory): Use calloc for data.  Also change the destructor.
+	(main_memory): Initialize the new member.
+
+	* include/vx68k/machine.h (class main_memory): Removed.
+
+	* include/vx68k/memory.h (class main_memory): Moved from
+	machine.h.
+	(class main_memory): Add new member super_area, and
+	set_super_area.
+	(class main_memory): Rename member array to data.  Also change all
+	users.
+
+	* TODO: Modified.
+
+2000-08-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/memory.h (class memory_address_space): Renamed
+	from address_space.  Also change all users.
+
+	* TODO: Modified.
+
+	* libvx68k/machine.cc (check_timers): Use new check_timeouts'.
+	(connect): Call reset's.
+
+	* libvx68k/opmmem.cc (reset): New function.
+	(check_timeout): Changed from check_timeout, adding argument t.
+	(check_timeout): Change use of renamed members.
+	(add_console, opm_memory(console *)): Removed.
+	(opm_memory): Change member initializations.
+
+	* libvx68k/crtcmem.cc (reset): New function.
+	(check_timeout): Changed from check_timeout, adding argument t.
+	(add_console, crtc_memory(console *)): Removed.
+	(crtc_memory): Change member initializations.
+
+	* include/vx68k/memory.h (class crtc_memory): Remove member
+	_console, crtc_memory(console *), and add_console.  Add member
+	reset.  Change member check_timeout to check_timeouts.
+	(class opm_memory): Remove member _console, opm_memory(console *),
+	add_console.  Add member last_check_time, and reset.  Change
+	member check_timeout to check_timeouts.  Rename members
+	timer_a_reset_time and timer_b_reset_time to timer_a_start_time
+	and timer_b_start_time.
+
+	* TODO: Modified.
+
+	* libvx68kgtk/gtkconsole.cc (update_area): Removed.
+	(~gtk_console, gtk_console): Remove use of update_area.
+
+	* include/vx68k/gtk.h (class gtk_console): Remove member
+	update_region, and update_area.
+
+	* include/vx68k/memory.h (struct console): Remove member
+	update_area.
+
+	* libvx68kgtk/gtkconsole.cc (class gdk_threads_monitor): New
+	class.
+	(handle_timeout): Rewrite the code using machine::update_image.
+
+	* libvx68k/textvram.cc (mark_update_area, poll_update): New
+	function.
+	(scroll, draw_char, put_16, put_8, connect): Use mark_update_area.
+	(text_video_memory): Initialize the new member.
+
+	* libvx68k/machine.cc (get_image): Removed.
+	(update_image): New function.
+
+	* include/vx68k/machine.h (class machine): Add type rectangle and
+	member update_image.  Remove member get_image.
+
+	* include/vx68k/memory.h (class text_video_memory): Add member
+	raster_update_marks, poll_update, and mark_update_area.
+
+	* TODO: Modified.
+
+2000-08-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/palettemem.cc (get_16, put_16): Change log output.
+	(get_16, put_16): Canonicalize address.
+	(get_8): Change return type.
+	(put_8): Change value type.
+
+	* libvm68k/execunit.cc (m68k_asr_i): New function template.
+	(asrl_i): #if'd out.
+	(initialize_instructions): Use new handlers.
+
+	* bin/main.cc (run_boot): Use vm's master context.
+
+	* libvx68k/systemrom.cc (iocs_vdispst): Implement.
+
+	* libvm68k/context.cc (interrupt): Set a_interrupted.
+
+	* libvx68k/machine.cc (check_timers): Call crtc.check_timeout.
+	(connect): New function.
+
+	* libvx68k/crtcmem.cc (check_timeout, add_console,
+	set_vdisp_interrupt_enabled, ~crtc_memory, crtc_memory): New
+	function.
+
+	* include/vx68k/machine.h (class machine): Add members
+	vdisp_interrupt_enabled and set_vdisp_interrupt_enabled.  Make
+	member connect out-of-line.
+
+	* include/vx68k/memory.h (class crtc_memory): Add members
+	_console, _vdisp_interrupt_enabled, vdisp_interval,
+	vdisp_start_time, add_console, vdisp_interrupt_enabled,
+	set_vdisp_interrupt_enabled, and check_timeout.
+
+	* libvm68k/context.cc (handle_interrupts): Remove comments.
+
+	* libvx68k/opmmem.cc (set_reg): Remove comments.
+	(check_timeout): Handle timers even if interrupts are not enabled.
+	(opm_memory): Reorder initializations.
+
+	* libvx68k/systemrom.cc (iocs_opmintst, iocs_opmset): Implemented.
+
+	* libvx68k/machine.cc (boot): Use master_context.
+	(check_timers): Call opm.check_timeout.
+	(machine): Initialize master_as and _master_context.
+
+	* libvm68k/context.cc (handle_interrupts): Add code.
+	(context): Initialize interrupt_queues.
+
+2000-08-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/context.cc (interrupt): New function.
+
+	* include/vx68k/memory.h (class opm_memory): Change members'
+	order.  Add interrupt_enabled.
+
+	* include/vx68k/machine.h (class machine): Add member master_as,
+	_master_context, master_context, opm_interrupt_enabled, and
+	set_opm_interrupt_enabled.
+
+	* include/vm68k/cpu.h (class context): Add member interrupt_queues
+	and interrupt.
+
+	* libvx68kgtk/gtkconsole.cc (current_time): New function.
+
+	* libvx68k/machine.cc (configure): Map opm into the address space.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add opmmem.cc.
+
+	* libvx68k/opmmem.cc: New file.
+	(set_reg, check_timeout, add_console, set_interrupt_enabled,
+	get_8, get_16, put_8, put_16, ~opm_memory, opm_memory): New
+	function.
+
+	* include/vx68k/gtk.h (class gtk_console): Add new member
+	current_time.
+
+	* include/vx68k/machine.h (class machine): Add member opm,
+	set_opm_reg, and opm_status.  Call opm.add_console in connect.
+
+	* include/vx68k/memory.h (struct console): Add type time_type and
+	new member current_time.
+
+	(class opm_memory): New class.
+
+2000-08-06  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68kgtk/gtkconsole.cc (handle_machine_timeout): New
+	function.
+	(~gtk_console): Call gtk_timeout_remove for machine_timeout.
+	(gtk_console): Initialize machine_timeout.
+
+	* include/vx68k/gtk.h (class gtk_console): Add members
+	machine_timeout and check_machine_timers.
+
+	* libvx68k/machine.cc (check_timers): New function.
+
+	* include/vx68k/machine.h (class machine): Add members
+	last_check_time and check_timers.
+
+	* libvm68k/execunit.cc (m68k_asl_r): New function template.
+	(asll_r): #if'd out.
+	(initialize_instructions): Use new handlers.
+
+	* libvx68kgtk/gtkconsole.cc (handle_timeout): Request drawing only
+	in RGB buffer.
+
+	* libvx68k/textvram.cc (put_16, put_8): Wrap y for update_area.
+
+	* libvm68k/execunit.cc (m68k_andi_to_ccr): New function.
+	(m68k_suba): New function template.
+	(subal): #if'd out.
+	(initialize_instructions): Use new handlers.
+
+	* libvx68k/systemrom.cc (iocs_ms_curst, iocs_ms_init,
+	iocs_ms_limit): New function.
+	(initialize_iocs_functions): Use new handlers.
+
+	* libvx68k/machine.cc (configure): Map sprites into the address
+	space.
+
+	* include/vx68k/machine.h (class machine): Add new member sprites.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add spritemem.cc.
+
+	* libvx68k/spritemem.cc: New file.
+	(get_16, get_8, put_16, put_8): New function.
+
+	* include/vx68k/memory.h (class sprites_memory): New class.
+
+	* bin/gtkabout.cc: Include cstdlib and cstdio.
+
+	* bin/main.cc (console_callback): Add console_callback to base.
+	Add member window_closed.
+	(create_window): Add callback to main_window.
+	(window_closed): New function.
+
+	* bin/gtkconwin.cc (notify_window_destroyed): Call
+	callback->window_closed.
+
+	* bin/gtkapp.h (class gtk_console_window): Replace members
+	eject_floppy_0_item and eject_floppy_1_item with
+	eject_floppy_subitems array.  Also change all users.
+	(struct console_callback): Rename window_destroyed to
+	window_closed.
+
+	* bin/main.cc (class gtk_app): Remove `#if 0' sections.
+	(class gtk_app): Remove show_about_dialog.
+	(handle_about_ok_clicked, show_about_dialog, handle_run_command,
+	handle_fd_load_command, handle_fd_eject_command,
+	handle_about_command): Removed.
+	(create_window, main): Remove `#if 0' sections.
+
+2000-08-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/gtkconwin.cc (show_about, handle_about_item_activate): New
+	function.
+	(handle_window_destroy): Add a throw spec.
+	(gtk_console_window): Connect about_item's "activate" to a
+	handler.  Do not disable about_item.
+
+	* bin/Makefile.am (vx68k_SOURCES): Add gtkabout.cc.
+
+	* bin/gtkabout.cc: New file.
+	(notify_window_destroyed, handle_window_destroy,
+	handle_ok_button_clicked, close, open, ~gtk_about_window,
+	gtk_about_window): New function.
+
+	* bin/gtkapp.h (class gtk_about_dialog): Removed.
+	(class gtk_about_window): New class.
+	(class gtk_console_window): Add new members aw and show_about.
+
+2000-08-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/gtkconwin.cc (gtk_console_window): Set window policy and
+	title.
+	(gtk_console_window): Set geometry hints.
+
+	* bin/gtkapp.h (class gtk_load_floppy_dialog): New class.
+	(class gtk_about_dialog): New class.
+
+	* bin/gtkconwin.cc (new_tearoff_item): New function.
+	(gtk_console_window): Add tearoff item to Eject Floppy menu.
+	(gtk_console_window): Set focus to the content widget.
+	(gtk_console_window): Fix a label text.
+
+	* bin/main.cc (class gtk_app): Use gtk_console_window.
+	(main): Likewise.
+
+	* bin/Makefile.am (noinst_HEADERS): Add gtkapp.h.
+	(vx68k_SOURCES): Add gtkconwin.cc.
+
+	* bin/gtkconwin.cc: New file.
+	(notify_window_destroyed, add_callback, show, hide, new_item,
+	new_separator_item, handle_window_destroy, ~gtk_console_window,
+	gtk_console_window): New function.
+
+	* bin/gtkapp.h: New file.
+	(struct console_callback): New class.
+	(class gtk_console_window): New class.
+
+2000-08-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/textvram.cc (get_16, get_8): Remove log output.
+
+	* libvx68k/machine.cc (configure): Map font.
+
+	* include/vx68k/machine.h (class machine): Add member font.  Call
+	font.copy_data in connect.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add fontrom.cc.
+
+	* libvx68k/fontrom.cc: New file.
+	(copy_data, get_16, get_8, put_16, put_8, ~font_rom, font_rom):
+	New function.
+
+	* include/vx68k/memory.h (class font_rom): New class.
+
+	* libvx68kgtk/gtkconsole.cc (handle_timeout): Remove temporary
+	code.
+
+	* libvx68k/machine.cc (get_image): Use
+	text_video_memory::raster_iterator.
+
+	* libvx68k/textvram.cc (operator*, operator++,
+	text_video_raster_iterator): New function.
+	(raster): New function.
+	(put_16, put_8): Remove log output.
+
+	* include/vx68k/memory.h (class text_video_raster_iterator): Make
+	a constructor out-of-line.  Add new member packs.
+	(class text_video_memory): Add new member raster.
+
+	* bin/main.cc: Gettextize.
+	(main): Set text domain.
+
+	* bin/Makefile.am (INCLUDES): Define LOCALEDIR.
+
+	* Makefile.am (SUBDIRS): Add intl and po.
+
+	* configure.in: Comment out AC_PROG_CPP.  Add AC_ISC_POSIX and
+	AM_GNU_GETTEXT.  Add more Makefiles.
+
+	* acconfig.h: Add #undef's for GNU gettext.
+
+	* libvx68k/systemrom.cc (iocs_b_super): New function.
+	(initialize_iocs_functions): Use new handler.
+
+2000-08-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_g_clr_on, iocs_scroll,
+	iocs_skey_mod, iocs_tgusemd, iocs_vdispst): New function.
+	(iocs_tcolor, iocs_tpalet): Correct log messages.
+	(initialize_iocs_functions): Use new handlers.
+	(get_16): Return 0x4e73.  Disable fc test.
+	(get_8, put_16, put_8): Add fc test.  Add messages.
+
+	* bin/main.cc (create_window): Modify menu structure.
+
+	* libvm68k/execunit.cc (m68k_move): New function template.
+	(moveb, movew, movel): Put in #if 0.
+	(initialize_instructions): Use new handlers.
+
+	* libvx68k/machine.cc (configure): Map palettes.
+
+	* include/vx68k/machine.h (class machine): Add new member
+	palettes.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add palettemem.cc.
+
+	* libvx68k/palettemem.cc: New file.
+	(get_16, get_8, put_16, put_8, palettes_memory): New function.
+
+	* include/vx68k/memory.h (class palettes_memory): New class.
+
+	* libvx68k/mainmem.cc (get_16, get_32, put_16): Rewrite code.
+	(put_32): New function.
+
+	* include/vx68k/machine.h (class main_memory): Add new method
+	put_32.
+
+2000-07-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/addrspace.cc (getl, putl): Use get_32 and put_32 only
+	if address % 4 == 0.
+
+2000-07-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vx68k/memory.h (class text_video_raster_iterator):
+	Change member buf to unsigned char *.
+
+	* libvx68k/systemrom.cc (namespace): Fix debug message.
+
+	* libvx68k/textvram.cc (advance_row): Change the argument to
+	unsigned char *.
+	(scroll): Use STL.
+	(draw_char, get_image): Change for byte array.
+	(get_16, get_8, put_16, put_8): Avoid generate_bus_error.
+	Rewrite code.
+	(connect): Update the console.
+	(text_video_memory): Clear the buffer.
+
+	* include/vx68k/memory.h (class text_video_memory): Change member
+	buf to unsigned char *.
+
+	* libvx68k/textvram.cc: Add new constant PLANE_SIZE and PLANE_MAX.
+	(draw_char): Use PLANE_SIZE.
+	(get_16, put_16, text_video_memory): Use PLANE_SIZE and PLANE_MAX.
+
+	* include/vx68k/memory.h (struct console): Moved from machine.h.
+	(class text_video_raster_iterator): Likewise.
+	(class text_video_memory): Likewise.
+
+	* include/vx68k/machine.h (class text_video_memory): Renamed from
+	text_vram.  Also change all users.
+	(class text_video_raster_iterator): Renamed from
+	text_vram_raster_iterator.  Also change all users.
+
+	* libvm68k/addrspace.cc (namespace): Rename no_mem to null_memory.
+	Also change all users.
+
+	* libvm68k/defaultmem.cc (get_8, get_16, put_8, put_16): Moved
+	from memory.cc.  Avoid use of generate_bus_error.
+
+	* include/vm68k/memory.h (class default_memory): Renamed from
+	no_memory.  Also change all method definitions.
+
+	* libvm68k/Makefile.am (libvm68k_la_SOURCES): Add defaultmem.cc.
+
+	* libvm68k/defaultmem.cc: New file.
+
+2000-07-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_b_sftsns): Get key modifiers.
+
+	* libvx68kgtk/gtkconsole.cc (handle_key_press_event): Add
+	modifiers handling.
+	(handle_key_release_event): New function.
+	(deliver_key_release_event): New function.
+	(create_widget): Add handler for key release events.
+
+	* libvx68k/machine.cc (set_key_modifiers): New function.
+	(machine): Initialize _key_modifiers.
+
+	* include/vx68k/gtk.h (class gtk_console): Add new methods
+	handle_key_release_event.
+
+	* include/vx68k/machine.h (class machine): Add new members
+	_key_modifiers, and methods set_key_modifiers and key_modifiers.
+
+2000-07-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.xml: Updated.
+
+	* TODO: Updated.
+
+	* libvm68k/execunit.cc (m68k_nop): New function.
+	(initialize_instructions): Add new handler.
+
+	* libvx68k/systemrom.cc (iocs_b_clr_st, iocs_b_locate,
+	iocs_dateasc, iocs_timeasc): New function.
+	(iocs_textput): Fix debug message.
+	(initialize_iocs_functions): Add new handlers.
+
+	* libvx68k/machine.cc (queue_key): Use class auto_lock.
+	(peek_key): Likewise.
+	(get_key): Likewise.
+
+	* include/vx68k/Makefile.am (vx68kinclude_HEADERS): Add utility.h.
+
+	* include/vx68k/utility.h: New file.
+	(class auto_lock): New class template.
+
+	* include/vx68k/Makefile.am (vx68kincludedir): New macro.
+	(vx68kinclude_HEADERS): Renamed from noinst_HEADERS.
+
+2000-07-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/vx68k.1: Updated.
+
+	* libvx68k/machine.cc (peek_key): Call pthread_testcancel.
+
+	* bin/main.cc (join): Call pthread_cancel.
+	(boot, run): Set vm_status to 0.
+	(gtk_app): Remove initialization of vm_status.
+
+2000-07-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Version 1.1.1.
+
+	* configure.in: Set VERSION to 1.1.1.
+
+	* README: Updated.
+
+	* bin/main.cc (COPYRIGHT_YEAR): Modified.
+
+	* NEWS: Updated for version 1.1.1.
+
+	* bin/vx68k.1: Updated.
+
+	* libvx68k/systemrom.cc (iocs_b_keyinp, iocs_ledmod): New
+	function.
+	(iocs_b_keysns): Replace with working code.
+	(initialize_iocs_functions): Add new handlers.
+
+	* libvx68k/machine.cc (peek_key): New function.
+
+	* include/vx68k/machine.h (class machine): Add new method
+	peek_key.
+
+2000-07-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* NEWS: Updated.
+
+	* libvm68k/execunit.cc (m68k_and_m, m68k_eori, m68k_not,
+	m68k_or_m, m68k_rol_r): New function template.
+	(m68k_bclr_r, m68k_bset_r, m68k_btst_r): Fix the operand offset.
+	(eoriw, rolb_r): Disabled.
+	(initialize_instructions): Add new handlers.  Fix some errors.
+
+	* libvx68k/systemrom.cc (iocs_romver): Change the ROM version and
+	the debug message.
+
+2000-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/ppimem.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/sccmem.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/crtcmem.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/areaset.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/sram.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/systemrom.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/textvram.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvx68k/mainmem.cc (read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(get_32): Renamed from getl.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* libvm68k/addrspace.cc (read): Rewritten only using getb.
+	(write): Rewritten only using putb.
+
+	* libvm68k/memory.cc (get_32): Renamed from getl.
+	(put_32): Renamed from putl.
+	(read, write): Deleted.
+	(get_8): Renamed from getb.
+	(get_16): Renamed from getw.
+	(put_8): Renamed from putb.
+	(put_16): Renamed from putw.
+
+	* include/vm68k/memory.h (class memory): Rename members getw to
+	get_16, getb to get_8, getl to get_32, putw to put_16, putb to
+	put_8, and putl to put_32.  Remove members read and write.  Also
+	change all derived classes and all users.
+
+	* libvx68k/machine.cc (configure): Set maps for crtc, scc, and
+	ppi.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add crtcmem.cc,
+	sccmem.cc, and ppimem.cc.
+
+	* libvx68k/ppimem.cc: New file.
+	(getw, getb, read, putw, putb, write): New function.
+
+	* libvx68k/sccmem.cc: New file.
+	(getw, getb, read, putw, putb, write): New function.
+
+	* libvx68k/crtcmem.cc: New file.
+	(getw, getb, read, putw, putb, write): New function.
+
+	* include/vx68k/machine.h (class x68k_address_space): Moved.
+	(class machine): Add new members crtc, scc, and ppi.
+
+	* include/vx68k/memory.h (class crtc_memory, class scc_memory,
+	class ppi_memory): New class.
+
+	* bin/main.cc (run_boot): Fix a width of a printf format.
+	* libvx68k/doscontext.cc (start): Likewise.
+
+2000-07-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.xml: Updated.
+	* doc/vx68k.texi: Regenerated.
+
+	* doc/Makefile.am (EXTRA_DIST): Add docbook2texi.
+	(DOCBOOK2TEXI): Use the included one.
+	(${srcdir}/vx68k.texi): Simplify commands.
+
+	* doc/docbook2texi: New file.
+
+2000-07-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/execunit.cc (m68k_btst_r): New function template.
+	(initialize_instructions): Add new or missing handlers.
+
+	* libvx68k/textvram.cc (putw): Output diagnostic message.
+
+	* libvx68k/systemrom.cc (iocs_ontime, iocs_opmintst, iocs_opmset):
+	New function.
+	(initialize_iocs_functions): Add new handlers.
+
+	* libvm68k/execunit.cc (extsb, extsw, extsl): New inline function.
+	(initialize_instructions): Add missing handlers.
+
+	* doc/Makefile.am (${srcdir}/vx68k.texi): Suppress output of grep.
+
+	* doc/vx68k.xml: Updated.
+	* doc/vx68k.texi: Regenerated.
+
+	* libvx68k/systemrom.cc (iocs_os_curon): New function.
+	(initialize_iocs_functions): Add new handler.
+
+2000-06-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/execunit.cc (m68k_bclr_i): Fix the instruction size.
+	(m68k_move_to_usp): New function.
+	(install_instructions): Add new handler.
+
+2000-06-29  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/machine.cc (configure): Map _area_set.
+	(machine): Add initialization of _area_set.
+
+	* include/vx68k/machine.h (class machine): Add new member
+	_area_set.
+
+	* libvx68k/Makefile.am (libvx68k_la_SOURCES): Add areaset.cc.
+
+	* libvx68k/areaset.cc: New file.
+	(getw, getb, read, putw, putb, write, area_set): New function.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add memory.h.
+
+	* include/vx68k/memory.h: New file.
+	(class area_set): New class.
+
+	* libvx68k/sram.cc (getw, getb): Fix memory size mask.
+
+2000-06-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/machine.cc (boot): Handle bus error and address error
+	correctly.
+
+	* bin/main.cc (run_boot): Catch special_exception.
+
+	* libvx68k/doscontext.cc (start): Catch a special_exception.
+
+	* libvm68k/execunit.cc (m68k_move_to_sr, m68k_move_from_usp,
+	m68k_ori_to_sr, m68k_rte): Use privilege_violation_exception.
+
+	* libvm68k/addrspace.cc (getw, getl, putw, putl): Throw
+	address_error instead of bus_error.
+
+	* libvm68k/memory.cc (bus_error): Removed.
+	(generate_bus_error): Add argument bool read.  Use
+	bus_error_exception.
+
+	* include/vm68k/memory.h (class memory): Add an argument to member
+	function generate_bus_error.  Also change all users.
+
+	* include/vm68k/except.h (struct special_exception): New struct.
+	(struct bus_error_exception): Renamed from bus_error.  Also change
+	all users.
+	(struct address_error_exception): Likewise.
+	(struct bus_error_exception, struct address_error_exception): Use
+	special_exception as a base.
+	(struct ordinary_exception): New struct.
+	(struct illegal_instruction_exception): Renamed from
+	illegal_instruction.  Also change all users.
+	(struct zero_divide_exception): Likewise.
+	(struct privilege_violation_exception): Likewise.
+	(struct illegal_instruction, struct zero_divide_exception, struct
+	privilege_violation_exception): Use ordinary_exception as a base.
+
+	* libvm68k/execunit.cc (m68k_bclr_r, m68k_bclr_i,
+	m68k_move_from_sr): Add missing finish call.
+	(m68k_move_from_sr): Fix diagnostic output.
+	(m68k_move_to_sr): New function template.
+	(initialize_instructions): Add new handlers.
+
+	* libvx68k/systemrom.cc (getw): Generate a bus error for a program
+	access.
+
+	* bin/main.cc (parse_options): Handle `-b'.
+	(display_help): Modify help messages.
+
+	* libvx68k/systemrom.cc (initialize): Use 0xfe0000 as initial
+	handler base address.
+	(dispatch_iocs_function, iocs_trap): Likewise.
+
+	* libvx68k/machine.cc (boot): Handle bus errors.
+
+	* libvm68k/execunit.cc (m68k_add_m): Renamed from m68k_add_r.
+	Also change all users.
+	(m68k_sub_m): Renamed from m68k_sub_r.  Also change all users.
+	(m68k_bclr_r): Modify diagnostic output.  Use variable value2.
+	(m68k_bclr_i, m68k_move_from_sr): New function template.
+	(bclrl_i): Disabled by #if-#endif.
+	(m68k_ori_to_ccr): Use byte_type.  Modify diagnostic output.
+	(m68k_ori_to_sr): New function.
+	(initialize_instructions): Add new handlers.
+
+	* libvx68k/systemrom.cc (iocs_b_readid): New function.
+	(initialize_iocs_functions): Use the new function.
+
+2000-06-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/execunit.cc (m68k_andi, m68k_b): Modify the trace
+	message.
+	(initialize_instructions): Add new handler.
+
+	* libvx68k/systemrom.cc (initialize): Initialize the work area.
+
+	* libvx68k/machine.cc (boot): Handle TRAP.
+
+	* libvx68k/sram.cc (getw): Write diagnostic message.
+	(getb): Add code.
+	(sram): Add SRAM initialization.
+
+	* libvx68k/systemrom.cc (iocs_sys_stat): Renamed from iocs_xac.
+	Also change all users.
+	(iocs_sys_stat): Add code.
+
+	* libvm68k/execunit.cc (m68k_andi): New function template.
+	(andib, andiw, andil): Disabled in #if-#endif.
+	(m68k_b): New function.
+	(b): Removed.
+	(initialize_instructions): Use the new handlers.
+
+	* libvx68k/systemrom.cc (dispatch_iocs_function): Add support for
+	installed handlers.
+	(iocs_trap): Likewise.
+	(iocs_xac): New function.
+	(initialize_iocs_functions): Use the new handler.
+
+2000-06-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/execunit.cc (initialize_instructions): Add new
+	handlers.
+
+2000-06-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_romver): New function.
+	(initialize_iocs_functions): Use the new handler.
+
+	* include/vm68k/cpu.h (struct registers): Rename member sr to ccr.
+	Also change all referrers.
+
+	* libvx68k/systemrom.cc (iocs_b_intvcs): Fix the data size.
+
+	* libvm68k/execunit.cc (m68k_cmp): New function template.
+	(cmpb, cmpw, cmpl): Disabled in #if-#endif.
+	(initialize_instructions): Use the new handlers.
+
+	* include/vm68k/condition.h (struct t, struct f, struct hi, struct
+	ls, struct cc, struct cs, struct ne, struct eq, struct pl, struct
+	mi, struct ge, struct lt, struct gt, struct le): Make member
+	function text static.
+
+	* libvx68k/systemrom.cc (iocs_x3a): New function.
+	(initialize_iocs_functions): Use the new handler.
+
+	* libvm68k/execunit.cc (m68k_adda, m68k_addq_a, m68k_subq_a): Use
+	long_word_size::svalue for value1/value2.
+	(m68k_addx_r): New function template.
+	(initialize_instructions): Use the new handlers.
+
+	* libvx68k/doscontext.cc (load_executable): Modify the PSP setup.
+
+	* include/vm68k/addressing.h (class basic_postinc_indirect, class
+	basic_index_indirect): Write the actual address in text.
+	(class postinc_indirect, class indexed_indirect): Likewise.
+
+	* libvm68k/addrspace.cc (getw, getl, putw, putl): Trap an
+	unaligned access.
+
+	* libvx68k/mainmem.cc (main_memory) [DUMP_MEMORY]: Dump memory
+	contents to a file.
+
+	* libvm68k/statusreg.cc (class add_condition_tester): Fix member
+	functions ls and cs.
+
+	* libvx68k/systemrom.cc (putw, putb): Throw a bus_error.
+	(iocs_b_intvcs): Fix the diagnostic message.
+
+	* libvx68k/allocator.cc (make_block): Use PREV to get NEXT.
+
+2000-05-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/execunit.cc (initialize_instructions): Add new
+	handler.
+	(m68k_movem_r_m): New function template.
+	(initialize_instructions): Add new handlers.
+
+	* libvx68k/systemrom.cc (initialize): Initialize the interrupt
+	vector table, too.
+	(iocs_b_keysns, iocs_b_putc): New function.
+	(initialize_iocs_functions): Add new handlers.
+
+	* libvx68k/mainmem.cc (main_memory): Fill memory with the ILLEGAL
+	instructions.
+
+	* libvm68k/execunit.cc (m68k_ori_to_ccr): New function.
+	(initialize_instructions): Add new handlers.
+	(cmpil): Fix the size of immediate value.
+
+	* libvx68k/systemrom.cc (iocs_b_intvcs): New function.
+	(initialize_iocs_functions): Use the new handler.
+
+	* libvm68k/execunit.cc (initialize_instructions): Add another
+	handler.
+
+	* libvx68k/systemrom.cc (iocs_timerdst, iocs_x39): New function.
+	(initialize_iocs_functions): Use the new function.
+
+	* NEWS: Modified.
+
+	* libvm68k/execunit.cc: Modify comments.
+	(m68k_sub_r): New function template.
+	(subl_r): Disabled in #if-#endif.
+	(initialize_instructions): Use the new functions.
+
+2000-05-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/Makefile.am (vx68k_LDADD): Use libvx68k.la.
+
+	* libvx68k/Makefile.am (LIBS): Set to empty.
+	(lib_LTLIBRARIES): Changed from noinst_LIBRARIES.
+	(libvx68k_la_LDFLAGS): New macro.
+	(libvx68k_la_SOURCES): Changed from libvx68k_a_SOURCES.
+
+	* libvx68k/systemrom.cc (iocs_b_color, iocs_b_curoff,
+	iocs_b_curon, iocs_b_putmes, iocs_defchr, iocs_tcolor,
+	iocs_textput, iocs_tpalet, iocs_x38): New function.
+	(initialize_iocs_functions): Use the new function.
+
+	* libvm68k/execunit.cc (m68k_bclr_r, m68k_ror_i, m68k_subq_a): New
+	function template.
+	(m68k_bset_r): Renamed from m68k_bset_d.  Get modulo for the bit
+	number.
+	(rorw_i, subqw, subql): Disabled in #if-#endif.
+	(initialize_instructions): Update the instruction table.
+	(m68k_ror_i): Fix a bit mask.
+
+	* libvx68k/systemrom.cc (iocs_datebin, iocs_dateget,
+	iocs_timebin): New function.
+	(iocs_timeget): Rewrite using local variables.
+	(initialize_iocs_functions): Use the new functions.
+
+2000-05-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc: Include <cstdio>.
+	(iocs_timeget): New function.
+	(initialize_iocs_functions): Use the new function.
+
+	* libvm68k/execunit.cc (m68k_bset_d, m68k_db): New function
+	template.
+	(dbf): Disabled.
+	(initialize_instructions): Use the new function.
+	(initialize_instructions): Fix wrong bit masks.
+
+	* libvx68k/systemrom.cc (iocs_b_drvchk, iocs_b_eject): New
+	function.
+	(initialize_iocs_functions): Use the new functions.
+
+	* libvm68k/execunit.cc (m68k_subq): New function template.
+	(initialize_instructions): Renamed from add_instructions.  Also
+	change all callers.
+	(initialize_instructions): Add SUBQ instructions for byte.
+
+	* libvx68k/systemrom.cc (iocs_b_recali): New function.
+	(initialize_iocs_functions): Use iocs_b_recali.
+
+2000-05-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_b_consol, iocs_b_sftsns,
+	iocs_crtmod, iocs_init_prn, iocs_set232c, iocs_x37): New function.
+	(initialize_iocs_functions): Use the new functions.
+
+	* libvm68k/statusreg.cc: Use using declarations.
+	* libvm68k/context.cc: Likewise.
+
+	* libvx68k/machine.cc (boot): Save the value of the status
+	register before entering the supervisor state.
+
+	* include/vm68k/addressing.h (class basic_index_pc_indirect): Fix
+	member function text.
+
+	* libvm68k/statusreg.cc (uint_type): Fix the bit mask.
+
+	* libvm68k/execunit.cc (m68k_add_r): Fix the trace output.
+
+	* libvm68k/context.cc (set_sr): Change the supervisor state before
+	assigning to sr.
+
+	* libvm68k/execunit.cc (add_instructions): Add
+	tstb<absolute_short>.
+
+	* libvx68k/systemrom.cc (attach): Use make_pair.
+
+	* libvx68k/dos.cc: Use uint_type for all instruction handlers.
+	(dos_close, dos_create, dos_delete, dos_dup, dos_exit2,
+	dos_filedate, dos_fgetc, dos_fputs, dos_getdate, dos_getpdb,
+	dos_gettim2, dos_intvcs, dos_ioctrl, dos_malloc, dos_open,
+	dos_print, dos_putchar, dos_read, dos_seek, dos_setblock,
+	dos_vernum, dos_write): Change the name of argument ec to c.
+	(add_instructions): Use a simpler version of set_instruction.
+
+	* libvm68k/execunit.cc: Use uint_type for all instruction
+	handlers.
+	(set_instruction): Change the arguments.
+	[0] (beq, bne): Disabled.
+	[0] (moveb_d_postinc, moveb_postinc_postinc, movew_d_predec,
+	movew_absl_predec, movew_d_absl, subb_postinc_d, subql_d, subql_a,
+	tstw_d): Removed.
+	(add_instructions): Use b<ne> and b<eq>.
+	(exec_unit): Change initialization of member instructions.
+	(install_instructions): Removed.
+
+	* include/vm68k/cpu.h (struct instruction_data): Removed.  Also
+	replace all use of instruction_data * to unsigned long.
+	(class exec_unit): Use uint_type for instruction_handler.
+	(class exec_unit): Change the name of intruction to
+	instruction_type.  Also change all users.
+	(class exec_unit): Remove member install_instructions.  Change
+	member instructions to a vector.
+	(class exec_unit): Change arguments of member function
+	set_instruction.
+
+2000-05-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/statusreg.cc: Define status_register::bitset_tester.
+	(cs, eq, mi, lt): New member function for class
+	bitset_condition_tester.
+
+	* libvm68k/execunit.cc (m68k_move_from_usp, m68k_rte): New
+	function.
+	(add_instructions): Use the new functions.
+
+	* libvm68k/context.cc (sr, set_sr): New member function.
+
+	* include/vm68k/cpu.h (class condition_tester): Add inline
+	implementations for member ls and le.
+	(class bitset_condition_tester): New class.
+	(class status_register): Add new members bitset_tester and
+	operator=.
+	(class context): Add new members sr and set_sr.
+
+	* libvx68k/machine.cc (boot): Handles F-line traps.
+
+	* libvm68k/statusreg.cc: Move static variables.
+	(operator uint_type): New member function.
+
+	* include/vm68k/cpu.h (class status_register): Add new member
+	operator uint_type.
+
+2000-05-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/machine.cc (boot): Fix the unit specification.
+
+	* libvm68k/execunit.cc: Add using declarations.
+	(m68k_adda): Change Destination to Source.
+	(m68k_movea): New function template.
+	[0] (moveaw, moveal): Disabled.
+	(install_instructions): Use the new template.
+	(add_instructions): New function.
+	(install_instructions): Use add_instruction.
+	(exec_unit, illegal): Moved.
+
+	* libvx68k/iocsdisk.cc (read): Round up NBYTES.
+
+2000-05-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc: Rewrite using's.
+
+	* libvx68k/machine.cc (configure): Set pages for _sram.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add file sram.cc.
+
+	* libvx68k/sram.cc: New file.
+	(getw, getb, read, putw, putb, write, ~sram, sram): New function.
+
+	* include/vx68k/machine.h (class sram): New class.
+	(class machine): Add new member _sram.
+
+	* libvx68k/systemrom.cc (iocs_b_print, iocs_b_read): Use
+	dynamic_cast for the address space.
+	* libvx68k/dos.cc (dos_super_jsr): Likewise.
+
+	* include/vm68k/memory.h (class address_space): Add a virtual
+	destructor.
+
+2000-05-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (run_boot): Catches bus errors.
+
+	* libvx68k/systemrom.cc (iocs_b_read): Write working code.
+	(iocs_os_curof): New function.
+	(initialize_iocs_functions): Use iocs_os_curof.
+
+	* libvm68k/execunit.cc (m68k_addi): Use Size for typedefs.
+	(m68k_asl_i): New function.
+	[0] (asll_i): Disabled.
+	(install_instructions): Use the new ASL handler.
+
+2000-05-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (run_boot): Catch an illegal instruction.
+
+	* libvx68k/machine.cc (boot): Make a version with an argument of
+	class context.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Change the file
+	order.
+
+	* include/vx68k/machine.h (class x68k_address_space): Moved before
+	class machine.
+	(class machine): Add new member boot with an argument of class
+	context.
+
+	* libvx68k/systemrom.cc (iocs_b_print, iocs_bootinf): New
+	function.
+	(iocs_b_read, iocs_b_write): Print FIXME message by fprintf.
+	(initialize_iocs_functions): Add new functions.
+
+	* libvx68k/machine.cc (boot): Catch illegal_instrunction.
+
+	* bin/main.cc (class gtk_app): Add new members run_boot.  Make
+	member boot out of line.
+	(run_boot): New member function.
+	(call_run_boot): New function.
+	(boot): Rewrite to start a thread.
+
+	* include/vm68k/memory.h: Add comments.
+
+	* libvx68k/dos.cc (dos_super_jsr): Use x68k_address_space.
+	(create_context, dos): Use as instead of vm.
+
+	* libvx68k/filesystem.cc (write): Use the first argument.
+	(fputs): Pass as to b_print.
+
+	* libvx68k/machine.cc (b_print, read_disk, write_disk): Add
+	argument as.
+	(boot): Make its own address space.
+	(configure): New function.
+	(machine): Remove address space initialization.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add x68kaddr.cc.
+
+	* libvx68k/x68kaddr.cc: New file.
+	(x68k_address_space): New function.
+
+	* include/vx68k/human.h (class dos): Add new member as.  Remove
+	member vm.
+
+	* include/vx68k/machine.h (class machine): Remove class
+	address_space from its base.  Add new member configure.  Change
+	arguments of member b_print, read_disk, and write_disk.
+	(class x68k_address_space): New class.
+
+2000-05-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (class gtk_app): Rewrite boot and load_fd_image in
+	line.
+
+	* libvx68k/machine.cc (read_disk, write_disk, boot, load_fd,
+	unload_fd): New member functions.
+
+	* include/vx68k/machine.h (class machine): Add new members
+	load_fd, unload_fd, read_disk, write_dist, and boot.
+
+2000-05-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/dos.cc (dos_chmod, dos_fflush, dos_nameck): Use
+	reinterpret_cast for data.
+	(dos_super_jsr): Use c.mem to get a machine.
+	(add_instructions): Use reinterpret_cast for data.
+
+	* include/vx68k/human.h (class dos): Remove the base class.
+	Remove member machine.
+
+	* libvx68k/systemrom.cc (attach): Use the single version of
+	set_instruction.
+
+	* libvx68k/filesystem.cc (write): Remove the use of
+	machine::address_space.
+	* libvx68k/dos.cc (create_context, dos): Likewise.
+
+	* libvx68k/machine.cc (b_print, machine): Remove the reference to
+	member as.
+
+	* include/vx68k/machine.h (class machine): Change the base class
+	to address_space.  Remove member as and address_space.
+
+	* libvx68k/systemrom.cc (iocs_b_lpeek, invalid_iocs_function):
+	Modify the debug message.
+	(iocs_b_read, iocs_b_write): New functions.
+	(initialize_iocs_functions): Set for 0x45 and 0x46.
+	(initialize_iocs_functions): Change the argument to a pointer.
+	Also change all callers.
+
+	* include/vx68k/machine.h: Remove the forward declaration of class
+	machine.
+
+	* libvx68k/systemrom.cc (dispatch_iocs_function): Remove the debug
+	message.
+	(iocs_b_lpeek): Change the debug message.
+	(invalid_iocs_function): Add new debug message.
+
+	* libvx68k/machine.cc (iocs_b_lpeek, set_iocs_functions,
+	invalid_iocs_function, iocs, set_iocs_function): Removed.
+	(machine): Remove the initialization of iocs_functions and eu.
+
+	* include/vx68k/machine.h (class machine): Remove members
+	iocs_function_handler, invalid_iocs_function, iocs,
+	iocs_functions, and set_iocs_function.
+
+	* libvx68k/systemrom.cc (set_iocs_function): New member function.
+	(detach): Rewrite code.
+	(initialize): Initialize the IOCS handler table.
+	(iocs_b_lpeek, initialize_iocs_functions): New functions.
+	(system_rom): Call initialize_iocs_functions.
+
+	* include/vx68k/machine.h (class system_rom): Add new member
+	set_iocs_function.
+
+2000-05-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/systemrom.cc (iocs_dispatch): Removed.
+	(iocs_trap): New function.
+	(attach): Use iocs_trap instead of iocs_dispatch.
+	(invalid_iocs_function): Remove the machine & argument.
+	(dispatch_iocs_function): New member function.
+
+	* include/vx68k/machine.h (class system_rom): Modify
+	iocs_function_handler.  Add new member dispatch_iocs_function.
+
+	* libvx68k/machine.cc (~machine): Clean up about rom.
+	(machine): Initialize about rom.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add systemrom.cc.
+
+	* libvx68k/systemrom.cc: New file.
+	(iocs_dispatch): New function.
+	(getw, getb, read, putw, putb, write, attach, detach, initialize,
+	invalid_iocs_function, ~system_rom, system_rom): New member
+	functions.
+
+	* include/vx68k/machine.h (class system_rom): New class.
+	(class machine): Add new member rom.
+
+2000-04-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/iocsdisk.cc (class disk_error): New class.
+	(record_offset): New function.
+	(read): Add code.
+	(write, verify): Add seek code.
+
+	* include/vx68k/iocs.h (class image_file_floppy_disk): Add new
+	member record_offset.
+
+	* configure.in: Add AC_TYPE_OFF_T.
+
+2000-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (class vx68k_app): Add new member load_fd_image.
+	(load_fd_image): New function.
+	(vx68k_app): Load image files.
+	(class gtk_app): Renamed from vx68k_app.
+	(class gtk_app): Remove members opt_fd0_image, opt_fd1_image.
+	(load_fd_image): Change the second argument to int.
+	(gtk_app): Remove image loading.
+	(parse_options): Make opt_fd_images namespace-local.  Reorder
+	cases.
+	(main): Load images.
+
+	* libvx68k/machine.cc (iocs_b_lpeek, invalid_iocs_function,
+	set_iocs_function): Change argument type.  Also change all
+	callers.
+
+	* include/vx68k/machine.h (struct iocs_function_data): Removed.
+	(class machine): Replace iocs_function_data * with unsigned long.
+	Also change constructor.
+
+	* libvx68k/machine.cc (machine): Initialize fd's.
+	(~machine): Delete fd's.
+
+	* include/vx68k/machine.h (class machine): Add new member fd.
+
+	* libvx68k/iocsdisk.cc (read, write, verify): Change arguments.
+
+	* include/vx68k/iocs.h (class disk): Change interface.
+	(class image_file_floppy_disk): Likewise.
+
+	* libvx68kgtk/gtkconsole.cc (handle_key_press_event): Return a
+	value.
+
+	* bin/main.cc (class vx68k_app): Add new members opt_fd0_image and
+	opt_fd1_image.
+	(parse_options): Handle new options.  Rewrite getopt loop.
+	(display_help): Add new options.
+	(main): Handle opt_boot.
+
+2000-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (class vx68k_app): Remove members args and
+	exit_status.  Add new members vm_args, vm_thread, boot, and join.
+	Rename member status to vm_status.
+	(run): Add new argument.  Remove the main loop.
+	(boot, join): New functions.
+	(vx68k_app): Remove the argument.  Modify member initialization.
+	(main): Add the main loop.  Change the use of an application.
+	(main): Make the main window even if no command is specified.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add iocsdisk.cc.
+
+	* libvx68k/iocsdisk.cc: New file.
+	(read, write, verify, ~image_file_floppy_disk,
+	image_file_floppy_disk): New functions.
+
+	* include/vx68k/iocs.h (class image_file_floppy_disk): New class.
+
+	* include/vx68k/machine.h (class text_vram_raster_iterator): New
+	class.
+	(class text_vram): Typedef raster_iterator.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add iocs.h.
+
+	* include/vx68k/iocs.h: New file.
+	(class disk): New class.
+
+2000-03-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* README: Updated.
+
+	* libvm68k/Makefile.am (libvm68k_la_LDFLAGS): Add -version-info.
+
+	* acconfig.h: Add HAVE_EXCEPTIONS.  Remove unneeded defines.
+
+	* configure.in: Add new check for exceptions.
+
+	* acinclude.m4: New file.
+	(HS_CPLUSPLUS_EXCEPTIONS): New macro.
+
+2000-03-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (show_about_dialog): Show the library version.
+
+	* libvx68k/Makefile.am (libvx68k_a_SOURCES): Add version.cc.
+
+	* libvx68k/version.cc: New file.
+	(library_version): New function.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add version.h.
+
+	* include/vx68k/version.h: New file.
+
+	* bin/main.cc (show_about_dialog): Add "report bugs" paragraph.
+	(main): Print copyright for `--version'.
+	(main): Modify "unhandled exception" message.
+	(show_about_dialog): Show the dialog at the end.
+	(create_window): Set the title and add an accel group.  Do not
+	show the window here.
+	(show_about_dialog): Add cleanup for exceptions.
+
+2000-02-29  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (class vx68k_app): Add new member main_window.
+	(show_about_dialog): Enable set_transient_for.
+	(vx68k_app): Initialize main_window.
+	(run): Moved.
+	(create_window): Create the main window only if not created.
+	Reform code.
+	(handle_run_command): New function.
+	(create_window): Add new menu item.
+
+2000-02-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (PROGRAM, COPYRIGHT_YEAR): New macros.
+	(class vx68k_app): Add new member shor_about_dialog.
+	(handle_about_ok_clicked, show_about_dialog,
+	handle_about_command): New functions.
+	(create_window): Use macro for function casts.  Use
+	handle_about_command for about handler.  Add new items.
+	(handle_fd_load_command, handle_fd_eject_command): New functions.
+	(create_window): Use the new functions for callbacks.
+
+2000-02-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc: Add declaration for environ.
+
+2000-01-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/Makefile.am (libvm68k_la_LDFLAGS): Use VERSION only for
+	ltlib versioning.
+
+2000-01-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Updated.
+
+	* libvm68k/execunit.cc (m68k_add, m68k_add_r, m68k_addi,
+	m68k_addq): Use set_cc_as_add method.
+
+	* libvm68k/statusreg.cc (class general_condition_tester): Renamed
+	from struct common_cc_evaluator.  Make base class non-virtual.
+	(class add_condition_tester): New class.
+	(class sub_condition_tester): Renamed from struct
+	cmp_cc_evaluator.  Also change all users.
+	(class asr_condition_tester): Renamed from struct
+	asr_cc_evaluator.  Also change all users.
+	(class lsl_condition_tester): Likewise.
+
+	* include/vm68k/cpu.h (class condition_tester): Renamed from
+	struct cc_evaluator.  Also change all users.
+	(vm68k): Add new static member add_condition_tester, and rename
+	common_cc_eval to general_condition_tester.  Add new member
+	function set_cc_as_add.
+
+	* TODO: Modified.
+
+2000-01-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/execunit.cc (set_instruction): Use the new method.
+
+	* include/vm68k/cpu.h (class exec_unit): Add mew member type
+	instruction.  Change type of instructions.  Add new member
+	set_instruction.
+
+	* libvm68k/execunit.cc (run): Add interrupt checking.
+
+	* libvm68k/context.cc (handle_interrupts): New function.
+	(context): Initialize a_interrupt.
+
+	* include/vm68k/cpu.h (class context): Add members a_interrupted,
+	interrupted, and handle_interrupts.  Add comments.
+	(struct instruction_data): Moved just before class exec_unit.
+
+1999-12-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/machine.cc (queue_key): Use key_queue directly.
+
+	* include/vx68k/machine.h (class machine): Remove member
+	queue_key_unlocked.
+
+1999-12-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Modified.
+
+	* bin/main.cc (create_window): Set focus to the console widget.
+ 	Move gtk_widget_show earlier.
+
+	* libvx68kgtk/gtkconsole.cc (handle_key_press_event): New
+	function.
+	(deliver_key_press_event): New function.
+	(create_widget): Add key press handling
+
+	* include/vx68k/gtk.h (class gtk_console): Add new member
+	handle_key_press_event.
+
+	* libvx68k/machine.cc (get_key): New function.
+	(machine): Initialize key_queue_not_empty.
+	(~machine): Destroy key_queue_not_empty.
+
+	* include/vx68k/machine.h (class machine): Add new members
+	key_queue_not_empty and get_key.  Add pthread_cond_signal in
+	queue_key_unlocked.
+
+1999-11-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/Makefile.am (lib_LTLIBRARIES): Update version info.
+
+	* libvx68k/machine.cc (machine): Initialize key_queue_mutex.
+	(~machine): Destroy key_queue_mutex.
+	(queue_key): New function.
+
+	* include/vx68k/machine.h (class machine): Add new members
+	queue_key, queue_key_unlocked, key_queue, key_queue_mutex, and
+	destructor.
+
+	* bin/main.cc (class vx68k_app): Moved out of unnamed namespace.
+	(class vx68k_app): Add new static members: opt_memory_size,
+	opt_single_threaded, and opt_debug_level.
+	(namespace): Remove opt_memory_size, opt_one_thread, and
+	opt_debug.  Also change all users.
+	(parse_options): Define longopts locally.
+
+	* README: Modified.
+
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
+	* libvm68k/execunit.cc (m68k_and): New function.
+	(install_instructions): Use m68k_and to replace andb, andw, and
+	andl.
+	(andb, andw, andl): Removed.
+
+	* bin/Makefile.am (bin_PROGRAMS): Modify locations.
+	(noinst_LIBRARIES): Make libmisc.a.
+	(libmisc_a_SOURCES): Add getopt.c and getopt1.c.
+	(libmisc_a_SOURCES): Use libmisc.a.
+
+	* Makefile.am (SUBDIRS): Modify the list.
+
+	* configure.in: Modify AC_OUTPUT and AC_INIT.
+
+	* Rename directories vm68k, vx68k, and vx68kgtk to libvm68k,
+	libvx68k, and libvx68kgtk espectively.
+
+	* bin/main.cc (vx68k_app): Set the default visual.
+	(main): Remove the gdk_rgb_init call.
+
+	* TODO: Modified.
+
+	* vm68k/Makefile.am (LIBS): Set to emtpy.
+
+	* doc/Makefile.am (${srcdir}/vx68k.texi): Test for @setfilename.
+ 	Regenerate vx68k.texi.
+
+	* vm68k/Makefile.am (lib_LTLIBRARIES): Add comments for releases.
+
+1999-11-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Modified.
+
+1999-11-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
+1999-11-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (m68k_addq, m68k_addq_a): New functions.
+	(addqb, addqw, addql): Removed.
+	(install_instructions): Replace addqb, addqw, and addql using
+	m68k_addq and m68k_addq_a.
+
+	* include/vm68k/cpu.h (class byte_size, word_size): Truncate
+	the return types.
+
+	* include/vm68k/cpu.h (class context): Remove methods fetchw and
+	fetchl.
+	* vm68k/execunit.cc: Replace fetchw and fetchl using fetch.
+	* include/vm68k/addressing.h: Likewise.
+
+1999-11-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Updated.
+
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (m68k_addi): New function.
+	(addil): Removed.
+	(install_instructions): Replace addil with m68k_add.  Add m68k_add
+	for byte and word.
+
+	* include/vm68k/cpu.h (class context): Add member fetch.
+	(fetch): Specialize for byte_size.
+
+	* vx68k/dos.cc (dos_super_jsr): New function.
+	(add_instructions): Add dos_super_jsr.
+
+	* include/vx68k/human.h (class dos): Add method machine.
+
+	* bin/main.cc (create_window): Add menu bar.
+
+1999-11-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/addressing.h (class basic_index_indirect,
+	basic_index_pc_indirect): Avoid use of value_mask.
+	(basic_immediate<byte_size>::get): Likewise.
+
+	* vm68k/execunit.cc (m68k_add, m68k_add_r, m68k_adda): Avoid use
+	of value_mask.
+
+	* vx68k/dos.cc: Substitute extsl with long_word_size::svalue and
+	extsw with word_size::svalue.
+
+	* vx68k/allocator.cc: Substitute extsl with
+	long_word_size::svalue.
+
+	* vm68k/Makefile.am (INCLUDES): Define VM68K_ENABLE_DEPRECATED.
+
+	* include/vm68k/addressing.h (class data_register,
+	address_register, indirect, postinc_indirect, predec_indirect,
+	disp_indirect, indexed_indirect, absolute_short, absolute_long,
+	disp_pc, indexed_pc_indirect, immediate): Disabled unless
+	VM68K_ENABLE_DEPRECATED defined.
+
+	* include/vm68k/cpu.h (extsb, extsw, extsl): Disabled unless
+	VM68K_ENABLE_DEPRECATED defined.
+
+	* include/vm68k/cpu.h (struct byte_size, word_size,
+	long_word_size): Add asserts in svalue.  Mask values in put.
+
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (m68k_add, m68k_add_r): Add conversion to
+	signed for value2.
+	(m68k_adda): New function.
+	(addaw, addal): Removed.
+	(install_instructions): Replace addaw and addal using m68k_adda.
+
+	* vx68k/textvram.cc (draw_char): Fix width for update_area.
+
+	* vm68k/execunit.cc (m68k_add_r): New function.
+	(addw_r, addl_r): Removed.
+	(install_instructions): Replace addw_r and addl_r using
+	m68k_add_r.  Also add byte_size version.
+
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (install_instructions): Replace addw and addl
+	using m68k_add.
+	(addb, addw): Removed.
+
+	* vm68k/Makefile.am (lib_LTLIBRARIES): Add -release for snapshots.
+
+	* include/vm68k/addressing.h (class basic_postinc_indirect,
+	basic_predec_indirect, basic_abs_long): Fix compile errors.
+
+	* vm68k/execunit.cc (m68k_add): New function.
+	(install_instructions): Replace addb with m68k_add.
+
+	* include/vm68k/cpu.h (struct byte_size, word_size,
+	long_word_size): Add static member suffix.
+
+	* include/vm68k/addressing.h (class basic_postinc_indirect,
+	basic_predec_indirect, basic_disp_indirect, basic_index_indirect,
+	basic_abs_short, basic_abs_long, basic_disp_pc_indirect,
+	basic_index_pc_indirect, basic_immediate): Add members.  Add
+	typedef's for each size.
+
+	* doc/vx68k.xml: Updated.
+
+1999-11-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* doc/vx68k.xml: Updated.
+
+1999-11-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Makefile.am (EXTRA_DIST): Remove doc/vx68k.sgml.
+	(SUBDIRS): Add doc.
+
+	* configure.in: Add doc/Makefile to AC_OUTPUT.
+
+	* doc/Makefile.am: New file.
+
+	* doc/vx68k.xml: Converted from vx68k.sgml.
+
+1999-11-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vx68kgtk/gtkconsole.cc (handle_timeout): Adjust bounds so that
+	bounds.x == 0.
+
+	* include/vm68k/cpu.h (struct byte_type, struct word_type): Change
+	type of value_mask to uint32_type.  Use value_mask in get.
+	(struct long_word_size): Use constant in value_mask.
+
+1999-10-31  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/addressing.h (class basic_d_register, class
+	basic_a_register, class basic_indirect): New class templates.
+	(class basic_a_register): Use long_word_size::put in put.
+	(class basic_postinc_indirect, class basic_predec_indirect, class
+	basic_disp_indirect, class basic_index_indirect, class
+	basic_abs_short, class basic_abs_long, class
+	basic_disp_pc_indirect, class basic_index_pc_indirect, class
+	basic_immediate): New class templates.
+	(class data_register): Fix data types.  Use *_size::get.
+	(class address_register): Likewise.  Use long_word_size::put in
+	putw and putl.
+	(class indirect): Fix data types.  Use *_size::get and put.
+
+	* include/vm68k/cpu.h (struct byte_size): Renamed from
+	byte_size_traits.  Also change all uses.
+	(struct word_size): Likewise.
+	(struct long_word_size): Likewise.
+	(strcut byte_size, struct word_size, struct long_word_size): Add
+	svalue, value_bit, versions of get and put for address_space.
+	Replace member set with put, immediate_operand_size with
+	aligned_value_size.
+
+	* vm68k/Makefile.am (libvm68k_la_LDFLAGS): Revert version info.
+
+	* include/vm68k/cpu.h (struct exception_listener): #if'd out.
+	(class context): Comment out member exception.
+	(struct byte_size_traits, struct word_size_traits, struct
+	long_word_size_traits): New structs.
+	(extract_ub, extract_uw, extract_ul): Removed.
+	(modify_b, modify_w, modify_l): Removed.  Also change all uses.
+
+	* vm68k/Makefile.am (libvm68k_la_LDFLAGS): Set version info 1:0:0.
+
+	* include/vm68k/cpu.h (extsb, extsw, extsl): Add function
+	comments.
+	(extsb, extsl): Avoid old-style casts.
+	(extsw): Use sint_type and uint_type.
+	(struct registers): Move member pc before sr.
+
+	* include/vm68k/types.h: Remove int32, uint32, uint16, and uint8.
+	Also change all uses to sint32_type, uint32_type, unsigned short,
+	and unsigned char respectively.
+
+	* vx68k/dos.cc (dos_delete, dos_filedate, dos_getdate, dos_getpdb,
+	dos_gettim2, dos_intvcs, dos_ioctrl, dos_read, dos_vernum,
+	dos_write): Change log messages.
+	(dos_close, dos_exit2, dos_fgetc, dos_fputs, dos_print,
+	dos_putchar, dos_read, dos_seek, dos_write): Move log output after
+	getting parameters.
+	(add_instructions): Add function comments.
+
+	* vx68k/textvram.cc (scroll): Call update_area.
+
+	* vx68kgtk/gtkconsole.cc (handle_timeout): Use update_area to
+	optimize updates.
+
+	* bin/Makefile.am (vx68k_LDADD): Change libvx68kgtk's location.
+
+	* vx68k/Makefile.am (noinst_LIBRARIES): Remove libvx68kgtk.a.
+	(INCLUDES): Remove ${GTK_CFLAGS}.
+
+	* Makefile.am (SUBDIRS): Add vx68kgtk.
+
+	* configure.in: Add vx68kgtk/Makefile to AC_OUTPUT.
+
+	* vx68kgtk/gtkconsole.cc: Moved from vx68k/gtkconsole.cc.
+
+	* vx68kgtk/Makefile.am: New file.
+
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (install_instructions): Replace
+	postincrement_indirect and predecrement_indirect.
+
+	* include/vm68k/addressing.h: Remove typedefs
+	postincrement_indirect and predecrement_indirect.
+
+	* vm68k/execunit.cc (install_instructions): Add instructions.
+
+1999-10-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Updated.
+
+	* vx68k/dos.cc (dos_close): Change log message.
+
+	* vx68k/gtkconsole.cc: Change TIMEOUT_INTERVAL to 200.
+
+	* NEWS: Updated.
+
+	* vm68k/execunit.cc (install_instructions): Add missing
+	instruction.
+	(negb): New function template.
+	(install_instructions): Add negb.
+
+	* vx68k/filesystem.cc (export_file_name): Implement translation.
+
+	* vx68k/dos.cc (dos_super): New function.
+	(dos): Install dos_super.
+	(add_instructions): New function.
+	(dos): Use add_instructions.
+
+	* vx68k/doscontext.cc (start): Clear the supervisor state.
+	(exit): Add comments.
+
+	* include/vm68k/cpu.h (class context): Add method
+	supervisor_state.
+	(class context): Rename member pfc to pfc_cache, and dfc to
+	dfc_cache.  Also change all users.
+	* vm68k/context.cc: Change use of pfc and dfc.
+	(set_supervisor_state): Use new method supervisor_state.
+
+	* vm68k/context.cc (set_supervisor_state): New function.
+
+	* include/vm68k/cpu.h (class context): Add method
+	set_supervisor_state.
+	(class status_register): Add method set_s_bit.
+
+	* include/vm68k/Makefile.am (vm68kinclude_HEADERS): Renamed from
+	noinst_HEADERS.
+	(vm68kincludedir): New macro.
+
+1999-10-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vm68k/TODO: New file.
+
+	* vm68k/README: New file.
+
+	* bin/Makefile.am (vx68k_LDADD): Change directory of vx68k libs.
+
+	* Makefile.am (SUBDIRS): Add vx68k and remove lib.
+
+	* configure.in: Modify AC_OUTPUT.
+
+	* lib/Makefile.am: Removed.
+
+	* Move lib/vx68k to vx68k.
+
+	* bin/Makefile.am (vx68k_LDADD): Use libvm68k.la.
+
+	* vm68k/Makefile.am (lib_LTLIBRARIES): Changed from
+	noinst_LIBRARIES.
+	(libvm68k_la_LDFLAGS): New macro.
+	(libvm68k_la_SOURCES): Changed from libvm68k_a_SOURCES.
+
+	* configure.in: Add comment text to _GNU_SOURCE definition.  Use
+	AM_PROG_LIBTOOL and remove AC_PROG_RANLIB.
+
+	* bin/Makefile.am (vx68k_LDADD): Modify directory of libvm68k.a.
+
+	* lib/Makefile.am (SUBDIRS): Remove vm68k.
+
+	* Makefile.am (SUBDIRS): Add vm68k.
+
+	* configure.in: Modify AC_OUTPUT.
+
+	* Move lib/vm68k to vm68k.
+
+1999-09-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/textvram.cc (draw_char): Call console::update_area.
+
+	* lib/vx68k/doscontext.cc (start): Use exec_unit::run.
+	(dos_exec_context): Initialize _eu.
+
+	* lib/vm68k/execunit.cc (run): New function using code from
+	context::run.
+
+	* include/vx68k/human.h (class dos_exec_context): Add member _eu.
+
+	* lib/vm68k/context.cc (run): Removed.
+	(context): Remove the second argument.
+
+	* include/vm68k/cpu.h (class context): Remove members eu, step,
+	and run.  Remove the second argument from constructor.
+	(class exec_unit): Make member dispatch protected.  Add members
+	step and run.
+
+1999-09-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc: Enable instruction trace only if
+	TRACE_INSTRUCTIONS is defined.
+
+	* lib/vx68k/gtkconsole.cc (update_area): New function.
+	(~gtk_console): Put gtk & gdk calls into thread lock.  Destroy
+	update_region.
+	(gtk_console): Create update_region.  Put gdk & gtk calls in
+	thread lock.
+
+	* include/vx68k/gtk.h (class gtk_console): Add members
+	update_region and update_area.  Move member widgets before
+	primary_font.
+
+	* include/vx68k/machine.h (struct console): Add member
+	update_area.
+
+	* lib/vx68k/gtkconsole.cc (handle_timeout): Use gdk with thread
+	lock.
+	(~gtk_console): Likewise.
+	(create_widget): Copy the widget's style to modify.
+
+	* bin/main.cc (run): Use gdk with thread lock.
+	(main): Add gthread initialization.
+
+	* configure.in: Add gthread option.
+
+1999-08-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Modified.
+
+	* NEWS: Updated.
+
+	* configure.in: Change base version to 1.1.0.
+
+	* NEWS: Modified.
+
+	* lib/vx68k/textvram.cc (draw_char): Handle kanji.
+	(scroll): Add code.
+
+	* lib/vx68k/gtkconsole.cc (kanji16_font_array): Use pointer
+	increments to write into kanji16_font.
+	(get_k16_image): Fix font to use.
+
+	* lib/vx68k/machine.cc (b_putc): Handle double-byte characters.
+	(machine): Initialize saved_byte1.
+
+	* include/vx68k/machine.h (class machine): Add new member
+	saved_byte1.
+
+	* lib/vx68k/gtkconsole.cc (base16_font_array, kanji16_font_array):
+	New functions.
+	(get_k16_image): Add code.
+	(~gtk_console): Delete kanji16_font.
+	(gtk_console): Use new functions.
+
+	* include/vx68k/gtk.h (class gtk_console): Add new member
+	kanji16_font.
+
+	* lib/vx68k/gtkconsole.cc [gtk_console] (handle_expose_event,
+	handle_destroy, handle_timeout): Changed to non-static.
+	(handle_expose_event, handle_destroy, handle_timeout): New
+	functions in namespace.
+	(create_widget, gtk_console): Use new glue functions.
+
+	* include/vx68k/gtk.h (class gtk_console): Change handle_timeout,
+	handle_destroy and handle_expose_event to non-static.
+
+	* lib/vx68k/machine.cc (b_putc): Remove write to stdout.
+
+	* NEWS: Modified.
+
+1999-08-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/gtkconsole.cc (get_b16_image): Add code.
+	(~gtk_console): Delete primary_font.
+	(gtk_console): Get font data.
+
+	* include/vx68k/gtk.h (class gtk_console): Add new member
+	primary_font.
+
+	* lib/vx68k/machine.cc (b_putc): Add code for control characters
+	and cursor motion.
+	(machine): Add initialization for curx and cury.
+
+	* lib/vx68k/textvram.cc (draw_char): Add arguments x and y, and
+	use them instead of removed curx and cury.
+	(draw_char): Remove code for control characters and cursor motion.
+	(draw_char): Change loop iterator.
+	(text_vram): Remove curx and cury initialization.
+
+	* include/vx68k/machine.h (class text_vram): Remove members curx
+	and cury, and change draw_char signature.
+	(class machine): Add members curx and cury.
+
+	* bin/main.cc (vx68k_app): Add argument to con initialize.
+
+	* lib/vx68k/gtkconsole.cc (handle_timeout): Get image from
+	machine.
+	(gtk_console): Add argument and initialize _m.
+
+	* include/vx68k/gtk.h (class gtk_console): Add member _m, and
+	change constructor.
+
+	* lib/vx68k/machine.cc (get_image): New function.
+
+	* lib/vx68k/textvram.cc (draw_char): Add code for control
+	characters.
+	(draw_char): Fix cursor motion.
+	(get_image): New function.
+
+	* include/vx68k/machine.h (class text_vram): Add member get_image.
+
+	* lib/vx68k/gtkconsole.cc (handle_destroy, handle_timeout): New
+	functions.
+	(create_widget): Add connect for "destroy".
+	(~gtk_console): Call disconnect for each widget and remove timeout.
+	(gtk_console): Add timeout.
+	(create_widget): Add drawing_area to widgets.
+
+	* include/vx68k/gtk.h (class gtk_console): Add new members:
+	handle_timeout, handle_destroy, timeout, and widgets.
+
+1999-08-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/dos.cc (dos): Add initialization for _fs.
+
+	* lib/vx68k/doscontext.cc (dos_exec_context): Open "con" for
+	descriptors 0, 1, and 2.
+
+	* lib/vx68k/filesystem.cc (class con_device_file): New class.
+	[con_device_file] (read, write, fgetc, fputc, fputs,
+	con_device_file): New functions.
+	(open): New function for string argument.  Handle "con" specially.
+	(open): Use new open in uint32_type version.
+	(file_system): New function.
+
+	* include/vx68k/human.h (class file_system): Add member _m,
+	constructor and one more open.
+
+	* lib/vx68k/textvram.cc (draw_char): Fix pointer arithmetics.
+
+	* lib/vx68k/machine.cc (b_putc, b_print): New functions.
+
+	* include/vx68k/machine.h (class machine): Add member b_putc and
+	b_print.
+
+1999-08-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/addressing.h (class data_register): Use new modify
+	functions.
+
+	* include/vm68k/cpu.h (extract_ub, extract_uw, extract_ul,
+	modify_b, modify_w, modify_l): New functions.
+
+	* lib/vx68k/textvram.cc (advance_row): New function.
+	(scroll, draw_char): New functions.
+	(text_vram): Initialize curx and cury.
+
+	* include/vx68k/machine.h (class text_vram): Add members: curx,
+	cury, draw_char, and scroll.
+
+1999-07-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/doscontext.cc (getenv): Add test before erase.
+
+	* NEWS: Modified.
+
+	* lib/vx68k/gtkconsole.cc (create_widget): Set style to black
+	background.
+
+	* bin/main.cc (run_machine_thread): Mask signals.
+	(create_window): #if out code to use GtkScrolledWindow.
+
+	* lib/vm68k/execunit.cc (oril): Fix debug message.
+	(roxrw_i, roxrl_i): New function.
+	(asll_i, asrl_i, rolw_i, roll_i, rorw_i): Fix bit count.
+	(install_instructions): Add new handlers.
+
+	* lib/vm68k/statusreg.cc (set_cc_sub): Rewrite code to set x_eval
+	and x_values.
+	(set_cc_asr, set_cc_lsl): Set x_eval and x_values too.
+	(status_register): Initialize x_eval.
+
+	* include/vm68k/cpu.h (cass status_register): Add members x_eval,
+	x_values, and x.
+
+	* lib/vx68k/doscontext.cc (start): Add catch for bus_error.
+
+	* lib/vm68k/execunit.cc (andib, oril): New function.
+	(subqw<address_error>): Fix data size.
+	(install_instructions): Add new handlers.
+
+	* lib/vx68k/dos.cc (dos_getc): New function.
+	(dos): Add new handler.
+
+	* lib/vx68k/filesystem.cc (export_file_name): New function.
+	(open, create, chmod): Use export_file_name.
+	(open, create): Add case for errno.
+	(chmod): Write code.
+
+	* lib/vx68k/dos.cc (dos_nameck): Use address_space::gets and puts.
+
+	* lib/vx68k/doscontext.cc (read, write, fgetc, fputc, fputs, seek,
+	close, open, create): Remove obsolete code.
+	(load_executable): Replace abort calls with throws.
+	(load_executable): Use address_space::puts.
+	(load_executable): Remove a[2]..a[4] setting code.
+	(getenv): Use address_space::gets and puts.
+
+	* lib/vx68k/filesystem.cc (fputs): Use address_space::gets.
+	(open, create, chmod): Use address_space::gets.
+
+	* include/vm68k/memory.h (class address_space): Update member
+	functions.
+
+	* lib/vm68k/addrspace.cc (gets, puts): New functions.
+
+1999-07-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Makefile.am (EXTRA_DIST): Add doc/vx68k.sgml.
+
+	* doc/vx68k.sgml: New file.
+
+	* bin/main.cc (vx68k_app): Use machine::connect.
+
+	* lib/vx68k/gtkconsole.cc (get_b16_image, get_k16_image): New
+	functions.
+
+	* include/vx68k/gtk.h (class gtk_console): Add members to override
+	console.
+
+	* include/vx68k/machine.h (struct console): Add pure virtual
+	members.
+	(class machine): Remove member function text_vram, and add
+	connect and get_image.
+
+	* bin/main.cc (vx68k_app): Connect text vram to console.
+
+	* lib/vx68k/machine.cc (machine): Set pages for tvram.
+
+	* include/vx68k/machine.h (class text_vram): Rename member base to
+	buf.
+	(class machine): Rename member main_mem to mem, and add tvram and
+	text_vram.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add textvram.cc.
+
+	* lib/vx68k/textvram.cc: New file.
+
+	* lib/vx68k/gtkconsole.cc (handle_expose_event, ~gtk_console,
+	gtk_console): New functions.
+
+	* include/vx68k/gtk.h (class gtk_console): Add data members.
+
+	* bin/main.cc (main): Call gdk_rgb_init.
+
+	* bin/Makefile.am (vx68k_LDADD): Add libvx68kgtk.a.
+
+	* lib/vx68k/Makefile.am (noinst_LIBRARIES): Add libvx68kgtk.a.
+	(libvx68kgtk_a_SOURCES): New macro.
+	(INCLUDES): Add ${GTK_CFLAGS}.
+
+	* lib/vx68k/gtkconsole.cc: New file.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add gtk.h.
+
+	* include/vx68k/gtk.h: New file.
+
+	* bin/main.cc: Add Nana support.
+	(display_help): Modify message.
+	(struct machine_data, run_machine): Removed.
+	(class vx68k_app): New class.
+	(main): Use vx68k_app.
+	(class vx68k_app): Add member con.
+	(create_window): New function.
+	(run): Call gtk_main.
+	(main): Create window.
+
+1999-07-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Makefile.am (dist-snapshot distcheck-snapshot): Removed.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (install_instructions): Add new handlers.
+
+	* include/vm68k/condition.h (struct ne, struct eq): New class.
+
+	* lib/vm68k/execunit.cc (addaw, exgl, extw, lsrb_i, moveaw): New
+	functions.
+	(install_instructions): Add new handlers.
+
+	* lib/vx68k/shell.cc (create_env): Implemented.
+
+	* lib/vm68k/execunit.cc (cmpil, cmpmb, eorl_r, roll_i, rorw_i):
+	New functions.
+	(install_instructions): Add new handlers.
+
+	* configure.in: Change config.h's location.
+
+1999-07-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
+	* lib/vx68k/dos.cc (dos_dup): New function.
+	(dos): Add new handler to eu.
+
+	* include/vx68k/human.h (class dos_exec_context): Update with new
+	member.
+
+	* lib/vx68k/doscontext.cc (dup): New function.
+
+	* lib/vx68k/dos.cc (dos): Add dummy device chain.
+
+	* lib/vx68k/machine.cc (iocs_b_lpeek): Print address for debug.
+
+	* lib/vm68k/execunit.cc (install_instructions): Fix wrong
+	operation word for lea.
+
+	* lib/vx68k/machine.cc (iocs): Pass machine to handler.
+
+	* include/vx68k/machine.h (class machine): Add machine * argument
+	to iocs_function_handler.  Also change all referrers.
+
+	* lib/vx68k/machine.cc (iocs_b_lpeek): New function.
+	(set_iocs_functions): Add new handler.
+
+	* include/vx68k/machine.h (struct iocs_function_data): New class.
+	(class machine): Add typedef iocs_function_handler and member
+	iocs_functions, and update with new members.
+	(class machine): Add instructions_data to base class.
+
+	* lib/vx68k/machine.cc: Add using namespace vm68k and Nana
+	support.
+	(invalid_iocs_function, set_iocs_function, set_iocs_functions,
+	iocs): New functions.
+	(machine): Fill array iocs_functions.
+
+	* lib/vx68k/dos.cc (dos_chmod, dos_fflush, dos_nameck): Change
+	dynamic_cast to static_cast.
+
+	* include/vx68k/human.h (class dos): Remove virtual for base class
+	instructions_data.
+
+	* include/vm68k/cpu.h (struct instructions_data): Remove virtual
+	destructor.
+
+	* include/vx68k/machine.h (struct console): New class.
+	(class graphics_vram): Add member connected_console and connect.
+	(class text_vram): Likewise.
+
+	* bin/main.cc: Remove include for vx68k/memory.h.
+
+	* lib/vx68k/mainmem.cc: Use <vx68k/machine.h> instead.
+
+	* include/vx68k/machine.h (class main_memory, class graphics_vram,
+	class text_vram): Moved from memory.h.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Remove memory.h.
+
+	* include/vx68k/memory.h: Removed.
+
+1999-07-10  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (jmp, asrl_i): New functions.
+	(install_instructions): Add new handlers.
+
+	* lib/vx68k/dos.cc (dos_fflush, dos_nameck): New function.
+	(dos): Add new handlers.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (andb, btstb_i, oriw): New functions.
+	(install_instructions): Add new handlers.
+
+	* bin/main.cc (run_machine): Fix argument offset.
+
+	* include/vx68k/memory.h (class graphics_vram, class text_vram):
+	New classes.
+
+	* bin/Makefile.am (man_MANS): Add vx68k.1.
+	(EXTRA_DIST): Add ${man_MANS}.
+
+	* bin/vx68k.1: New file.
+
+	* configure.in: Add testsuite/Makefile to AC_OUTPUT.
+
+	* Makefile.am (SUBDIRS): Add testsuite.
+
+	* testsuite/Makefile.am: New file.
+	* testsuite/config/default.exp: New file.
+
+1999-07-09  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (run_machine): Remove pthread_exit, and add
+	throw-spec and try-catch block.
+	(longopts): Add `--one-thread' option.
+	(main): Handle `--one-thread'.
+	(display_help): Describe the new option.
+	(main): Change error message.
+
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
+	* configure.in: Set VERSION to 0.36.
+
+	* bin/main.cc (main): Modify version string.
+
+	* bin/Makefile.am (INCLUDES): Add ${GTK_CFLAGS}.
+	(vx68k_LDADD): Add ${GTK_LIBS}.
+
+	* bin/main.cc: Include <gtk/gtk.h>.  Put #ifdef for <unistd.h>.
+	(main): Call gtk_set_locale and gtk_init.
+
+	* configure.in: Add check for GTK+.
+
+	* include/vx68k/human.h: Add using namespace std.  Prefix
+	include-once macro with _.
+
+	* include/vx68k/machine.h (class machine): Rename main_memory to
+	main_mem.  Also change all referrers.
+
+	* include/vm68k/memory.h: Add using namespace std.
+
+	* include/vm68k/cpu.h: Prefix include-once macro with _, and use
+	<> for include.
+	* include/vm68k/types.h: Likewise.
+	* include/vm68k/memory.h: Likewise.
+	* include/vm68k/except.h: Likewise.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Change file name.
+
+	* lib/vx68k/mainmem.cc: Renamed from memory.cc.
+
+	* lib/vx68k/memory.cc (getb, getw, getl): Change return type and
+	argument type.
+	(putb, putw): Change argument type.
+	(~main_memory): Use delete.
+	(main_memory): Use new.
+
+	* include/vx68k/memory.h: Add using namespace vm68k.  Use <> for
+	include.
+	(class main_memory): Renamed from main_memory_page.
+	(class main_memory): Move data members and change type of end.
+
+	* lib/vm68k/addrspace.cc (no_mem): New static object.
+	(read, write): Change use of uint32 to uint32_type.
+	(read, write): Use canonical_address and find_page.
+	(set_pages): Reformat spaces.
+	(address_space): Use no_mem.
+	(getl): Add const to memory.
+
+	* include/vm68k/memory.h (class address_space): Move data members
+	and remove default_page.
+	(class address_space): Add const to memory in getb and
+	getw_aligned.
+
+	* lib/vm68k/memory.cc: Remove namespace block.
+	(getw, getl): Change return type and reformat code.
+	(putw, putl): Change argument type and reformat code.
+	[class memory] (getl): Change return type and reformat code.
+	[class memory] (putl): Change argument type and reformat code.
+	[class no_memory] (read, getb, getw, write, putb, putw): Use
+	generate_bus_error.
+
+	* include/vm68k/memory.h (class memory): Renamed from memory_page
+	and cleaned.  Also change all referrers.
+	(class no_memory): Renamed from bus_error_page and cleaned.  Also
+	change all referrers.
+
+	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Change file order.
+
+	* bin/main.cc (display_help): New function.
+	(main): Handle `--help'.
+
+	* lib/vx68k/doscontext.cc (read, write, fgetc, fputc, fputs, seek,
+	close, open, create): Change code to use files.
+
+1999-07-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/dos.cc (dos_create): Change code to use new
+	dos_exec_context method.
+	(dos_open): Likewise.
+
+	* lib/vx68k/doscontext.cc (mfree): Fix code to return a value.
+	(getenv): New function.
+	(~dos_exec_context): New function.
+	(dos_exec_context): Add new argument for _fs, and initialize
+	std_files and files.  Also change all callers.
+
+	* lib/vx68k/dos.cc (dos_chmod): Changed to use file_system::chmod.
+	(dos_getenv): Changed to use dos_exec_context::getenv.
+
+	* include/vx68k/human.h (class file_system): Add members: files,
+	chmod, create, open, ref, and unref.
+	(class file): Add virtual functions and friends.
+	(class regular_file): New class.
+	(class dos_exec_context): Add members: _fs, std_files, files, and
+	getenv.  Also add destructor.
+	(class dos_exec_context): Modify members: create, open, close,
+	read, write, seek, fgetc, fputc, and fputs.
+	(class dos): Rename member fs to _fs, and add new member function
+	fs.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add filesystem.cc.
+
+	* lib/vx68k/filesystem.cc: New file.
+
+	* bin/main.cc: Include <unistd.h>.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (orb, subql, addl_r, asll_i, bsetl_i): New
+	functions.
+	(subql_d, subql_a, movew_d_absl): #if out the entire functions.
+	(install_instructions): Add new handlers.
+
+1999-07-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/allocator.cc (memory_allocator): Set root_block.
+	(memory_allocator): Change root block size to 0x10.
+
+	* lib/vx68k/doscontext.cc (dos_exec_context): Change current_pdb
+	value.
+
+	* include/vx68k/human.h (class memory_allocator): Add member
+	root_block and root.
+
+	* bin/main.cc (run_machine, main): Use shell.
+
+	* include/vx68k/human.h (class shell): Rename member _ec to
+	_context.
+	(class dos): Updated with new/removed members.
+
+	* lib/vx68k/dos.cc (create_context): New function.
+	(execute): Removed.
+
+	* lib/vx68k/doscontext.cc (mfree): New function.
+	(dos_exec_context): Remove code to make environment.
+
+	* lib/vx68k/shell.cc (shell): Change block size to 0x2000 and set
+	env address to 0.
+	(shell): Use mfree to remove memory block.
+	(create_env): New function.
+	(exec): Implemented.
+	(exec): Change return type to int.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add shell.cc.
+
+	* lib/vx68k/shell.cc: New file.
+
+	* include/vx68k/human.h (class shell): New class.
+
+	* lib/vx68k/dos.cc (execute): Get environment address from ec.
+
+	* lib/vx68k/doscontext.cc (dos_exec_context): Make a shell
+	process.
+
+	* bin/main.cc (main) [!USE_THREAD]: Run without thread.
+
+	* lib/vx68k/dos.cc (load): Removed.
+	(execute): Use dos_exec_context::load.
+
+	* lib/vx68k/doscontext.cc (load): New function.  Also change class
+	definition.
+
+	* lib/vx68k/allocator.cc (free_by_parent, alloc, alloc_largest):
+	Use inner address for parent.  Also change all callers.
+
+	* lib/vx68k/doscontext.cc (read, write, close, open, create,
+	fputc, fputs): New functions.
+	(load_executable): Use ::malloc.
+	(dos_exec_context): Change arguments and initialize new members.
+
+	* lib/vx68k/dos.cc (load): Changed to return pdb.
+	(execute): Changed to handle pdb.
+	(dos_close, dos_create, dos_fputs, dos_getpdb, dos_malloc,
+	dos_open, dos_print, dos_putchar, dos_read, dos_setblock,
+	dos_write): Changed to use dos_exec_context's methods.
+
+	* include/vx68k/human.h (class process): Removed.
+	(class dos_exec_context): Replace member _process with _allocator
+	and current_pdb.
+	(class dos_exec_context): Remove member current_process and
+	set_current_process.
+	(class dos_exec_context): Add member getpdb, setpdb, malloc, and
+	setblock.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Remove process.cc.
+
+	* lib/vx68k/process.cc: Removed.
+
+1999-07-02  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vx68k/human.h (class process): Add inline malloc and
+	setblock.
+	(class memory_allocator): Add resize.
+	(class dos_exec_context): Add set_current_process.
+
+	* lib/vx68k/dos.cc (load): Set current process in context.
+	(dos_malloc, dos_setblock): Implemented.
+
+	* lib/vx68k/doscontext.cc (load_executable): Fix %a1 value.
+
+	* lib/vx68k/allocator.cc (free, alloc, alloc_largest): Add error
+	tests and logging.
+	(resize): New function.
+
+1999-07-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/dos.cc (dos_fputs, print): Use process::fputs.
+
+	* include/vx68k/human.h (class process): Updated.
+
+	* lib/vx68k/process.cc (fputs, fputc): New functions.
+
+	* lib/vm68k/execunit.cc (addl, addal, addil, addqb, addqw,
+	addqw<address_register>, addql, addql<address_register>): Modify
+	logging message to include effective address.
+	(addw_off_d, addil<address_register>, addil_d, addqb, addqw_a,
+	addql_d): Removed.
+	Modify logging messages to omit comments, and fix some effective
+	address size.
+
+	* lib/vm68k/context.cc (run): Modify logging message to include
+	operation word.
+	(run): Output logging message before step.
+
+	* Makefile.am (EXTRA_DIST): Remove MEMO.ja.
+
+	* MEMO.ja: Removed.
+
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
+	* configure.in: Set VERSION to 0.35.
+
+1999-06-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* bin/main.cc (parse_options): Add new option `--memory-size' or
+	`-m'.
+	(run_machine): Shift argument list.
+	(main): Use opt_memory_size.
+	(main): Add optind to md->argv.
+
+	* lib/vm68k/context.cc (context): Initialize pfc and dfc.
+
+	* include/vm68k/cpu.h (class context): Add members pfc, dfc.
+	(class context): Change program_fc and data_fc to use new members.
+
+	* lib/vx68k/allocator.cc (memory_allocator): Reserve 0x2000 - 0x10
+	bytes for initial stack.
+
+	* lib/vx68k/doscontext.cc (start): Remove initialization of sp.
+
+	* lib/vx68k/dos.cc (load): Pass pdb to load_executable.
+	(dos_getpdb): Get real pdb from process.
+	(execute): Set initial sp.
+
+	* lib/vx68k/process.cc (~process, process): Modified for pdb.
+
+	* lib/vx68k/doscontext.cc (load_executable): Add second argument
+	address, and use it as pdb.
+
+	* include/vx68k/human.h (class process): Rename member block to
+	pdb, and add getpdb.
+
+	* bin/main.cc (struct machine_data): New class.
+	(run_machine): New function.
+	(main): Update code using run_machine.
+
+	* lib/vx68k/dos.cc (dos): Pass this to all handlers as
+	instructions_data *.
+
+	* include/vx68k/human.h (class dos): Updated.
+	(class): Add instruction_data to virtual base.
+
+	* lib/vx68k/dos.cc (load): New function.
+	(execute): Rerote using load.
+
+	* include/vx68k/human.h (class process): Updated.
+
+	* lib/vx68k/process.cc (load, exec, create_process): Removed.
+
+	* bin/main.cc (main): Use machine instead of removed
+	x68k_address_space.
+
+	* lib/vx68k/dos.cc (execute): Construct ec using vm.
+	(dos): Change arguments to machine *, and rewrite function body
+	for changed members.
+
+	* lib/vx68k/memory.cc (x68k_address_space): Removed.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add machine.cc.
+
+	* lib/vx68k/machine.cc: New file.
+
+	* include/vx68k/human.h (class dos): Replace members with vm.
+
+	* include/vx68k/memory.h (class x68k_address_space): Removed.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add machine.h.
+
+	* include/vx68k/machine.h: New file.
+
+1999-06-28  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/process.cc (~process): New function.
+	(process): Allocate memory block.
+	(load, create_process, exec): New functions.
+
+	* include/vx68k/human.h (class process): Add member block.
+
+	* lib/vx68k/dos.cc (dos): Change argument to allocator.
+
+	* lib/vx68k/allocator.cc (remove_block, make_block,
+	free_by_parent, alloc_largest): New functions.
+	(free, alloc): Implemented.
+	(memory_allocator): Initialize limit.
+
+	* include/vx68k/human.h (class memory_allocator): Add member
+	limit, and rename first_block to last_block.
+
+1999-06-27  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add allocator.cc and
+	move memory.cc to the beginning.
+
+	* lib/vx68k/allocator.cc: New file.
+
+	* lib/vx68k/process.cc (process): Add argument of type
+	memory_allocator * and initialize _allocator.
+
+	* lib/vx68k/dos.cc (dos): Initialize allocator.
+	(execute): Pass allocator's address to process.
+
+	* include/vx68k/human.h (class memory_allocator): New class.
+	(class process): Add member _allocator.
+	(class dos): Add member allocator and exchange main_cpu and mem.
+
+	* lib/vx68k/dos.cc (execute): Set debug level for ec.
+	(dos): Initialize debug_level to 0.
+
+	* lib/vx68k/doscontext.cc (dos_exec_context): Initialize
+	debug_level to 0.
+	(load_executable): Print header information only if debug mode.
+
+	* include/vx68k/human.h (class dos_exec_context): Add member
+	debug_level and set_debug_level.
+	(class dos): Likewise.
+
+	* bin/main.cc: Add `--debug' option.
+	(main): Set debug level.
+
+	* NEWS: Modified.
+
+	* lib/vx68k/dos.cc (dos_fputs, dos_getenv, dos_gettim2,
+	dos_vernum): New functions.
+	(dos): Add new handlers.
+
+	* lib/vm68k/execunit.cc (andw, negw, rolw_i): New functions.
+	(negl): Fix result and Add putl call.
+	(install_instructions): Add new handlers.
+
+	* configure.in: Add check for localtime_r.
+	Move AC_CHECK_HEADERS.
+
+	* lib/vx68k/dos.cc (dos_getdate): New function.
+	(dos): Add new handler.
+
+	* lib/vx68k/doscontext.cc (read, write, close, open): Removed.
+
+	* lib/vx68k/dos.cc (dos_read, dos_write): Use methods of class
+	process.
+
+	* include/vx68k/human.h (class process): Add an (address_space *)
+	argument to read and write.
+
+	* lib/vx68k/process.cc (read, write): New function.
+
+	* lib/vx68k/dos.cc (execute): Pass &fs to process.
+
+	* lib/vx68k/process.cc (process): New function.
+
+	* include/vx68k/human.h (class process): Add member _fs and fs().
+	(class process): Add explicit constructor.
+
+	* lib/vx68k/dos.cc: Include <cstring>.
+
+	* include/vx68k/human.h (class file_system): New class.
+	(class dos): Add member fs.
+
+	* include/vx68k/memory.h: Reformat indents.
+	(_VX68K_MEMORY_H): Renamed from VX68K_MEMORY_H.
+	(class x68k_address_space): Change members' order.
+
+	* lib/vx68k/memory.cc (getl): New function.
+
+	* lib/vm68k/addrspace.cc (getl): Add cast to uint32_type before
+	shift.
+
+1999-06-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/dos.cc (dos_create, dos_open): Treat any space in file
+	name as the end of string.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add process.cc.
+
+	* lib/vx68k/process.cc: New file.
+
+	* lib/vx68k/dos.cc (dos_close): Use process::close.
+	(dos_create): Use process::create.
+	(dos_open): Use process:open.
+
+	* include/Makefile.am (noinst_HEADERS): Remove all.
+
+	* debug.h: Removed.
+
+	* lib/vx68k/doscontext.cc: Expand "debug.h".
+
+	* lib/vx68k/dos.cc (execute): Make process p and pass it to the
+	dos_exec_context.
+
+	* lib/vx68k/doscontext.cc (dos_exec_context): Add (process *)
+	argument and initialize _process with the value.
+	(dos_exec_context): Change the order of the first two arguments.
+
+	* include/vx68k/human.h (class dos_exec_context): Add member
+	_process and current_process().
+
+1999-06-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/memory.h (class address_space): Move find_page for
+	possibly better optimization.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (bclrl_i): Fix log message.
+	(s_b): New function.
+	(install_instructions): Add new handlers.
+
+	* include/vm68k/condition.h (struct t, struct f): New classes.
+
+	* lib/vm68k/statusreg.cc (set_cc): Removed as an out-of-line
+	function.
+
+	* include/vm68k/cpu.h (class status_register): Add static member
+	common_cc_eval.
+	(class status_register): Make set_cc inline.
+
+	* lib/vm68k/execunit.cc (dispatch): Removed as an out-of-line
+	function.
+
+	* include/vm68k/cpu.h (class exec_unit): Make dispatch inline.
+
+	* lib/vx68k/memory.cc (read, getb, getw, write, putb, putw): Use
+	generate_bus_error.
+	(getb): Changed to read words from the array directly.
+	(putb): Changed to read-modify-write words to the array directly.
+
+	* include/vm68k/memory.h (class memory_page): Changed to a class
+	with access specs.
+
+	* lib/vm68k/memory.cc (generate_bus_error): New function.
+
+	* include/vm68k/memory.h (struct memory_page): Remove throw-specs
+	from methods.  Also change all classes derived from this class.
+
+1999-06-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/addressing.h (class indexed_indirect): Fix
+	address.
+	(class indexed_pc_indirect): Fix address.
+	(class disp_pc, class indexed_pc_indirect): Add offset to
+	effective address.
+
+	* include/vx68k/human.h (class file, class process): New classes.
+
+	* NEWS: Modified.
+
+	* lib/vx68k/dos.cc (dos_getpdb, dos_intvcs): New functions.
+	(dos): Add new handlers.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (dispatch): Add the third argumrnt to
+	handlers.
+	(set_instruction): Save handler with instruction data.
+	(exec_unit): Likewise.
+	(divuw, orib, subw, swapw): New functions.
+	(install_instructions): Add new handlers.
+
+	* include/vm68k/cpu.h (struct install_data): New class.
+	(class exec_unit): Add instruction_data * to instruction_handler's
+	argument.  Also change all handler functions.
+	(class exec_unit): Change data members to keep instruction_data
+	pointers.
+
+	* lib/vx68k/dos.cc (dos_malloc): New function.
+	(dos): Add new handlers.
+
+	* lib/vm68k/execunit.cc (install_instructions): Add new addressing
+	mode to lea.
+
+	* include/vm68k/addressing.h (class indexed_pc_indirect): New
+	class.
+	(class indexed_indirect): Modify code of address.
+	(class disp_pc): Fix textw.
+
+	* bin/main.cc: Use "getopt.h" instead of <getopt.h>.
+
+	* Makefile.am (bin_PROGRAMS): Removed.
+	(SUBDIRS): Add bin to the list.
+
+	* configure.in: Add AC_PROG_CC and remove AC_PROG_CPP.
+	Add bin/Makefile to output files.
+
+	* bin/main.cc: Moved from ../main.cc.
+
+	* bin/Makefile.am: New file.
+	* bin/getopt.c, bin/getopt1.c, bin/getopt.h: New file.
+
+1999-06-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (bclrl_i, btstl_i, cmpaw, muluw, negl):
+	New functions.
+	(install_instructions): Add new handlers.
+
+	* configure.in: Use AC_SEARCH_LIBS for a pthread library.
+	Reformat lines.
+
+	* lib/vm68k/addrspace.cc (getl): Use find_page.
+	(putw): Use putw_aligned.
+	(putl): Use memory_page::putl in the case that address does not
+	cross page boundaries.
+
+	* include/vm68k/memory.h (class address_space): Add
+	canonical_address and putw_aligned.
+	(class address_space): Make putb inline.
+
+	* include/vm68k/cpu.h (class context): Use getw_aligned in fetchw.
+
+	* lib/vm68k/addrspace.cc (getb): Move to the header as inline.
+	(getw): Use getw_aligned.
+	(getl): Use memory_page::getl in the case that address does not
+	cross page boundaries.
+
+	* include/vm68k/memory.h: Add comments.
+	(class address_space): Add canonical_address and getw_aligned.
+	(class address_space): Make getb inline.
+
+	* lib/vm68k/addrspace.cc: Expand "debug.h".
+
+1999-06-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (bmi): #if'd out.
+	(install_instructions): Add new handlers.
+
+	* include/vm68k/condition.h (struct pl, struct mi): New classes.
+
+	* lib/vx68k/dos.cc (dos_putchar): Avoid stdio.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/statusreg.cc (struct cmp_cc_evaluator): Add lt and le.
+	(struct asr_cc_evaluator): Remove use of eq in ls.
+	(struct lsl_cc_evaluator): Likewise.
+
+	* lib/vm68k/execunit.cc (set_instruction) [L]: Add warning
+	message.
+	(addw_r, andiw, andil, mulsw, subal, subil): New functions.
+	(asrl_r): Use set_cc_asr.
+	(cmpiw): Fix the size of an immediate value.
+	(eoriw): Use extsw for an immediate value.
+	(subb): Fix to use textb for logging.
+	(install_instructions): Add new handlers.
+	(install_instructions): Fix wrong mask bits.
+
+	* lib/vx68k/dos.cc (dos_write): Use dos_exec_context::write.
+	(dos_create): Change file name to "create.out".
+
+	* lib/vx68k/doscontext.cc (read): Fix memory leak.
+	(write): New function.  Also change the class definition.
+
+	* lib/vx68k/dos.cc (dos_filedate, dos_putchar): New functions.
+	(dos): Add new handlers.
+
+	* lib/vm68k/execunit.cc (eorb_r, eorw_r): New functions.
+	(install_instructions): Add new handlers.
+
+	* lib/vx68k/dos.cc (dos_delete): New function.
+	(dos_write): Change the return value.
+	(dos): Add new handlers.
+
+	* lib/vm68k/execunit.cc (lslb_i): New function.
+	(lslw_i): Renamed from lslw_i_d.  Also change all user.
+	(lsll_i): Renamed from lsll_i_d.  Also change all user.
+	(lslw_i, lsll_i): Use set_cc_lsl.
+	(install_instructions): Add new handlers.
+
+	* lib/vm68k/statusreg.cc (struct lsl_cc_evaluator): New class.
+	(set_cc_lsl): New function.  Also change the class definition.
+
+	* lib/vm68k/execunit.cc (dbf): Renamed from dbf_d.
+	(dbf): Fix counter size to word.
+	(tstw): Fix debugging log message.
+
+	* lib/vm68k/context.cc (run): Add register dump.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (addw, andl, asll_r, asrl_r, extl, lsll_r,
+	lsrl_r, tstw): New functions.
+	(addw_off_d, andl_i_d, tstw_d): #if'd out.
+	(install_instructions): Add new handlers.
+
+1999-06-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (lsrw, lsrw): Apply masks before shifts.
+	(subb, subl, subl_r, subib, subqw, subql_d): Use set_cc_sub to
+	update the condition code.
+	(orl, lsrw_r): New function.
+	(install_instructions): Add new handlers.
+
+	* lib/vm68k/statusreg.cc (set_cc_sub): New function.  Also add to
+	the class definition.
+
+	* lib/vm68k/execunit.cc (cmpiw): New function.
+	(install_instructions): Add new handlers.
+
+	* include/vm68k/addressing.h (class disp_indirect): Change member
+	reg to unsigned.
+	(class disp_indirect): Fix textw to use offset.
+	(class indexed_indirect): New class.
+
+	* lib/vm68k/statusreg.cc (struct asr_cc_evaluator): Change the
+	side of shift.
+
+	* lib/vm68k/execunit.cc (subl_r, subqw): New functions.
+	(install_instructions): Add new handlers.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (bge): #if'd out.
+	(lslw_r, subb, addb, rolb_r): New functions.
+	(install_instructions): Add new handlers.
+
+	* lib/vm68k/statusreg.cc (struct common_cc_evaluator): Add member
+	function le.
+
+	* include/vm68k/condition.h (struct ge, struct lt, struct gt,
+	struct le): New classes.
+
+	* include/vm68k/cpu.h (struct cc_evaluator): Add member function
+	le.
+	(class status_register): Add member function gt and le.
+
+	* lib/vx68k/dos.cc: Expand "debug.h".
+	(dos_create, dos_write): New function.
+	(dos): Add new handlers.
+
+	* lib/vm68k/execunit.cc (install_instructions): Add new pea
+	handler.
+
+	* include/vm68k/addressing.h (class absolute_short): New class.
+	(class absolute_long): Make data member private.
+	(class absolute_long): Change constructor's 1st argument unsigned.
+
+	* lib/vx68k/dos.cc (dos_chmod): New function.
+	(dos): Add new handler.
+
+	* lib/vm68k/execunit.cc (cmpb, cmpw, cmpl, cmpib): Change code to
+	set condition codes properly.
+	(install_instructions): Fix subib code.
+	(cmpal): New function.
+	(moveb, movew): Reformat code.
+	(moveb_d_postinc, moveb_postinc_postinc, movew_d_predec,
+	movew_absl_predec): #if'd out.
+	(install_instructions): Add new handlers.
+
+	* lib/vm68k/statusreg.cc: Add suffix _eval to evaluator objects.
+	(struct common_cc_evaluator): Renamed from result_cc_evaluator.
+	Also change all users.
+	(struct cmp_cc_evaluator): New class.
+	(set_cc_cmp): New function.  Also change the class definition.
+
+1999-06-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Makefile.am (dist-snapshot distcheck-snapshot): Change version
+	number for snapshots.
+
+	* NEWS: Modified.
+
+	* configure.in: Set VERSION to 0.34.
+
+	* lib/vm68k/execunit.cc (bcc): #if'd out
+	(install_instructions): Add new handlers.
+
+	* include/vm68k/condition.h (struct hi, struct ls): New classes.
+
+	* include/vm68k/addressing.h (class data_register): Fix getb wrong
+	size bug.
+
+	* lib/vm68k/execunit.cc (install_instructions): Change the type of
+	argument to reference.  Also change all users.
+	(eoriw): New function.
+	(lsrw_i, lsrl_i): Change code to hold values in signed type.
+	(install_instructions): Add new handlers.
+
+	* lib/vm68k/context.cc (context): Change the type of second
+	argument to const pointer.
+
+	* include/vm68k/cpu.h (class context): Change type of eu const
+	pointer.
+
+	* include/vm68k/condition.h: Change interface to pass context by
+	reference instead of pointer.  Also change all users.
+
+	* include/vm68k/addressing.h: Change interface to pass context by
+	reference instead of pointer.  Also change all users.
+
+	* include/vm68k/types.h: Remove size test for uint_type.
+
+	* include/vm68k/cpu.h: Remove typedef execution_context.  Also
+	change all users.
+	(class exec_unit): Rename insn_handler to instruction_handler and
+	change the second argument to reference.  Also change all users.
+
+	* lib/vm68k/execunit.cc (lsrw_i): Renamed from lsrw_i_d.  Also
+	change all users.
+	(lsrw_i, lsrl_i): Change code to set condition codes properly.
+
+	* lib/vm68k/statusreg.cc (struct result_cc_evaluator, struct
+	asr_cc_evaluator): New classes.
+	(cs, eq, mi, lt): Moved into the header as inline functions using
+	cc_eval.
+	(set_cc): Change code to use new members.
+	(set_cc_asr): New function.
+	(status_register): Initialize new members.
+
+	* include/vm68k/cpu.h (struct cc_evaluator): New class.
+	(class status_register): Modify members.
+
+1999-06-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (movew_d_postinc, movel_d_postinc,
+	movel_d_predec, movel_a_predec, movel_postinc_a, movel_i_predec,
+	movel_d_absl, movel_a_absl, pea_absl, tstb_d, tstb_predec,
+	tstl_d): Removed.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (orw, b): New functions.
+	(install_instructions): Add new handlers.
+
+	* include/vm68k/Makefile.am (noinst_HEADERS): Add condition.h.
+
+	* include/vm68k/condition.h: New file.
+
+	* include/vm68k/types.h: Add new types: uint_type, uint32_type,
+	sint_type, and sint32_type.
+
+	* configure.in: Move config.h into include.
+
+1999-06-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (cmpw, subib): New function template.
+	(movew): Use L instead of VL.
+	(movew_d_postinc): #if-out the function.
+	(install_instructions): Add new functions.
+
+	* lib/vx68k/dos.cc (dos_ioctrl): New function.
+	(dos): Add new function.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (bmi): New function.
+	(install_instructions): Add new function.
+
+	* include/vm68k/cpu.h (class status_register): Add new members.
+
+	* lib/vm68k/statusreg.cc (mi): New function.
+
+	* lib/vx68k/dos.cc (dos_setblock): New function.
+	(dos): Add new function.
+
+	* include/vm68k/addressing.h (class disp_pc): New class.
+
+	* lib/vm68k/execunit.cc: Expand "debug.h".
+	(cmpb, jsr, moveml_mr, pea): New function template.
+	(cmpl): Rename Destination to Source.
+	(lea): Rename Source to Destination.
+	(moveml_mr<postinc_indirect>): Renamed from moveml_postinc_r.
+	(cmpl, lea, moveml_mr<postinc_indirect>): Use L instead of VL.
+	(lea): Change the arg to isize to 0.
+	(pea_absl): #if-out the function.
+	(install_instructions): Add new functions.
+
+1999-05-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/context.cc: Rename execution_context to context.
+	(step): Changed to inline.  Update the header.
+
+	* include/vm68k/cpu.h (class execution_context): Updated.
+	(class context): Renamed from execution_context.  Add typedef for
+	the old name.
+
+	* lib/vm68k/context.cc: Expand "debug.h".
+	(step): New function.
+	(run): Use step.
+
+	* Makefile.am (EXTRA_DIST): Add MEMO.ja.
+
+	* MEMO.ja: New file.
+
+	* NEWS: Modified.
+
+1999-05-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/memory.cc (getw, putw): Replace abort with throw.
+
+	* lib/vm68k/addrspace.cc (read, getb, getw, write, putb, putw):
+	Mask address using ADDRESS_BIT.
+
+	* include/vm68k/memory.h: Rename MEMORY_SHIFT to ADDRESS_BIT.
+	Also update all referrers.
+
+	* lib/vm68k/execunit.cc (movel): Modify the log message.
+	(addl): New function template.
+	(install_instructions): Add new functions.
+
+	* Makefile.am (dist-snapshot): Change the version number format.
+
+	* NEWS: Modified.
+
+	* configure.in: Remove PRCS-keyword substitution.
+	Set VERSION to 0.33.
+
+	* Makefile.am (EXTRA_DIST): Add VERSION-ID.
+
+	* VERSION-ID: New file.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (movel_d_absl, movel_a_absl): Fix data
+	sizes for put.
+	(clrl, moveal, tstb, tstl): New function templates.
+	Ifdef out substituted functions.
+	(install_instructions): Add new functions.
+
+	* include/vm68k/addressing.h (class postinc_indirect): Renamed
+	from postincrement_indirect.
+	(class predec_indirect): Renamed from predecrement_indirect.
+	(postincrement_indirect, predecrement_indirect): Added typedefs.
+
+1999-04-04  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* include/vm68k/cpu.h (class status_register): Add members ls and
+	hi, and reformat.
+
+	* lib/vm68k/execunit.cc (movew_off_d, movel_off_d): #if'd out.
+	(install_instructions): Use disp_indirect.
+	(clrb): New function.
+	(clrw): Modify log message and fix %pc increment.
+	(install_instructions): Add new functions.
+	(addal, clrb, clrw, cmpl, lea, moveb, movew, movel, subl): Print
+	%pc to log output.
+	(clrw_predec, lea_offset_a, lea_absl_a, moveb_indir_d,
+	moveb_postinc_d, moveb_off_d, movew_off_d, movew_absl_d,
+	movel_d_d, movel_a_d, movel_postinc_d, movel_off_d): Removed.
+	(addil, addqb, addqw, addqw<address_register>, addql,
+	addql<address_register>, cmpib): Fix %pc increments.
+	(cmpib): Modify log message.
+	(cmpib_postinc): Removed.
+
+	* include/vm68k/addressing.h (class disp_indirect): New class.
+
+	* lib/vm68k/execunit.cc (moveb, addal): New function.
+	(movew): Remove unneccessary extsw.
+	(movel): Remove unneccessary extsl.
+	(movel_d_d, movel_a_d, movel_postinc_d, movew_absl_d): #if'd out.
+	(install_instructions): Updated with new functions.
+
+	* NEWS: Modfied.
+
+	* include/vm68k/addressing.h (class postincrement_indirect):
+	Handle %a7 specially.
+	(class predecrement_indirect): Likewise.
+
+	* lib/vm68k/execunit.cc (cmpl, lea, lsrl_i, subl, movew, movel):
+	New functions.
+	(lea_absl_a): #if'd out
+	(cmpib): Change the log output.
+	(install_instructions): Updated with the new functions.
+
+	* include/vm68k/addressing.h (class data_register): Add members:
+	isize, textb, textw, and textl.
+	(class address_register): Likewise.
+	(class indirect): Change data members private from protected.
+	(class indirect): Add members: isize, address, textb, textw, and
+	textl.  Use address in get and put methods.
+	(class postincrement_indirect): Made non-derived.
+	(class postincrement_indirect): Add members: reg, isize, getb,
+	getw, getl, putb, putw, putl, textb, textw, and textl.
+	(class predecrement_indirect): Made non-derived.
+	(class predecrement_indirect): Add members: reg, isize, textb,
+	textw, and textl.
+	(class absolute_long): New class.
+	(class immediate): New class.
+
+1999-04-01  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* README: Modified.
+
+	* include/vm68k/cpu.h (class exec_unit): Change the first arg of
+	insn_handler.  Also update all functions.
+
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (addqw<address_register>): Fix size.
+	(addql, addql<address_register>, clrw, cmpib): New template
+	functions.
+	(clrw<address_register>): Specialized without definition.
+	(addql_d, clrw_predec, cmpib_postinc): #if'd out.
+	(install_instructions): Updated with the new functions.
+
+	* lib/vm68k/statusreg.cc (status_register): New constructor.
+	(supervisor_state): Removed.
+
+	* include/vm68k/cpu.h (class status_register): Add constructor and
+	member value.
+	(class status_register): Make supervisor_state inline.
+
+	* lib/vm68k/execunit.cc (struct data_register, struct
+	address_register, struct indirect): Removed.
+	(addil, addqb): Updated for <vm68k/addressing.h> classes.
+	(addil<address_register>): Specialized without definition.
+	(addqw, addqw<address_register>): New template function.
+	(addqw_a): #if'd out.
+	(install_instructions): Updated with the new functions.
+
+	* include/vm68k/Makefile.am (noinst_HEADERS): Add addressing.h.
+
+	* include/vm68k/addressing.h: New file.
+
+1999-03-30  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (struct data_register, struct
+	address_register, struct indirect): New structs.
+	(addil, addqb): New template functions.
+	(movew_d_postinc): Fix source register reference.
+	(addil_d, addqb_d): #if'd out.
+	(install_instructions): Use the template version.
+	[0] (addil_d): Fix value size.
+
+1999-03-26  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/doscontext.cc (read): Use unsigned char instead of
+	uint8.
+	(start): Remove the restart label.
+
+	* lib/vx68k/dos.cc (dos_print): Use write for unbuffered output.
+
+	* TODO: Modified.
+
+	* include/vx68k/human.h (class dos_exec_context): Add member exit.
+
+	* lib/vx68k/dos.cc: Remove methods of class dos_exec_context.
+	(dos_exit2): Use dos_exec_context::exit instead of throw.
+
+	* lib/vx68k/Makefile.am (libvx68k_a_SOURCES): Add doscontext.cc.
+
+	* lib/vx68k/doscontext.cc: New file.
+	(exit): New function.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (cmpib_postinc, moveb_postinc_d,
+	movel_postinc_d, subb_postinc_d, subql_d): New functions.
+	(install_instructions): Set instruction handlers to the new
+	functions.
+	(movew_d_predec): Fix register reference bug.
+
+	* lib/vx68k/dos.cc (fgetc): Fix the subscript.
+
+	* include/vm68k/cpu.h (extsb, extsw, extsl): Avoid overflows.
+
+1999-03-25  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/execunit.cc (moveb_off_d, moveb_d_postinc, lsll_i_d,
+	moveb_indir_d, movel_d_postinc, lslw_i_d): New functions.
+	(install_instructions): Set instructions.
+	(lsrw_i_d): Renamed from lslw_i_d, and reverse the shift diection.
+	Update all users.
+
+	* include/vx68k/human.h (class dos_exec_context): Add member
+	fgetc.
+
+	* lib/vx68k/dos.cc (fgetc, dos_fgetc): New functions.
+	(dos): Set instructions.
+
+	* lib/vm68k/execunit.cc (bcc, dbf_d, addqb_d, addql_d, andl_i_d,
+	movew_d_postinc, tstb_d, tstb_predec): New functions.
+	(install_instructions): Set instructions.
+
+	* lib/vm68k/statusreg.cc (cs): New function.
+	* include/vm68k/cpu.h (class status_register): Add members cc and
+	cs.
+
+	* lib/vm68k/execunit.cc (addil_d, movel_a_d): Remove fc.
+	(lslw_i_d, movel_d_d, tstl_d): New functions.
+	(install_instructions): Set instructions.
+
+	* lib/vx68k/dos.cc (seek, dos_seek): New function.
+	(dos): Add instruction.
+	* include/vx68k/human.h (class dos_exec_context): Add member seek.
+
+1999-03-24  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (addq_off_d, addil_d, movew_off_d,
+	movel_a_d, movel_off_d, movel_d_predec, movel_d_absl,
+	movel_a_absl): New functions.
+	(movew_absl_d): Fix to modify only the low word of register.
+	(install_instructions): Set new instructions.
+
+	* include/vx68k/human.h (dos): Add member mem, remove main_ec.
+	* lib/vx68k/dos.cc (execute): Use local dos_exec_context.
+	(dos): Modify member initialization.
+	(load_executable): Set address registers.
+
+	* lib/vx68k/dos.cc (dos_exec_context): Reverse the order of
+	arguments.
+	(dos_exec_context): Made out-of-line.
+
+	* lib/vm68k/context.cc (execution_context): Reverse the order of
+	arguments.  Also update all users.
+
+	* lib/vm68k/context.cc: Renamed from cpu.cc.
+	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Update the file
+	name.
+
+	* configure.in: Add check for -lpthread.
+
+	* include/vx68k/human.h (class dos): Remove members
+	load_executable and start.
+
+	* lib/vx68k/dos.cc (load_executable, start): Moved from class dos.
+	(execute): Use methods of main_ec.
+
+	* include/vx68k/human.h (class dos_exec_context): Add member
+	functions: load_executable, start, and execute.
+	(class dos_exec_context): Remove member execute.
+
+1999-03-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/dos.cc (dos): Fix main_ec initialization.
+	(load_executable, start): Use fprintf for messages.
+	Remove `#include <iostream>'.
+
+	* include/vx68k/human.h (class dos): Remove members: from, open,
+	close, read, and write.
+	(class dos_exec_context): Remove `friend class dos';
+	(class dos_exec_context): Remove member dos.  Also update the
+	constructor.
+	Remove forward declaration for class dos.
+
+	* lib/vx68k/dos.cc (read, close, open): Moved from class dos to
+	class dos_exec_context.
+	(dos_close, dos_open, dos_read): Use static_cast instead of
+	dos::from.
+
+	* include/vx68k/human.h (class dos_exec_context): Changed from
+	struct.
+	(class dos_exec_context): Add member functions: open, close, read,
+	and write.
+
+	* include/vm68k/cpu.h (class cpu): Removed.  Also remove member
+	functions.
+
+	* lib/vm68k/cpu.cc (run): Use ec->run.
+
+	* lib/vx68k/dos.cc (start): Use main_ec.run.
+	(dos): Use set_instruction instead of set_handlers.
+
+	* include/vx68k/human.h (struct dos_exec_unit): Add argument to
+	constructor.
+	(class dos): Change main_cpu to of type vm68k::exec_unit.
+
+	* include/vm68k/cpu.h (class execution_context): Add member eu.
+	* lib/vm68k/cpu.cc: Use <> for <vx68k/cpu.h>.
+	Include "debug.h" instead of <cassert>.  Update all users.
+	(run): New function.
+	(execution_context): Initialize eu with the new argument.  Update
+	all callers.
+
+	* lib/vm68k/execunit.cc (dispatch): New function.
+	(execute): Removed.
+	* include/vm68k/cpu.h (class exec_unit): Updated.
+
+1999-03-22  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/cpu.cc: Remove `#include <algorithm>'.
+	(run): Use fprintf instead of iostream functions.
+
+	* TODO: Modified.
+
+	* NEWS: Modified.
+
+	* lib/vx68k/dos.cc (read, dos_read): New functions.
+	(dos): Set an instruction.
+	* include/vx68k/human.h (class dos): Add member functions read and
+	write.
+
+	* lib/vm68k/execunit.cc (movew_absl_predec, movel_i_predec): New
+	functions.
+	(install_instructions): Set instructions.
+	(clrw_predec, moveb_postinc_postinc, movew_d_predec,
+	movel_a_predec, movel_postinc_a): Keep addresses in auto
+	variables.
+	(movel_a_predec): Use extsl for value.
+	(moveql_d): Use extsb for value.
+
+	* include/vm68k/cpu.h (extsl): New inline function.
+	(extsb, extsw): Divide M by 2.
+
+1999-03-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* NEWS: Modified.
+
+	* lib/vx68k/dos.cc (load_executable): Remove size adjustment for
+	write.
+
+	* lib/vm68k/addrspace.cc: Include "debug.h".
+	(read, write): Rewrite using memory_page::read and
+	memory_page::write.
+	(set_pages): Use nana-style assertion check.
+
+	* lib/vx68k/memory.cc: Add `using namespace vx68k' and move
+	functions out of the namespace.
+	(read, write): Write real code.
+	(x68k_address_space): Map only available pages.
+
+	* include/vm68k/memory.h (class address_space): Remove _signed
+	member function, and add gets and puts.
+
+	* TODO: Modified.
+
+	* lib/vx68k/dos.cc (dos_open): Fix offset.
+	(open): Add log message.
+
+	* include/vm68k/memory.h (struct memory_page): Modify read and
+	write to return size_t, and remove throw-specs for them.  Update
+	all derived classes.
+
+	* main.cc (main): Add human:: as required.
+
+	* include/vx68k/human.h (class dos): Add member functions: open
+	and close, from.
+	(namespace vm68k): Remove `using namespace human'.
+
+	* lib/vx68k/dos.cc (close, open): New functions.
+	(dos_close, dos_exit2, dos_open, dos_print): Renamed from close,
+	exit2, open, and print, respectively.  Update all referrers.
+	(dos_close, dos_open): Use the new open and close.
+
+	* include/vm68k/except.h: Include <exception> and add `using
+	namespace std'.
+	(struct exception): Removed.
+
+	* include/vx68k/human.h (struct dos_exec_context): New struct.
+	(class dos): Change type of member main_ec.
+	* lib/vx68k/dos.cc (dos): Update member initialization.
+
+	* include/vx68k/memory.h (class x68k_address_space): Renamed from
+	address_space.  Update all referrers.
+
+1999-03-19  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/dos.cc: Include <fcntl.h> and <unistd.h> if available.
+	(close, open): Add test code.
+
+	* configure.in: Add checks for <fcntl.h> and <unistd.h>.
+	Check also for CPP.
+
+	* lib/vm68k/execunit.cc (pea_absl): Fix address register.
+
+	* lib/vx68k/dos.cc (quit_loop): New struct.
+	(start): Handle quit_loop exception.
+	(exit2): New function.
+	(dos): Set instruction to the new function.
+
+	* lib/vm68k/execunit.cc (moveml_postinc_r): New function.
+	(install_instructions): Set instructions to the new function.
+	(moveml_r_predec, moveml_postinc_r): Move array subscripts out of
+	loops.
+
+	* include/debug.h: Include <cstdio>.
+
+	* lib/vm68k/execunit.cc: Use I and VL instead of assert and
+	fprintf.
+
+	* README: Modified.
+
+	* include/debug.h (debug_printf): Removed.
+	(VL): Change to empty.
+
+	* lib/vm68k/execunit.cc (moveml_r_predec): Divide a loop to two
+	register groups.
+
+	* include/vm68k/cpu.h (registers): Use array for general
+	registers.  Update all users.
+
+	* include/debug.h (debug_printf): Fix errors.
+	(I): Remove `std::'.
+
+	* configure.in: Add `--with-nana'.
+	Remove `--enable-step-trace'.
+
+	* acconfig.h: Modify comments.
+
+	* TODO: Modified.
+
+1999-03-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vx68k/dos.cc: Use I and VL instead of assert and fprintf.
+	Remove cpp tests for TRACE_STEPS.
+
+	* configure.in: Add checks for Nana.
+
+	* include/debug.h: New file.
+	* include/Makefile.am: Add comments.
+	(noinst_HEADERS): Add the new file.
+
+	* lib/vm68k/execunit.cc (unlk_a): New function.
+	(install_instructions): Set operation words to the new function.
+
+	* lib/vx68k/dos.cc (close): New function.
+	(dos): Set operation word to the new function.
+
+	* lib/vm68k/execunit.cc (movew_absl_d, tstw_d, beq,
+	movew_d_predec): New functions.
+	(install_instructions): Set operation words to the new functions.
+
+	* lib/vm68k/execunit.cc (moveb_postinc_postinc): Renamed from
+	moveb_postint_postinc.  Update all referrers.
+	(moveb_postinc_postinc, movel_a_predec): Update the condition
+	codes.
+	(movew_d_absl): Fix the trace output.
+	Modify comments.
+
+	* lib/vx68k/dos.cc (open, print): Output system call names.
+	(load_executable): Set part of PSP.
+
+	* lib/vm68k/execunit.cc (clrw_predec, movew_d_absl, moveql_d): Use
+	status_register::set_cc.
+
+	* lib/vm68k/statusreg.cc (set_cc): New function.
+	(eq, lt): Use result.
+
+	* include/vm68k/cpu.h (class status_register): Changed from struct.
+
+	* lib/vm68k/execunit.cc (execute, bge, bne, bra, bsr,
+	lea_offset_a, lea_absl_a, link_a, movew_d_absl, moveml_r_predec,
+	pea_absl): Use execution_context::fetchw.
+
+	* include/vm68k/cpu.h (class execution_context): Add fetchw and
+	fetchl.
+
+	* lib/vm68k/execunit.cc (execute, bge, bne, bra, bsr, clrw_predec,
+	lea_offset_a, lea_absl_a, link_a, moveb_postinc_postinc,
+	movew_a_absl, movel_a_predec, movel_postinc_a, moveml_r_predec,
+	pea_absl, rts): Use execution_context::program_fc/data_fc.
+
+	* include/vm68k/cpu.h (class execution_context): Changed from
+	struct.
+	(class execution_context): Add program_fc and data_fc().
+
+	* lib/vm68k/addrspace.cc: Modify comments.
+	(getb_signed, getw_signed, getl_signed): Removed.
+
+	* lib/vm68k/execunit.cc (bge, bne, lea_offset_a, link): Use
+	extsw/extsb instead of getw_/getb_signed.
+	(link_a): Renamed from link.  Update all referrers.
+
+	* lib/vm68k/addrspace.cc: New file.
+	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Add the new file.
+	* lib/vm68k/memory.cc: Move address_space methods to
+	addrspace.cc.
+
+	* lib/vm68k/memory.cc (read, write, getb, putb, getw, putw, getl,
+	putl): Remove throw-specs.
+	(getb, putb, getw, putw): Change the value types to unsigned int.
+	* include/vm68k/memory.h (class address_space): Updated.
+
+1999-03-16  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (bra, bsr): Use extsw and extsb to make
+	displacements.
+	(bra): Fix debug output.
+
+	* lib/vm68k/statusreg.cc (lt): New function.
+
+	* lib/vm68k/execunit.cc (bge): Do test condition code.
+
+	* lib/vx68k/dos.cc (open): Make the d0 value unsigned.
+
+	* lib/vm68k/statusreg.cc (eq): Invert the return value to debug.
+
+	* include/vm68k/cpu.h (extsb, extsw): New functions.
+	(status_register): Fix ne to invert its return value.
+	(status_register): Add lt and ge.
+
+	* lib/vm68k/execunit.cc (movew_d_absl, bge, bra, moveql_d): New
+	functions.
+	(install_instructions): Set the new instructions to the operation
+	words.
+
+	* lib/vx68k/dos.cc (open): New function.
+	(dos): Set the new system call to the operation word.
+
+1999-03-15  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* lib/vm68k/execunit.cc (addqw_a, subql_a): Move the register
+	number extraction earlier.
+
+	* lib/vm68k/memory.cc (getb_signed, getw_signed, getl_signed):
+	Cast non-negative values explicitly.
+	(getb_signed, getw_signed, getl_signed): Remove throw-specs.
+	Update the class-def too.
+
+	* include/vm68k/cpu.h (registers): Renamed from cpu_regs.  Update
+	all users.
+
+	* lib/vm68k/execunit.cc (bne, bsr, lea_offset_a, link): Use
+	address_space::getw_signed.
+
+	* include/vm68k/memory.h (class address_space): Add signed get
+	methods.
+	* lib/vm68k/memory.cc (getb_signed, getw_signed, getl_signed): New
+	functions.
+
+	* TODO: Modifed.
+
+	* README: Modified.
+
+	* NEWS: Modified.
+
+	* lib/vm68k/statusreg.cc: New file.
+	* lib/vm68k/Makefile.am (libvm68k_a_SOURCES): Add the new file.
+
+	* lib/vm68k/execunit.cc (bne, subql_a, clrw_predec, pea_absl): New
+	functions.
+	(install_instructions): Set the new instructions.
+
+	* acconfig.h: Add _REENTRANT.
+	* configure.in: Define _REENTRANT.
+
+	* Move libvm68k to lib/vm68k and libvx68k to libvx68k.
+	* lib/Makefile.am: New file.
+	* Makefile.am (SUBDIRS): Replace libvm68k and libvx68k with lib.
+	(vx68k_LDADD): Adjust the directories.
+	* configure.in: Change the AC_OUTPUT files.  Change the AC_INIT
+	test file.
+
+	* include/vm68k/cpu.h: Modify comments.
+	(status_register): New class.
+	(user_cpu_regs): Removed.
+	(cpu_regs): Reconstruct members.  Update all users.
+
+1999-03-13  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* main.cc: Modify comments.
+
+	* TODO: Modified.
+
+	* README: Modified.
+
+	* libvm68k/execunit.cc: Modify comments.
+	(addqw_a, rts, movel_postinc_a, lea_offset_a,
+	moveb_postinc_postinc): New function.
+	(install_instructions): Set new instructions for operation words.
+	(bsr): Fix the write address
+
+	* libvm68k/execunit.cc: Print instructions only ifdef TRACE_STEPS.
+
+	* acconfig.h: Add new macros.
+
+	* configure.in: Define _GNU_SOURCE.
+	Add `--enable-step-trace'.
+
+	* main.cc: Modify comments.
+	(_): New macro.
+	(parse_options): New function.
+	(main): Parse options via parse_options and handle options.
+	(main): Handle unhandled exceptions.
+
+	* README: Modified.
+
+	* libvm68k/execunit.cc (bsr): Print absolute address.
+	(lea_absl_a, link, mmove_l_a_predec, movem_l_r_predec): Use the
+	MIT syntax to print instead of the Motorola syntax.
+	(movel_a_predec): Renamed from move_l_a_predec.  Update all
+	referrers.
+	(moveml_r_predec): Renamed from movem_l_r_predec.  Update all
+	referrers.
+
+1999-03-12  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvx68k/dos.cc: Remove namespace blocks.
+	(print): New function.
+	(dos): Set &print.
+
+	* libvx68k/memory.cc: Modify comments.
+	(getb, putb): Replace abort with real code.
+
+	* libvm68k/memory.cc (getb, putb): New function.
+
+	* libvm68k/execunit.cc: Modify comments.
+	(bsr): New function.
+	(install_instructions): Set &bsr.
+
+1999-03-11  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* libvm68k/Makefile.am: Add comments.
+
+	* Makefile.am (vx68k_SOURCES): Renamed from x68v_SOURCES.
+	(vx68k_LDADD): Likewise.
+
+	* Rename the vx68k and vm68k directories to libvx68k and libvm68k
+	respectively.  Update all refs.
+	
+	* configure.in: Change the AC_INIT test file.
+
+	* main.cc: Moved from vx68v/main.cc.
+	* Makefile.am (INCLUDES, bin_PROGRAMS, x68k_SOURCES,
+	x68v_LDADD): Added.
+	* vx68k/Makefile.am: Modify comments.
+	(bin_PROGRAMS, vx68k_SOURCES, vx68k_LDADD): Removed.
+
+	* vx68k/dos.cc: Modify comments.
+
+	* vm68k/execunit.cc (link, move_l_a_predec, movem_l_r_predec):
+	Store data to memory.
+
+	* vx68k/dos.cc (start): Set a7 to a safe value.
+
+	* vm68k/cpu.cc: Modify comments.
+
+	* vm68k/execunit.cc (move_l_a_predec, lea_absl_a): New function.
+	(install_instructions): Set &move_l_a_predec and &lea_absl_a.
+
+	* vm68k/execunit.cc (link): New function.
+	(movem_l_r_predec): Renamed from movem_r_postdec.  Update all
+	refs.
+	(movem_l_r_predec): Add decrements.
+	(movem_l_r_predec): Move the PC increment.
+	(movem_l_r_predec): Modify the stderr message.
+	(install_instructions): Set &link.
+
+	* include/vm68k/cpu.h (user_cpu_regs): Rename members.
+
+	* vm68k/execunit.cc (movem_l_r_postdec): New function.
+	(install_instructions): Set instruction.
+
+	* include/vm68k/cpu.h: Make insn_instruction public.
+
+	* vm68k/execunit.cc (exec_unit): Call install_instructions.
+
+	* include/vm68v/cpu.h (class cpu): Replace the instruction table
+	with an exec_unit.  Remove all references.
+	* vm68k/cpu.cc: Remove namespace block.
+	(run): Use exec_unit::execute.
+	(set_handlers): Use exec_unit::set_instruction.
+
+	* vm68k/execunit.cc: New file.
+	* include/vm68k/cpu.h (class exec_unit): New class.
+	* vm68k/Makefile.am (libvm68k_a_SOURCES): Add execunit.cc.
+
+	* vx68k/dos.cc (load_executable): Make address fixup.
+
+	* vm68k/memory.cc (getl, putl): New function.
+
+	* Makefile.am (dist-snapshot): Add `x' to the version number.
+
+1999-02-05  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vx68k/main.cc (main): Add check for argc.
+
+	* TODO: Updated.
+
+	* NEWS: Updated.
+
+1999-02-03  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Makefile.am (dist-snapshot): New target.
+
+1998-11-23  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vx68k/main.cc (main): Update dos::execute call.
+
+	* vx68k/dos.cc (start): Add argument: argv.
+	(execute): Likewise.
+	* include/vx68k/human.h (class dos): Update.
+
+1998-11-21  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vx68k/dos.cc (load_executable): Fix reloc_size offset.
+
+1998-11-20  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Version 0.27.
+
+	* vx68k/Makefile.am (libvx68k_a_SOURCES): Remove loader.cc.
+	* vx68k/loader.cc: Removed.
+
+	* vx68k/dos.cc (load_executable): Get header information.
+
+	* vm68k/memory.cc (write): Defined.
+	(read): Defined.
+
+	* vx68k/dos.cc (start): Catch an illegal_instruction.
+	(load_executable): Try to load executable.
+
+	* vm68k/cpu.cc (illegal_insn): Throw an illegal_instruction.
+
+	* include/vm68k/except.h (struct illegal_instruction): New class.
+	(struct zero_divide): New class.
+	(struct privilege_violation): New class.
+
+	* vm68k/memory.cc (getw): New function.
+	(getl): New function.
+	(putw): New function.
+	(putl): New function.
+
+	* Version 0.26.
+
+	* include/vm68k/except.h (struct bus_error): Rename member fc to
+	status.  All refs changed.
+	(struct address_error): New class.
+
+	* vm68k/memory.cc (READ): Removed.  All uses replaced with
+	bus_error::READ.
+	(WRITE): Removed.  All uses replaced with bus_error::WRITE.
+
+	* include/vm68k/except.h (exception): Add WRITE and READ enum.
+
+	* vm68k/memory.cc (address_space::set_pages): Renamed from
+	set_memory_pages.  Change the first and the second arguments'
+	types.  All refs changed too.
+
+	* include/vm68k/Makefile.am (noinst_HEADERS): Add except.h.
+	* include/vm68k/except.h: New file.
+	(struct exception): Moved from types.h.
+	(struct bus_error): Moved from memory.h.
+
+	* vm68k/cpu.cc (set_pc): #if'd out.
+
+	* include/vm68k/cpu.h (class cpu): Remove member function set_pc.
+
+	* vm68k/memory.cc (address_space::putw): Defined.
+
+	* vx68k/memory.cc (main_memory_page::getw): Fix test condition.
+	(main_memory_page::putw): Store value into array.
+
+	* vx68k/main.cc (main): Rewritten with class vx68k::human::dos.
+
+	* vx68k/Makefile.am (libvx68k_a_SOURCES): Add dos.cc.
+	* vx68k/dos.cc: New file.
+
+	* include/vm68k/cpu.h (VM68K_CPU_H): Fix typo.
+
+	* include/vx68k/Makefile.am (noinst_HEADERS): Add human.h.
+	* include/vx68k/human.h (human): New file.
+
+	* vm68k/cpu.cc (illegal_insn): Output message.
+
+	* vx68k/memory.cc (main_memory_page): Allocate array.
+	(~main_memory_page): Deallocate array.
+	(getw): Return value.
+
+	* include/vx68k/memory.h (memory_page): Add members: end and
+	array.
+
+	* include/vx68k/memory.h (class address_space): Renamed from
+	memory.  All references changed.
+	* include/vm68k/memory.h (class address_space): Likewise.
+
+	* vm68k/memory.cc (set_memory_pages): Defined.
+
+	* vx68k/Makefile.am (libvx68k_a_SOURCES): Add memory.cc.
+	* vx68k/memory.cc: New file.
+
+	* include/vm68k/types.h (namespace types): New namespace
+	containing intX and uintX typedefs.
+
+	* vx68k/main.cc (main): Add constructor argument for mem.
+	* include/vx68k/memory.h (memory): Add member main_memory.
+	(class main_memory_page): New class.
+
+	* vx68k/main.cc (main): Set PC.
+
+	* include/vm68k/cpu.h (struct user_cpu_regs): Rename member r to
+	gr.
+
+	* vx68k/Makefile.am (libvx68k_a_SOURCES): Add loader.cc.
+	* vx68k/loader.cc: New file.
+
+	* Version 0.25.
+
+	* vm68k/cpu.cc (run): Modify display format for bus error.
+
+	* vm68k/memory.cc (READ): New const.
+	(WRITE): New const.
+	(read): Add READ to fc.
+	(getb): Likewise.
+	(getw): Likewise.
+	(write): Add WRITE to fc.
+	(putb): Likewise.
+	(putw): Likewise.
+
+	* vx68k/main.cc (main): Update use of cpu.
+
+	* vm68k/cpu.cc (cpu): Remove argument.
+	(run): Add argument ec.
+	(set_pc): #if'd out code.
+	(set_exception_listener): Likewise.
+
+	* include/vm68k/cpu.h (class cpu): Remove member context.
+
+	* include/vm68k/memory.h (struct bus_error): Add base class
+	exception.
+	* include/vm68k/types.h (struct exception): New class.
+	(VM68K_TYPES_H): Fix typo.
+	Test UINT_MAX instead of INT_MAX.
+
+	* vm68k/cpu.cc (run): Display fc and address of bus error.
+
+	* vm68k/memory.cc (bus_error): New constructor.  Update all
+	construction.
+
+	* include/vm68k/memory.h (struct bus_error): Add members.
+
+	* vx68k/main.cc (main): Remove abort.
+
+	* vm68k/cpu.cc (run): Catch bus_error.
+
+	* vm68k/memory.cc: Add using namespace std.
+	(getl): Added.
+	(putl): Added.
+	(read): New method.
+	(write): New method.
+	(getb): New method.
+	(getw): [class bus_error_page] New method.
+	(putb): New method.
+	(putw): New method.
+	(getw): [class memory] Use page_table.
+	(memory): Fill page_table with &default_page.
+
+	* include/vm68k/memory.h (PAGE_SHIFT): Renamed from
+	PAGE_SIZE_SHIFT.
+	(PAGE_SIZE): Bug fix.
+	(MEMORY_SHIFT): New const.
+	(NPAGES): New const.
+	(struct memory_page): Rename methods read8 to getb, etc.
+	(class memory): Likewise.
+	(class bus_error_page): New class.
+	(class memory): Put iterator in #if 0/#endif.
+	(class memory): Add member: default_page.  Rename member page to
+	page_table.
+
+1998-11-18  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* TODO: Update.
+
+1998-11-17  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* README: New file.
+
+	* include/vm68k/cpu.h (class cpu): Add description.
+
+	* TODO: New file.
+
+1998-11-14  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* Version 0.24.
+
+	* vx68k/main.cc: Use namespaces.
+
+	* include/vx68k/memory.h: Make namespace vx68k.
+	(class memory): Renamed from x68k_memory.
+
+	* include/vm68k/cpu.h: Make namespace vm68k.
+	* include/vm68k/memory.h: Likewise.
+	* include/vm68k/types.h: Likewise.
+	* vm68k/cpu.cc: Likewise.
+	* vm68k/memory.cc: Likewise.
+
+	* NEWS: New file.
+	* configure.in: Change version numbering.
+
+1998-10-08  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* configure.in (AC_TYPE_SIZE_T): Added.
+
+	* vx68k/main.cc: Undef const and inline.
+
+	* COPYING: New file.
+	* INSTALL: New file.
+
+	* Add copyright info to the source files.
+
+	* vm68k/cpu.cc: All refs to substituted members of class cpu
+	changed.
+	(execution_context): New function.
+	(SUPER_PROGRAM): Removed.
+	(run): Add some code for function code.
+	(run): Change instruction handler call.
+	(set_handlers): Fill table using a mask pattern.
+	(illegal_insn): Renamed from undefined_insn.  All refs changed.
+	(cpu): Change initializers.
+
+	* include/vm68k/cpu.h (struct exception_listener): Renamed from
+	interrupt_listener.  All refs changed.
+	(struct exception_listener): Add illegal.
+	(struct execution_context): New struct.
+	(class cpu): Put explicit keyword to the constructor.
+	(class cpu): Use execution_context for insn_handler arg.
+	(class cpu): Rename undefined_insn to illegal_insn.
+	(class cpu): Substitute members with execution_context.
+
+1998-10-07  Kaz Sasayama  <Kaz.Sasayama@hypercore.co.jp>
+
+	* vx68k/main.cc (main): Use x68k_memory and cpu.
+
+	* vm68k/memory.cc (read16): New function.
+
+	* include/vm68k/memory.h (VM68K_MEMORY_H): Fix typo.
+	(function_code): New enum.
+
+	* include/vm68k/Makefile.am (noinst_HEADERS): Add types.h and
+	memory.h.
+
+	* include/Makefile.am (SUBDIRS): Add vx68k.
+
+	* configure.in (AC_OUTPUT): Add include/vx68k/Makefile.
+
+	* include/vx68k/Makefile.am: New file.
+	* include/vx68k/memory.h: New file.
+
+	* ChangeLog: New file.
+

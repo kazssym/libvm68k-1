@@ -1,0 +1,5 @@
+2001-06-13  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* Separated from vx68k.  See the file ChangeLog.vx68k for older
+	changes.
+

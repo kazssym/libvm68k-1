@@ -17,7 +17,7 @@
    02111-1307, USA.  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include "vm68k/config.h"
 #endif
 #undef const
 #undef inline

@@ -1,0 +1,6 @@
+List of user-visible changes in libvm68k.
+
+Version 1.0.1
+
+* Separated from the vx68k package.  See the file NEWS.vx68k for older
+changes.

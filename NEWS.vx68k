@@ -1,0 +1,70 @@
+News and History of User-Visible Changes in Virtual X68000
+
+Version 1.1.4
+
+* Bug fixes.
+
+* New components: FDC and ACPDM codec.
+
+* Minor internal clean-ups.
+
+* Documentation updates.
+
+Version 1.1.3
+
+* New instruction handlers have been added.
+
+* New IOCS call handlers have been added.
+
+* Mouse now works.
+
+* VDISP counter has been implemented.
+
+* Many bugs have been fixed.
+
+Version 1.1.2
+
+* New instruction handlers.
+
+* New memory components.
+
+* New IOCS call handlers.
+
+* Preliminary interrupt support.  Currently, VDISP and OPM interrupts
+are implemented.
+
+* Text palette support.
+
+* Improved key input handling.
+
+* Reimplemented GUI.
+
+* NLS by GNU gettext.
+
+Version 1.1.1
+
+* First release.
+
+* Limitations.
+
+** Processor.
+
+*** Some minor instructions are not implemented.
+
+*** Conditions VC and VS are not implemented.
+
+*** Some instructions do not change condition codes correctly.
+
+** X68000 virtual machine.
+
+*** Many components including graphic VRAM are not implemented.
+
+*** Text VRAM only works in monochrome.
+
+*** Many IOCS calls are either not implemented or just stubs.
+
+** Virtual DOS.
+
+*** Many DOS calls are either not implemented or just stubs.
+
+*** Loader only loads HU (*.x) executables.
