@@ -1,3 +1,7 @@
+2001-08-05  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* libvm68k.texi (Basic Types): Updated.
+
 2001-07-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* configure.in (LTLIBRELEASE): Remove `AC_DEFINE(_GNU_SOURCE)'.
