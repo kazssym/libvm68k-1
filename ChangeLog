@@ -1,6 +1,8 @@
 2001-06-16  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Makefile.am (info_TEXINFOS): New macro.
+	(LTLIBRELEASE): New macro.
+	(libvm68k_la_LDFLAGS): Use LTLIBRELEASE.
 
 	* libvm68k.texi: New file.
 	* texinfo.tex: New file.
