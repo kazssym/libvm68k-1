@@ -37,7 +37,7 @@
 # define VL(EXPR)
 #endif
 
-using vm68k::exec_unit;
+using vm68k::processor;
 using vm68k::byte_size;
 using vm68k::word_size;
 using vm68k::long_word_size;
@@ -94,7 +94,7 @@ namespace
 }
 
 void
-vm68k::install_instructions_1(exec_unit &eu, unsigned long data)
+vm68k::install_instructions_1(processor &eu, unsigned long data)
 {
   static const instruction_map inst[]
     = {{0x1000, 0xe07, &m68k_move<byte_size, byte_d_register, byte_d_register>},
@@ -192,7 +192,7 @@ vm68k::install_instructions_1(exec_unit &eu, unsigned long data)
 }
 
 void
-vm68k::install_instructions_2(exec_unit &eu, unsigned long data)
+vm68k::install_instructions_2(processor &eu, unsigned long data)
 {
   static const instruction_map inst[]
     = {{0x2000, 0xe07, &m68k_move<long_word_size, long_word_d_register, long_word_d_register>},
@@ -310,7 +310,7 @@ vm68k::install_instructions_2(exec_unit &eu, unsigned long data)
 }
 
 void
-vm68k::install_instructions_3(exec_unit &eu, unsigned long data)
+vm68k::install_instructions_3(processor &eu, unsigned long data)
 {
   static const instruction_map inst[]
     = {{0x3000, 0xe07, &m68k_move<word_size, word_d_register, word_d_register>},

@@ -1,5 +1,8 @@
 2001-11-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* vm68k/processor.h (class processor): Renamed from exec_unit.
+	Also change all references.
+
 	* Makefile.am (libvm68k_la_SOURCES): Change the filename.
 	* processor.cc: Renamed from execunit.cc.
 

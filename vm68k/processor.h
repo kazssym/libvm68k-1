@@ -199,7 +199,7 @@ namespace vm68k
   };
 
   /* Context of execution.  A context represents all the state of
-     execution.  See also `class exec_unit'.  */
+     execution.  See also `class processor'.  */
   class context
   {
   public:
@@ -284,8 +284,8 @@ namespace vm68k
 						       regs.pc + offset));
   }
 
-  /* Execution unit.  */
-  class exec_unit
+  /* Decodes and executes an instruction sequence.  */
+  class processor
   {
   public:
     typedef void (*instruction_handler)(uint16_type, context &, unsigned long);
@@ -300,7 +300,7 @@ namespace vm68k
     vector<instruction_type> instructions;
 
   public:
-    exec_unit();
+    processor();
 
   public:
     /* Sets an instruction for an operation word.  The old value is
@@ -336,7 +336,7 @@ namespace vm68k
   };
 
   inline void
-  exec_unit::step(context &c) const
+  processor::step(context &c) const
   {
     dispatch(c.ufetch(word_size(), 0), c);
   }
