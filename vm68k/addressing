@@ -90,7 +90,7 @@ namespace vm68k
     data_register_direct::text(Size, const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%%d%d", _reg);
+      std::sprintf(buf, "%%d%d", _reg);
       return buf;
     }
 
@@ -157,7 +157,7 @@ namespace vm68k
     address_register_direct::text(Size, const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%d", _reg);
+      std::sprintf(buf, "%%a%d", _reg);
       return buf;
     }
 
@@ -230,7 +230,7 @@ namespace vm68k
     indirect::text(Size, const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%d@/*%#lx*/", _reg, address(Size(), c) + 0UL);
+      std::sprintf(buf, "%%a%d@/*%#lx*/", _reg, address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -317,7 +317,7 @@ namespace vm68k
     postinc_indirect::text(Size, const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%d@+/*%#lx*/", _reg, c.regs.a[_reg] + 0UL);
+      std::sprintf(buf, "%%a%d@+/*%#lx*/", _reg, c.regs.a[_reg] + 0UL);
       return buf;
     }
 
@@ -407,9 +407,9 @@ namespace vm68k
     predec_indirect::text(Size, const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%d@-/*%#lx*/", _reg,
-	      long_word::normal_u(c.regs.a[_reg] - decrement_size(Size()))
-	      + 0UL);
+      std::sprintf(buf, "%%a%d@-/*%#lx*/", _reg,
+		   long_word::normal_u(c.regs.a[_reg] - decrement_size(Size()))
+		   + 0UL);
       return buf;
     }
 
@@ -485,8 +485,8 @@ namespace vm68k
     disp_indirect::text(Size, const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%d@(%d)/*%#lx*/", _reg, c.fetch_s(word(), _address),
-	      address(Size(), c) + 0UL);
+      std::sprintf(buf, "%%a%d@(%d)/*%#lx*/", _reg,
+		   c.fetch_s(word(), _address), address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -574,11 +574,11 @@ namespace vm68k
       const char *x = xreg >= 8 ? "%a" : "%d";
       char buf[64];
       if (w & 0x800)
-	sprintf(buf, "%%a%d@(%d,%s%d:l)/*%#lx*/", _reg, byte::normal_s(w),
-		x, xreg & 7, address(Size(), c) + 0UL);
+	std::sprintf(buf, "%%a%d@(%d,%s%d:l)/*%#lx*/", _reg, byte::normal_s(w),
+		     x, xreg & 7, address(Size(), c) + 0UL);
       else
-	sprintf(buf, "%%a%d@(%d,%s%d:w)/*%#lx*/", _reg, byte::normal_s(w),
-		x, xreg & 7, address(Size(), c) + 0UL);
+	std::sprintf(buf, "%%a%d@(%d,%s%d:w)/*%#lx*/", _reg, byte::normal_s(w),
+		     x, xreg & 7, address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -652,7 +652,7 @@ namespace vm68k
     absolute_short::text(Size, const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%#lx:w", address(Size(), c) + 0UL);
+      std::sprintf(buf, "%#lx:w", address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -726,7 +726,7 @@ namespace vm68k
     absolute_long::text(Size, const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%#lx", address(Size(), c) + 0UL);
+      std::sprintf(buf, "%#lx", address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -791,8 +791,8 @@ namespace vm68k
     disp_pc_indirect::text(Size, const context &c) const
     {
       char buf[64];
-      sprintf(buf, "%%pc@(%d)/*%#lx*/", c.fetch_s(word(), _address),
-	      address(Size(), c) + 0UL);
+      std::sprintf(buf, "%%pc@(%d)/*%#lx*/", c.fetch_s(word(), _address),
+		   address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -869,11 +869,11 @@ namespace vm68k
       const char *x = xreg >= 8 ? "%a" : "%d";
       char buf[64];
       if (w & 0x800)
-	sprintf(buf, "%%pc@(%d,%s%d:l)/*%#lx*/", byte::normal_s(w),
-		x, xreg & 7, address(Size(), c) + 0UL);
+	std::sprintf(buf, "%%pc@(%d,%s%d:l)/*%#lx*/", byte::normal_s(w),
+		     x, xreg & 7, address(Size(), c) + 0UL);
       else
-	sprintf(buf, "%%pc@(%d,%s%d:w)/*%#lx*/", byte::normal_s(w),
-		x, xreg & 7, address(Size(), c) + 0UL);
+	std::sprintf(buf, "%%pc@(%d,%s%d:w)/*%#lx*/", byte::normal_s(w),
+		     x, xreg & 7, address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -930,7 +930,7 @@ namespace vm68k
     immediate::text(Size, const context &c) const
     {
       char buf[64];
-      sprintf(buf, "#%#lx", get_u(Size(), c) + 0UL);
+      std::sprintf(buf, "#%#lx", get_u(Size(), c) + 0UL);
       return buf;
     }
   }
