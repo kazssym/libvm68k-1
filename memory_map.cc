@@ -41,7 +41,7 @@ namespace vm68k
 
   uint16_type
   memory_map::get_16(uint32_type address, function_code fc) const
-    throw (memory_exception)
+    throw (memory_error)
   {
     if ((address & 1) != 0)
       throw address_error(address, memory::READ | fc);
@@ -51,7 +51,7 @@ namespace vm68k
 
   uint32_type
   memory_map::get_32(uint32_type address, function_code fc) const
-    throw (memory_exception)
+    throw (memory_error)
   {
     if ((address & 1) != 0)
       throw address_error(address, memory::READ | fc);
@@ -100,7 +100,7 @@ namespace vm68k
 
   void
   memory_map::put_16(uint32_type address, uint16_type value, function_code fc)
-    throw (memory_exception)
+    throw (memory_error)
   {
     if ((address & 1) != 0)
       throw address_error(address, memory::WRITE | fc);
@@ -110,7 +110,7 @@ namespace vm68k
 
   void
   memory_map::put_32(uint32_type address, uint32_type value, function_code fc)
-    throw (memory_exception)
+    throw (memory_error)
   {
     if ((address & 1) != 0)
       throw address_error(address, memory::WRITE | fc);
@@ -167,26 +167,26 @@ namespace vm68k
     {
     public:
       int get_8(uint32_type address, function_code) const
-	throw (memory_exception);
+	throw (memory_error);
       uint16_type get_16(uint32_type address, function_code) const
-	throw (memory_exception);
+	throw (memory_error);
 
       void put_8(uint32_type address, int, function_code)
-	throw (memory_exception);
+	throw (memory_error);
       void put_16(uint32_type address, uint16_type, function_code)
-	throw (memory_exception);
+	throw (memory_error);
     };
 
     int
     missing_memory::get_8(uint32_type address, function_code fc) const
-      throw (memory_exception)
+      throw (memory_error)
     {
       throw bus_error(address, READ | fc);
     }
 
     uint16_type
     missing_memory::get_16(uint32_type address, function_code fc) const
-      throw (memory_exception)
+      throw (memory_error)
     {
       I((address & 1) == 0);
       throw bus_error(address, READ | fc);
@@ -194,7 +194,7 @@ namespace vm68k
 
     void
     missing_memory::put_8(uint32_type address, int value, function_code fc)
-      throw (memory_exception)
+      throw (memory_error)
     {
       throw bus_error(address, WRITE | fc);
     }
@@ -202,7 +202,7 @@ namespace vm68k
     void
     missing_memory::put_16(uint32_type address, uint16_type value,
 			   function_code fc)
-      throw (memory_exception)
+      throw (memory_error)
     {
       I((address & 1) == 0);
       throw bus_error(address, WRITE | fc);

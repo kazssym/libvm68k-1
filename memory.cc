@@ -63,7 +63,7 @@ namespace vm68k
   
   uint32_type
   memory::get_32(uint32_type address, function_code fc) const
-    throw (memory_exception)
+    throw (memory_error)
   {
     I((address & 3) == 0);
     uint32_type value = uint32_type(get_16(address, fc)) << 16;
@@ -73,7 +73,7 @@ namespace vm68k
 
   void
   memory::put_32(uint32_type address, uint32_type value,
-		 function_code fc) throw (memory_exception)
+		 function_code fc) throw (memory_error)
   {
     I((address & 3) == 0);
     put_16(address,     value >> 16, fc);

@@ -17,8 +17,8 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
    USA.  */
 
-#ifndef __VM68K_MEMORY_H
-#define __VM68K_MEMORY_H 1
+#ifndef _VM68K_MEMORY_H
+#define _VM68K_MEMORY_H 1
 
 #include <vm68k/types.h>
 #include <vector>
@@ -37,21 +37,23 @@ namespace vm68k
   const uint32_type NPAGES = uint32_type(1) << ADDRESS_BIT - PAGE_SHIFT;
 
   /* Bus error or address error.  */
-  class memory_exception: public exception
+  class memory_error: public exception
   {
-  public:
+  private:
     uint32_type _address;
     uint16_type _status;
 
   protected:
-    memory_exception(uint32_type address, uint16_type status) throw ();
+    memory_error(uint32_type address, uint16_type status)
+      : _address(address), _status(status) {}
 
   public:
-    virtual int vecno() throw () = 0;
+    uint32_type address() const throw () {return _address;}
+    uint16_type status() const throw () {return _status;}
   };
 
   /* Bus error exception.  */
-  struct bus_error: memory_exception
+  struct bus_error: memory_error
   {
     bus_error(uint32_type address, uint16_type status) throw ();
     int vecno() throw ();
@@ -59,7 +61,7 @@ namespace vm68k
   };
 
   /* Address error exception.  */
-  struct address_error: memory_exception
+  struct address_error: memory_error
   {
     address_error(uint32_type address, uint16_type status) throw ();
     int vecno() throw ();
@@ -89,20 +91,20 @@ namespace vm68k
 
   public:
     virtual int get_8(uint32_type address, function_code fc) const
-      throw (memory_exception) = 0;
+      throw (memory_error) = 0;
     virtual uint16_type get_16(uint32_type address, function_code fc) const
-      throw (memory_exception) = 0;
+      throw (memory_error) = 0;
     virtual uint32_type get_32(uint32_type address, function_code fc) const
-      throw (memory_exception);
+      throw (memory_error);
 
     virtual void put_8(uint32_type address, int value, function_code fc)
-      throw (memory_exception) = 0;
+      throw (memory_error) = 0;
     virtual void put_16(uint32_type address, uint16_type value,
 			function_code fc)
-      throw (memory_exception) = 0;
+      throw (memory_error) = 0;
     virtual void put_32(uint32_type address, uint32_type value,
 			function_code fc)
-      throw (memory_exception);
+      throw (memory_error);
   };
 
   /* Maps an address space to memories.  An address space is a
@@ -134,22 +136,22 @@ namespace vm68k
   public:
     /* Returns one byte at address ADDRESS in this address space.  */
     int get_8(uint32_type address, function_code fc) const
-      throw (memory_exception);
+      throw (memory_error);
 
     /* Returns one word at address ADDRESS in this address space.  Any
        unaligned address will be handled.  */
     uint16_type get_16(uint32_type address, function_code fc) const
-      throw (memory_exception);
+      throw (memory_error);
 
     /* Returns one word at address ADDRESS in this address space.
        The address must be word-aligned.  */
     uint16_type get_16_unchecked(uint32_type address, function_code fc) const
-      throw (memory_exception);
+      throw (memory_error);
 
     /* Returns one long word at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
     uint32_type get_32(uint32_type address, function_code fc) const
-      throw (memory_exception);
+      throw (memory_error);
 
     string get_string(uint32_type address, function_code fc) const;
 
@@ -157,23 +159,23 @@ namespace vm68k
 
     /* Stores byte VALUE at address ADDRESS in this address space.  */
     void put_8(uint32_type address, int value, function_code fc)
-      throw (memory_exception);
+      throw (memory_error);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
     void put_16(uint32_type address, uint16_type value, function_code fc)
-      throw (memory_exception);
+      throw (memory_error);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        The address must be word-aligned.  */
     void put_16_unchecked(uint32_type address, uint16_type value,
 			  function_code fc)
-      throw (memory_exception);
+      throw (memory_error);
 
     /* Stores long word VALUE at address ADDRESS in this address
        space.  Any unaligned address will be handled.  */
     void put_32(uint32_type address, uint32_type value, function_code fc)
-      throw (memory_exception);
+      throw (memory_error);
 
     void put_string(uint32_type address, const string &, function_code fc);
 
@@ -181,23 +183,16 @@ namespace vm68k
   };
   
   inline
-  memory_exception::memory_exception(uint32_type address,
-				     uint16_type status) throw ()
-    : _address(address), _status(status)
-  {
-  }
-
-  inline
   bus_error::bus_error(uint32_type address,
 		       uint16_type status) throw ()
-    : memory_exception(address, status)
+    : memory_error(address, status)
   {
   }
 
   inline
   address_error::address_error(uint32_type address,
 			       uint16_type status) throw ()
-    : memory_exception(address, status)
+    : memory_error(address, status)
   {
   }
 
@@ -215,7 +210,7 @@ namespace vm68k
 
   inline int
   memory_map::get_8(uint32_type address, function_code fc) const
-    throw (memory_exception)
+    throw (memory_error)
   {
     const memory *p = *this->find_memory(address);
     return p->get_8(address, fc);
@@ -223,7 +218,7 @@ namespace vm68k
 
   inline uint16_type
   memory_map::get_16_unchecked(uint32_type address, function_code fc) const
-    throw (memory_exception)
+    throw (memory_error)
   {
     const memory *p = *this->find_memory(address);
     return p->get_16(address, fc);
@@ -231,7 +226,7 @@ namespace vm68k
 
   inline void
   memory_map::put_8(uint32_type address, int value, function_code fc)
-    throw (memory_exception)
+    throw (memory_error)
   {
     memory *p = *this->find_memory(address);
     p->put_8(address, value, fc);
@@ -240,11 +235,11 @@ namespace vm68k
   inline void
   memory_map::put_16_unchecked(uint32_type address, uint16_type value,
 			       function_code fc)
-    throw (memory_exception)
+    throw (memory_error)
   {
     memory *p = *this->find_memory(address);
     p->put_16(address, value, fc);
   }
 }
 
-#endif /* not __VM68K_MEMORY_H */
+#endif /* not _VM68K_MEMORY_H */

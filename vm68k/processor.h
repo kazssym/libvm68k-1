@@ -36,12 +36,12 @@ namespace vm68k
   private:
     uint32_type _pc;
 
-  public:
+  protected:
     explicit processor_exception(uint32_type pc)
       : _pc(pc) {}
 
   public:
-    uint32_type pc() const {return _pc;}
+    uint32_type pc() const throw () {return _pc;}
   };
 
   /* Illegal instruction exception.  */

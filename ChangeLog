@@ -1,5 +1,11 @@
 2001-12-07  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* vm68k/memory.h (class memory_error): Renamed from
+	memory_exception.  Also change all references.
+	(class memory_error): Add members: address() and status().  Remove
+	member vecno().
+	(_VM68K_MEMORY_H): Renamed from __VM68K_MEMORY_H.
+
 	* vm68k/processor.h (class processor_exception): Add members: _pc
 	and pc().  Add a constructor.
 	(struct illegal_instruction_exception): Add a constructor.  Also
