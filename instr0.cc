@@ -36,6 +36,8 @@
 # define I assert
 #endif
 
+using namespace std;
+
 #ifdef HAVE_NANA_H
 extern bool nana_instruction_trace;
 # undef L_DEFAULT_GUARD
@@ -54,7 +56,7 @@ namespace vm68k
     _addi(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
-      Destination ea1(w & 0x7, pc + 2 + Size::aligned_value_size());
+      Destination ea1(w & 7, pc + 2 + Size::aligned_value_size());
 #ifdef L
       L("\taddi%s #%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
 	ea1.text(c).c_str());
@@ -75,7 +77,7 @@ namespace vm68k
     _andi(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
-      Destination ea1(w & 0x7, pc + 2 + Size::aligned_value_size());
+      Destination ea1(w & 7, pc + 2 + Size::aligned_value_size());
 #ifdef L
       L("\tandi%s #%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
 	ea1.text(c).c_str());
@@ -132,8 +134,8 @@ namespace vm68k
     uint32_type
     _bclr_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      Destination ea1(w & 0x7, pc + 2);
-      unsigned int reg2 = w >> 9 & 0x7;
+      Destination ea1(w & 7, pc + 2);
+      unsigned int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tbclr%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
@@ -156,7 +158,7 @@ namespace vm68k
     _bclr_i(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       unsigned int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
-      Destination ea1(w & 0x7, pc + 2 + 2);
+      Destination ea1(w & 7, pc + 2 + 2);
 #ifdef L
       L("\tbclr%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
@@ -177,8 +179,8 @@ namespace vm68k
     uint32_type
     _bset_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      Destination ea1(w & 0x7, pc + 2);
-      unsigned int reg2 = w >> 9 & 0x7;
+      Destination ea1(w & 7, pc + 2);
+      unsigned int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tbset%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
@@ -200,7 +202,7 @@ namespace vm68k
     _bset_i(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       unsigned int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
-      Destination ea1(w & 0x7, pc + 2 + word_size::aligned_value_size());
+      Destination ea1(w & 7, pc + 2 + word_size::aligned_value_size());
 #ifdef L
       L("\tbset%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
@@ -222,8 +224,8 @@ namespace vm68k
     uint32_type
     _btst_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      Destination ea1(w & 0x7, pc + 2);
-      unsigned int reg2 = w >> 9 & 0x7;
+      Destination ea1(w & 7, pc + 2);
+      unsigned int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tbtst%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
@@ -245,7 +247,7 @@ namespace vm68k
     _btst_i(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       unsigned int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
-      Destination ea1(w & 0x7, pc + 2 + word_size::aligned_value_size());
+      Destination ea1(w & 7, pc + 2 + word_size::aligned_value_size());
 #ifdef L
       L("\tbtst%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
@@ -267,7 +269,7 @@ namespace vm68k
     _cmpi(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
-      Destination ea1(w & 0x7, pc + 2 + Size::aligned_value_size());
+      Destination ea1(w & 7, pc + 2 + Size::aligned_value_size());
 #ifdef L
       L("\tcmpi%s #%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
 	ea1.text(c).c_str());
@@ -288,7 +290,7 @@ namespace vm68k
     _eori(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
-      Destination ea1(w & 0x7, pc + 2 + Size::aligned_value_size());
+      Destination ea1(w & 7, pc + 2 + Size::aligned_value_size());
 #ifdef L
       L("\teori%s #%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
 	ea1.text(c).c_str());
@@ -310,7 +312,7 @@ namespace vm68k
     _ori(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
-      Destination ea1(w & 0x7, pc + 2 + Size::aligned_value_size());
+      Destination ea1(w & 7, pc + 2 + Size::aligned_value_size());
 #ifdef L
       L("\tori%s #%#lx,%s", Size::suffix(), Size::uvalue(value2) + 0UL,
 	ea1.text(c).c_str());
@@ -369,7 +371,7 @@ namespace vm68k
     _subi(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(word_size(), pc + 2);
-      Destination ea1(w & 0x7, pc + 2 + word_size::aligned_value_size());
+      Destination ea1(w & 7, pc + 2 + word_size::aligned_value_size());
 #ifdef L
       L("\tsubi%s #%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
 	ea1.text(c).c_str());
