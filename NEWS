@@ -1,5 +1,12 @@
 History of user-visible changes in Libvm68k.  -*-Outline-*-
 
+* Version 1.0.6
+
+** Interface Changes
+
+Small changes were made to class templates basic_uint16_iterator and
+basic_uint32_iterator.
+
 * Version 1.0.5
 
 ** Interface Changes

@@ -1,7 +1,12 @@
 2001-07-01  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
-	* vm68k/iterator.h (class uint16_iterator): Use const references
-	for T argumrnts.
+	* NEWS: Updated.
+
+	* vm68k/iterator.h (class basic_uint16_iterator): Use const
+	references for T arguments.  Add explicit to the class ref
+	constructor.  Remove template constructor and conversion to T.
+	Add new member `base'.
+	(class basic_uint32_iterator): Likewise.
 
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
