@@ -1,6 +1,7 @@
 2001-12-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* instr6.cc: Change the instruction handlers.
+	* instr7.cc: Change the instruction handlers.
 
 	* Makefile.am (libvm68k_la_SOURCES): Change the file names.
 

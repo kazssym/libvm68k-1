@@ -1,4 +1,4 @@
-/* Virtual X68000 - X68000 virtual machine
+/* Libvm68k - M68000 virtual machine library
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
@@ -34,15 +34,7 @@
 #else
 # include <cassert>
 # define I assert
-# define VL(EXPR)
 #endif
-
-using vm68k::processor;
-using vm68k::byte_size;
-using vm68k::word_size;
-using vm68k::long_word_size;
-using namespace vm68k::types;
-using namespace vm68k::addressing;
 
 #ifdef HAVE_NANA_H
 extern bool nana_instruction_trace;
@@ -50,35 +42,40 @@ extern bool nana_instruction_trace;
 # define L_DEFAULT_GUARD nana_instruction_trace
 #endif
 
-namespace
+namespace vm68k
 {
-  using vm68k::context;
-
-  /* Handles a MOVEQ instruction.  */
-  void
-  m68k_moveq(uint16_type op, context &c, unsigned long data)
+  namespace instr
   {
-    long_word_size::svalue_type value = byte_size::svalue(op);
-    unsigned int reg2 = op >> 9 & 0x7;
+    using namespace addressing;
+
+    /* Handles a MOVEQ instruction.  */
+    uint32_type
+    _moveq(uint32_type pc, context &c, uint16_type w, unsigned long)
+    {
+      long_word_size::svalue_type value = byte_size::svalue(w);
+      unsigned int reg2 = w >> 9 & 7;
 #ifdef L
-    L("\tmoveq%s #%#x,%%d%u\n", long_word_size::suffix(),
-      byte_size::uvalue(value), reg2);
+      L("\tmoveq%s #%#x,%%d%u\n", long_word_size::suffix(),
+	byte_size::uvalue(value), reg2);
 #endif
 
-    long_word_size::put(c.regs.d[reg2], value);
-    c.regs.ccr.set_cc(value);
+      long_word_size::put(c.regs.d[reg2], value);
+      c.regs.ccr.set_cc(value);
 
-    c.regs.advance_pc(2);
+      return pc + 2;
+    }
   }
-}
+  
+  using namespace instr;
 
-void
-vm68k::install_instructions_7(processor &eu, unsigned long data)
-{
-  static const instruction_map inst[]
-    = {{0x7000, 0xeff, &m68k_moveq}};
+  void
+  install_instructions_7(processor &p, unsigned long d)
+  {
+    static const instruction_map inst[]
+      = {{0x7000, 0xeff, &_moveq}};
 
-  for (const instruction_map *i = inst + 0;
-       i != inst + sizeof inst / sizeof inst[0]; ++i)
-    eu.set_instruction(i->base, i->mask, make_pair(i->handler, data));
+    for (const instruction_map *i = inst + 0;
+	 i != inst + sizeof inst / sizeof inst[0]; ++i)
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+  }
 }
