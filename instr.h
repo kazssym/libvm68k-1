@@ -26,18 +26,18 @@ namespace vm68k
     processor::instruction_handler handler;
   };
 
-  void install_instructions_0(processor &, unsigned long data);
-  void install_instructions_1(processor &, unsigned long data);
-  void install_instructions_2(processor &, unsigned long data);
-  void install_instructions_3(processor &, unsigned long data);
-  void install_instructions_4(processor &, unsigned long data);
-  void install_instructions_5(processor &, unsigned long data);
-  void install_instructions_6(processor &, unsigned long data);
-  void install_instructions_7(processor &, unsigned long data);
-  void install_instructions_8(processor &, unsigned long data);
-  void install_instructions_9(processor &, unsigned long data);
-  void install_instructions_11(processor &, unsigned long data);
-  void install_instructions_12(processor &, unsigned long data);
-  void install_instructions_13(processor &, unsigned long data);
-  void install_instructions_14(processor &, unsigned long data);
+  void install_instructions_0(processor &, void *data);
+  void install_instructions_1(processor &, void *data);
+  void install_instructions_2(processor &, void *data);
+  void install_instructions_3(processor &, void *data);
+  void install_instructions_4(processor &, void *data);
+  void install_instructions_5(processor &, void *data);
+  void install_instructions_6(processor &, void *data);
+  void install_instructions_7(processor &, void *data);
+  void install_instructions_8(processor &, void *data);
+  void install_instructions_9(processor &, void *data);
+  void install_instructions_11(processor &, void *data);
+  void install_instructions_12(processor &, void *data);
+  void install_instructions_13(processor &, void *data);
+  void install_instructions_14(processor &, void *data);
 }

@@ -1,3 +1,16 @@
+2002-05-12  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
+
+	* processor.cc (processor): Remove unsigned long data.
+
+	* instr.h (install_instructions_0, install_instructions_1,
+	install_instructions_2, install_instructions_3,
+	install_instructions_4, install_instructions_5,
+	install_instructions_6, install_instructions_7,
+	install_instructions_8, install_instructions_9,
+	install_instructions_11, install_instructions_12,
+	install_instructions_13, install_instructions_14): Change the
+	second argument to void *.
+
 2002-05-10  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* vm68k/processor.h (class context, class processor_exception,
