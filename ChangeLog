@@ -1,5 +1,9 @@
 2001-06-26  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* configure.in: Use new macros.
+
+	* acinclude.m4: Copied from the autoconf macro archive.
+
 	* NEWS: Reformated again.
 
 	* TODO: Updated.

@@ -17,7 +17,9 @@ if test "$with_nana" != no; then
 fi
 
 AC_TYPE_SIZE_T
-HS_CPLUSPLUS_EXCEPTIONS
+AC_CXX_EXCEPTIONS
+AC_CXX_TEMPLATES
+AC_CXX_NAMESPACES
 if test "$hs_cv_cplusplus_exceptions" = no; then
   AC_MSG_WARN([exceptions not supported in C++;])
   AC_MSG_WARN([this package cannot be built without exceptions])
