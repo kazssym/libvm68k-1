@@ -1,5 +1,12 @@
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* vm68k/memory.h: Remove #include <vm68k/iterator.h>.
+	(__VM68K_MEMORY_H): Renamed _VM68k_MEMORY_H.
+
+	* vm68k/iterator.h (class basic_uint16_iterator): Add relation
+	operators.  Move some methods out of the class definition.
+	(class basic_uint32_iterator): Likewise.
+
 	* vm68k/memory.h (PAGE_SHIFT): Changed to signed.
 	(ADDRESS_BIT): Likewise.
 	(getw, getl, putw, putl): Removed.

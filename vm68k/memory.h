@@ -17,10 +17,9 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
    USA.  */
 
-#ifndef _VM68K_MEMORY_H
-#define _VM68K_MEMORY_H 1
+#ifndef __VM68K_MEMORY_H
+#define __VM68K_MEMORY_H 1
 
-#include <vm68k/iterator.h>	// Provisionally.
 #include <vm68k/types.h>
 #include <vector>
 #include <string>
@@ -207,4 +206,4 @@ namespace vm68k
   }
 }
 
-#endif /* not _VM68K_MEMORY_H */
+#endif /* not __VM68K_MEMORY_H */
