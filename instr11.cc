@@ -56,7 +56,7 @@ namespace vm68k
     _cmp(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Source ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tcmp%s %s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
@@ -76,7 +76,7 @@ namespace vm68k
     _cmpa(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Source ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tcmpa%s %s,%%a%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
@@ -120,7 +120,7 @@ namespace vm68k
     _eor_m(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\teor%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif

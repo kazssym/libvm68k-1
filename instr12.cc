@@ -56,7 +56,7 @@ namespace vm68k
     _and_d(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Source ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tand%s %s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
@@ -78,7 +78,7 @@ namespace vm68k
     _and_m(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tand%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
@@ -98,8 +98,8 @@ namespace vm68k
     uint32_type
     _exg_d_d(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      unsigned int reg1 = w & 7;
-      unsigned int reg2 = w >> 9 & 7;
+      int reg1 = w & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\texg%s %%d%u,%%d%u\n", long_word_size::suffix(), reg2, reg1);
 #endif
@@ -117,8 +117,8 @@ namespace vm68k
     uint32_type
     _exg_a_a(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      unsigned int reg1 = w & 7;
-      unsigned int reg2 = w >> 9 & 7;
+      int reg1 = w & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\texg%s %%a%u,%%a%u\n", long_word_size::suffix(), reg2, reg1);
 #endif
@@ -136,8 +136,8 @@ namespace vm68k
     uint32_type
     _exg_d_a(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      unsigned int reg1 = w & 7;
-      unsigned int reg2 = w >> 9 & 7;
+      int reg1 = w & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\texg%s %%d%u,%%a%u\n", long_word_size::suffix(), reg2, reg1);
 #endif
@@ -157,7 +157,7 @@ namespace vm68k
     _muls(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Source ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tmuls%s %s,%%d%u\n", word_size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
@@ -180,7 +180,7 @@ namespace vm68k
     _mulu(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Source ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tmulu%s %s,%%d%u\n", word_size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
