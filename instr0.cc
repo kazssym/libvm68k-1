@@ -48,7 +48,7 @@ namespace vm68k
 {
   namespace instr
   {
-    using namespace vm68k::addressing;
+    using namespace addressing;
 
     /* Handles an ADDI instruction.  */
     template <class Size, class Destination>

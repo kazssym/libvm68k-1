@@ -48,7 +48,7 @@ namespace vm68k
 {
   namespace instr
   {
-    using namespace vm68k::addressing;
+    using namespace addressing;
 
     /* Handles a MOVE instruction.  */
     template <class Size, class Source, class Destination>
@@ -94,7 +94,7 @@ namespace vm68k
   using namespace instr;
 
   void
-  vm68k::install_instructions_1(processor &p, unsigned long data)
+  install_instructions_1(processor &p, unsigned long data)
   {
     static const instruction_map inst[]
       = {{0x1000, 0xe07, &_move<byte_size, byte_d_register, byte_d_register>},
@@ -192,7 +192,7 @@ namespace vm68k
   }
 
   void
-  vm68k::install_instructions_2(processor &p, unsigned long data)
+  install_instructions_2(processor &p, unsigned long data)
   {
     static const instruction_map inst[]
       = {{0x2000, 0xe07, &_move<long_word_size, long_word_d_register, long_word_d_register>},
@@ -310,7 +310,7 @@ namespace vm68k
   }
 
   void
-  vm68k::install_instructions_3(processor &p, unsigned long data)
+  install_instructions_3(processor &p, unsigned long data)
   {
     static const instruction_map inst[]
       = {{0x3000, 0xe07, &_move<word_size, word_d_register, word_d_register>},
