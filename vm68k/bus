@@ -182,7 +182,7 @@ namespace vm68k
 
   public:
     // External mc68000 address is 24-bit size.
-    static uint32_type address_mask() throw () {return 0xffffff;}
+    static uint32_type address_max() throw () {return 0xffffff;}
     static uint32_type page_size() throw () {return 0x1000;}
 
   public:
@@ -201,7 +201,7 @@ namespace vm68k
   inline memory::page_table_type::iterator
   memory::find_device(uint32_type address)
   {
-    address &= address_mask();
+    address &= address_max();
     return page_table.begin() + address / page_size();
   }
 

@@ -205,7 +205,7 @@ namespace vm68k
   }
 
   memory::memory()
-    : page_table(address_mask() / page_size() + 1, &no_device)
+    : page_table(address_max() / page_size() + 1, &no_device)
   {
   }
 
