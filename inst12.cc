@@ -60,7 +60,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tand%s %s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
@@ -81,7 +81,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tand%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
@@ -102,7 +102,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\texg%s %%d%u,%%d%u\n", long_word_size::suffix(), reg2, reg1);
 #endif
 
@@ -121,7 +121,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\texg%s %%a%u,%%a%u\n", long_word_size::suffix(), reg2, reg1);
 #endif
 
@@ -140,7 +140,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\texg%s %%d%u,%%a%u\n", long_word_size::suffix(), reg2, reg1);
 #endif
 
@@ -159,7 +159,7 @@ namespace
   {
     Register1 ea1(op & 0x7, 2);
     Register2 ea2(op >> 9 & 0x7, 2 + ea1.isize(4));
-#ifdef HAVE_NANA_H
+#ifdef L
     L(" exgl %s", ea2.textl(c));
     L(",%s\n", ea1.textl(c));
 #endif
@@ -182,7 +182,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmuls%s %s,%%d%u\n", word_size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
@@ -204,7 +204,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmulu%s %s,%%d%u\n", word_size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 

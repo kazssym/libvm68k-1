@@ -61,7 +61,7 @@ namespace
   m68k_clr(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tclr%s %s\n", Size::suffix(), ea1.text(c).c_str());
 #endif
 
@@ -78,8 +78,8 @@ namespace
   clrb(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    VL((" clrb %s\n", ea1.textb(ec)));
+#ifdef L
+    L("\tclrb %s\n", ea1.textb(ec));
 #endif
 
     ea1.putb(ec, 0);
@@ -93,8 +93,8 @@ namespace
   clrw(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    VL((" clrw %s\n", ea1.textw(ec)));
+#ifdef L
+    L("\tclrw %s\n", ea1.textw(ec));
 #endif
 
     ea1.putw(ec, 0);
@@ -111,8 +111,8 @@ namespace
   clrl(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    VL((" clrl %s\n", ea1.textl(ec)));
+#ifdef L
+    L("\tclrl %s\n", ea1.textl(ec));
 #endif
 
     ea1.putl(ec, 0);
@@ -128,7 +128,7 @@ namespace
   m68k_ext(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\text%s %%d%u\n", Size2::suffix(), reg1);
 #endif
 
@@ -144,7 +144,7 @@ namespace
   m68k_jmp(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tjmp %s\n", ea1.text(c).c_str());
 #endif
 
@@ -159,7 +159,7 @@ namespace
   m68k_jsr(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tjsr %s\n", ea1.text(c).c_str());
 #endif
 
@@ -180,7 +180,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tlea%s %s,%%a%u\n", long_word_size::suffix(), ea1.text(c).c_str(),
       reg2);
 #endif
@@ -199,7 +199,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     word_size::svalue_type disp = c.fetch(word_size(), 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tlink %%a%u,#%#x\n", reg1, word_size::uvalue(disp));
 #endif
 
@@ -219,7 +219,7 @@ namespace
   m68k_move_from_sr(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmove%s %%sr,%s\n", word_size::suffix(), ea1.text(c).c_str());
 #endif
 
@@ -237,7 +237,7 @@ namespace
   m68k_move_to_sr(uint16_type op, context &c, unsigned long data)
   {
     Source ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmove%s %s,%%sr\n", word_size::suffix(), ea1.text(c).c_str());
 #endif
 
@@ -258,7 +258,7 @@ namespace
   m68k_move_from_usp(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmove%s %%usp,%%a%u\n", long_word_size::suffix(), reg1);
 #endif
 
@@ -277,7 +277,7 @@ namespace
   m68k_move_to_usp(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmove%s ", long_word_size::suffix());
     L("%%a%u,", reg1);
     L("%%usp\n");
@@ -299,7 +299,7 @@ namespace
   {
     word_size::uvalue_type mask = c.ufetch(word_size(), 2);
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmovem%s #%#x,%s\n", Size::suffix(), mask, ea1.text(c).c_str());
 #endif
 
@@ -335,7 +335,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     word_size::uvalue_type mask = c.ufetch(word_size(), 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmovem%s #%#x,%%a%u@-\n", Size::suffix(), mask, reg1);
 #endif
 
@@ -373,7 +373,7 @@ namespace
   {
     word_size::uvalue_type mask = c.ufetch(word_size(), 2);
     Source ea1(op & 0x7, 2 + word_size::aligned_value_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmovem%s %s,#%#x\n", Size::suffix(), ea1.text(c).c_str(), mask);
 #endif
 
@@ -411,7 +411,7 @@ namespace
   {
     Source ea1(op & 0x7, 4);
     unsigned int bitmap = ec.fetch(word_size(), 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L(" moveml %s", ea1.textl(ec));
     L(",#0x%04x\n", bitmap);
 #endif
@@ -448,7 +448,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     word_size::uvalue_type mask = c.ufetch(word_size(), 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmovem%s %%a%u@+,#%#x\n", Size::suffix(), reg1, mask);
 #endif
 
@@ -485,7 +485,7 @@ namespace
   m68k_neg(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tneg%s %s\n", Size::suffix(), ea1.text(c).c_str());
 #endif
 
@@ -502,7 +502,7 @@ namespace
   void
   m68k_nop(uint16_type op, context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tnop\n");
 #endif
 
@@ -514,7 +514,7 @@ namespace
   m68k_not(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tnot%s %s\n", Size::suffix(), ea1.text(c).c_str());
 #endif
 
@@ -532,7 +532,7 @@ namespace
   m68k_pea(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tpea%s %s\n", long_word_size::suffix(), ea1.text(c).c_str());
 #endif
 
@@ -550,7 +550,7 @@ namespace
   void
   m68k_rte(uint16_type op, context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\trte\n");
 #endif
 
@@ -570,7 +570,7 @@ namespace
   void
   m68k_rts(uint16_type op, context &c, unsigned long data)
   {
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\trts\n");
 #endif
 
@@ -587,7 +587,7 @@ namespace
   m68k_swap(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tswap%s %%d%u\n", word_size::suffix(), reg1);
 #endif
 
@@ -607,7 +607,7 @@ namespace
   m68k_tst(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\ttst%s %s\n", Size::suffix(), ea1.text(c).c_str());
 #endif
 
@@ -624,8 +624,8 @@ namespace
   tstb(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    VL((" tstb %s\n", ea1.textb(ec)));
+#ifdef L
+    L("\ttstb %s\n", ea1.textb(ec));
 #endif
 
     int value = ea1.getb(ec);
@@ -639,7 +639,7 @@ namespace
   tstw(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L(" tstw %s\n", ea1.textw(ec));
 #endif
 
@@ -654,8 +654,8 @@ namespace
   tstl(uint16_type op, context &ec, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
-    VL((" tstl %s\n", ea1.textl(ec)));
+#ifdef L
+    L("\ttstl %s\n", ea1.textl(ec));
 #endif
 
     sint32_type value = ea1.getl(ec);
@@ -670,7 +670,7 @@ namespace
   m68k_unlk(uint16_type op, context &c, unsigned long data)
   {
     unsigned int reg1 = op & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tunlk %%a%u\n", reg1);
 #endif
 

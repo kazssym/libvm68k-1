@@ -60,7 +60,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tdivu%s %s,%%d%u\n", word_size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
@@ -85,7 +85,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tor%s %s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
@@ -106,7 +106,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tor%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 

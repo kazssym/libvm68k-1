@@ -60,7 +60,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tasl%s ", Size::suffix());
     L("%%d%u,", reg2);
     L("%%d%u\n", reg1);
@@ -83,7 +83,7 @@ namespace
     unsigned int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tasl%s #%u,%%d%u\n", Size::suffix(), value2, reg1);
 #endif
 
@@ -101,7 +101,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tasr%s %%d%u,%%d%u\n", Size::suffix(), reg2, reg1);
 #endif
 
@@ -122,7 +122,7 @@ namespace
     unsigned int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tasr%s ", Size::suffix());
     L("#%u,", value2);
     L("%%d%u\n", reg1);
@@ -142,7 +142,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tlsl%s %%d%u,%%d%u\n", Size::suffix(), reg2, reg1);
 #endif
 
@@ -164,7 +164,7 @@ namespace
     unsigned int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tlsl%s #%u,%%d%u\n", Size::suffix(), value2, reg1);
 #endif
 
@@ -183,7 +183,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tlsr%s %%d%u,%%d%u\n", Size::suffix(), reg2, reg1);
 #endif
 
@@ -205,7 +205,7 @@ namespace
     unsigned int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tlsr%s #%u,%%d%u\n", Size::suffix(), value2, reg1);
 #endif
 
@@ -223,7 +223,7 @@ namespace
   m68k_lsr_m(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tlsr%s %s\n", word_size::suffix(), ea1.text(c).c_str());
 #endif
 
@@ -243,7 +243,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\trol%s ", Size::suffix());
     L("%%d%u,", reg2);
     L("%%d%u\n", reg1);
@@ -267,7 +267,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int value2 = ((op >> 9) - 1 & 0x7) + 1;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\trol%s #%u,%%d%u\n", Size::suffix(), value2, reg1);
 #endif
 
@@ -289,7 +289,7 @@ namespace
     unsigned int count = op >> 9 & 0x7;
     if (count == 0)
       count = 8;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tror%s #%u,%%d%u\n", Size::suffix(), count, reg1);
 #endif
 
@@ -309,7 +309,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int value2 = ((op >> 9) - 1 & 0x7) + 1;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\troxl%s #%u,%%d%u", Size::suffix(), value2, reg1);
 #endif
 
@@ -330,7 +330,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int value2 = ((op >> 9) - 1 & 0x7) + 1;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\troxr%s #%u,%%d%u", Size::suffix(), value2, reg1);
 #endif
 

@@ -64,7 +64,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\taddq%s #%d,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
 
@@ -85,7 +85,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\taddq%s #%d,%%a%u\n", Size::suffix(), value2, reg1);
 #endif
 
@@ -105,7 +105,7 @@ namespace
     Condition cond;
     unsigned int reg1 = op & 0x7;
     word_size::svalue_type disp = c.fetch(word_size(), 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tdb%s %%d%u,%#lx\n", Condition::text(), reg1,
       long_word_size::uvalue(c.regs.pc + 2 + disp) + 0UL);
 #endif
@@ -127,7 +127,7 @@ namespace
   m68k_s(uint16_type op, context &c, unsigned long data)
   {
     Destination ea1(op & 0x7, 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\ts%s%s %s\n", Condition::text(), byte_size::suffix(),
       ea1.text(c).c_str());
 #endif
@@ -148,7 +148,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tsubq%s #%d,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
 
@@ -169,7 +169,7 @@ namespace
     int value2 = op >> 9 & 0x7;
     if (value2 == 0)
       value2 = 8;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tsubq%s #%d,%%a%u\n", Size::suffix(), value2, reg1);
 #endif
 

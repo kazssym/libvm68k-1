@@ -60,7 +60,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     Destination ea2(op >> 9 & 0x7, 2 + ea1.extension_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmove%s %s,%s\n", Size::suffix(), ea1.text(c).c_str(),
       ea2.text(c).c_str());
 #endif
@@ -80,7 +80,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmovea%s %s,%%a%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 

@@ -51,6 +51,8 @@ namespace vm68k
 
   public:
     basic_uint16_iterator(const T &ptr);
+    template <class U>
+    basic_uint16_iterator(const basic_uint16_iterator<U> &x);
 
   public:
     T base() const {return p;}
@@ -59,27 +61,16 @@ namespace vm68k
     uint16_type operator*() const {return ref(p);}
     ref operator*() {return ref(p);}
 
-    basic_uint16_iterator &operator++();
-    basic_uint16_iterator operator++(int);
+    basic_uint16_iterator<T> &operator++();
+    basic_uint16_iterator<T> operator++(int x);
 
-    basic_uint16_iterator &operator--();
-    basic_uint16_iterator operator--(int);
+    basic_uint16_iterator<T> &operator--();
+    basic_uint16_iterator<T> operator--(int x);
 
-    basic_uint16_iterator &operator+=(ptrdiff_t n);
-    basic_uint16_iterator operator+(ptrdiff_t n) const;
-
-    basic_uint16_iterator &operator-=(ptrdiff_t n);
-    basic_uint16_iterator operator-(ptrdiff_t n) const;
-
-    uint16_type operator[](ptrdiff_t n) const {return *(*this + n);}
-    ref operator[](ptrdiff_t n) {return *(*this + n);}
-
-    bool operator==(const basic_uint16_iterator &x) const {return p == x.p;}
-    bool operator!=(const basic_uint16_iterator &x) const {return p != x.p;}
-    bool operator<(const basic_uint16_iterator &x) const {return p < x.p;}
-    bool operator>(const basic_uint16_iterator &x) const {return p > x.p;}
-    bool operator<=(const basic_uint16_iterator &x) const {return p >= x.p;}
-    bool operator>=(const basic_uint16_iterator &x) const {return p <= x.p;}
+    basic_uint16_iterator<T> &operator+=(ptrdiff_t n);
+    basic_uint16_iterator<T> &operator-=(ptrdiff_t n);
+    uint16_type operator[](ptrdiff_t n) const;
+    ref operator[](ptrdiff_t n);
   };
 
   /* Helper iterator for 32-bit value.  This iterator reads/writes four
@@ -106,6 +97,8 @@ namespace vm68k
 
   public:
     basic_uint32_iterator(const T &ptr);
+    template <class U>
+    basic_uint32_iterator(const basic_uint32_iterator<U> &x);
 
   public:
     T base() const {return p;}
@@ -114,27 +107,16 @@ namespace vm68k
     uint32_type operator*() const {return ref(p);}
     ref operator*() {return ref(p);}
 
-    basic_uint32_iterator &operator++();
-    basic_uint32_iterator operator++(int);
+    basic_uint32_iterator<T> &operator++();
+    basic_uint32_iterator<T> operator++(int x);
 
-    basic_uint32_iterator &operator--();
-    basic_uint32_iterator operator--(int);
+    basic_uint32_iterator<T> &operator--();
+    basic_uint32_iterator<T> operator--(int x);
 
-    basic_uint32_iterator &operator+=(ptrdiff_t n);
-    basic_uint32_iterator operator+(ptrdiff_t n) const;
-
-    basic_uint32_iterator &operator-=(ptrdiff_t n);
-    basic_uint32_iterator operator-(ptrdiff_t n) const;
-
-    uint32_type operator[](ptrdiff_t n) const {return *(*this + n);}
-    ref operator[](ptrdiff_t n) {return *(*this + n);}
-
-    bool operator==(const basic_uint32_iterator &x) const {return p == x.p;}
-    bool operator!=(const basic_uint32_iterator &x) const {return p != x.p;}
-    bool operator<(const basic_uint32_iterator &x) const {return p < x.p;}
-    bool operator>(const basic_uint32_iterator &x) const {return p > x.p;}
-    bool operator<=(const basic_uint32_iterator &x) const {return p >= x.p;}
-    bool operator>=(const basic_uint32_iterator &x) const {return p <= x.p;}
+    basic_uint32_iterator<T> &operator+=(ptrdiff_t n);
+    basic_uint32_iterator<T> &operator-=(ptrdiff_t n);
+    uint32_type operator[](ptrdiff_t n) const;
+    ref operator[](ptrdiff_t n);
   };
 
   typedef basic_uint16_iterator<unsigned char *> uint16_iterator;
@@ -168,6 +150,22 @@ namespace vm68k
   }
 
   template <class T>
+  inline bool
+  operator==(const basic_uint16_iterator<T> &x,
+	     const basic_uint16_iterator<T> &y)
+  {
+    return x.base() == y.base();
+  }
+
+  template <class T>
+  inline bool
+  operator!=(const basic_uint16_iterator<T> &x,
+	     const basic_uint16_iterator<T> &y)
+  {
+    return !(x == y);
+  }
+
+  template <class T>
   inline basic_uint16_iterator<T> &
   basic_uint16_iterator<T>::operator++()
   {
@@ -177,7 +175,7 @@ namespace vm68k
 
   template <class T>
   inline basic_uint16_iterator<T>
-  basic_uint16_iterator<T>::operator++(int)
+  basic_uint16_iterator<T>::operator++(int x)
   {
     basic_uint16_iterator<T> old = *this;
     ++(*this);
@@ -194,7 +192,7 @@ namespace vm68k
 
   template <class T>
   inline basic_uint16_iterator<T>
-  basic_uint16_iterator<T>::operator--(int)
+  basic_uint16_iterator<T>::operator--(int x)
   {
     basic_uint16_iterator<T> old = *this;
     --(*this);
@@ -210,14 +208,6 @@ namespace vm68k
   }
 
   template <class T>
-  inline basic_uint16_iterator<T>
-  basic_uint16_iterator<T>::operator+(ptrdiff_t n) const
-  {
-    basic_uint16_iterator<T> tmp(*this);
-    return tmp += n;
-  }
-
-  template <class T>
   inline basic_uint16_iterator<T> &
   basic_uint16_iterator<T>::operator-=(ptrdiff_t n)
   {
@@ -227,16 +217,70 @@ namespace vm68k
 
   template <class T>
   inline basic_uint16_iterator<T>
-  basic_uint16_iterator<T>::operator-(ptrdiff_t n) const
+  operator+(const basic_uint16_iterator<T> &x, ptrdiff_t n)
   {
-    basic_uint16_iterator<T> tmp(*this);
+    basic_uint16_iterator<T> tmp(x);
+    return tmp += n;
+  }
+
+  template <class T>
+  inline basic_uint16_iterator<T>
+  operator+(ptrdiff_t n, const basic_uint16_iterator<T> &x)
+  {
+    return x + n;
+  }
+
+  template <class T>
+  inline basic_uint16_iterator<T>
+  operator-(const basic_uint16_iterator<T> &x, ptrdiff_t n)
+  {
+    basic_uint16_iterator<T> tmp(x);
     return tmp -= n;
+  }
+
+  template <class T>
+  inline ptrdiff_t
+  operator-(const basic_uint16_iterator<T> &x,
+	    const basic_uint16_iterator<T> &y)
+  {
+    return (x.base() - y.base()) / 2;
+  }
+
+  template <class T>
+  inline bool
+  operator<(const basic_uint16_iterator<T> &x,
+	    const basic_uint16_iterator<T> &y)
+  {
+    return x.base() < y.base();
+  }
+
+  template <class T>
+  inline uint16_type
+  basic_uint16_iterator<T>::operator[](ptrdiff_t n) const
+  {
+    return *(*this + n);
+  }
+
+  template <class T>
+  inline basic_uint16_iterator<T>::ref
+  basic_uint16_iterator<T>::operator[](ptrdiff_t n)
+  {
+    return *(*this + n);
   }
 
   template <class T>
   inline
   basic_uint16_iterator<T>::basic_uint16_iterator(const T &ptr)
     : p(ptr)
+  {
+  }
+
+  template <class T>
+  template <class U>
+  inline
+  basic_uint16_iterator<T>::basic_uint16_iterator(const
+						  basic_uint16_iterator<U> &x)
+    : p(x.base())
   {
   }
   
@@ -269,6 +313,22 @@ namespace vm68k
   }
 
   template <class T>
+  inline bool
+  operator==(const basic_uint32_iterator<T> &x,
+	     const basic_uint32_iterator<T> &y)
+  {
+    return x.base() == y.base();
+  }
+
+  template <class T>
+  inline bool
+  operator!=(const basic_uint32_iterator<T> &x,
+	     const basic_uint32_iterator<T> &y)
+  {
+    return !(x == y);
+  }
+
+  template <class T>
   inline basic_uint32_iterator<T> &
   basic_uint32_iterator<T>::operator++()
   {
@@ -278,7 +338,7 @@ namespace vm68k
 
   template <class T>
   inline basic_uint32_iterator<T>
-  basic_uint32_iterator<T>::operator++(int)
+  basic_uint32_iterator<T>::operator++(int x)
   {
     basic_uint32_iterator<T> old = *this;
     ++(*this);
@@ -295,7 +355,7 @@ namespace vm68k
 
   template <class T>
   inline basic_uint32_iterator<T>
-  basic_uint32_iterator<T>::operator--(int)
+  basic_uint32_iterator<T>::operator--(int x)
   {
     basic_uint32_iterator<T> old = *this;
     --(*this);
@@ -311,14 +371,6 @@ namespace vm68k
   }
 
   template <class T>
-  inline basic_uint32_iterator<T>
-  basic_uint32_iterator<T>::operator+(ptrdiff_t n) const
-  {
-    basic_uint32_iterator<T> tmp(*this);
-    return tmp += n;
-  }
-
-  template <class T>
   inline basic_uint32_iterator<T> &
   basic_uint32_iterator<T>::operator-=(ptrdiff_t n)
   {
@@ -328,16 +380,70 @@ namespace vm68k
 
   template <class T>
   inline basic_uint32_iterator<T>
-  basic_uint32_iterator<T>::operator-(ptrdiff_t n) const
+  operator+(const basic_uint32_iterator<T> &x, ptrdiff_t n)
   {
-    basic_uint32_iterator<T> tmp(*this);
+    basic_uint32_iterator<T> tmp(x);
+    return tmp += n;
+  }
+
+  template <class T>
+  inline basic_uint32_iterator<T>
+  operator+(ptrdiff_t n, const basic_uint32_iterator<T> &x)
+  {
+    return x + n;
+  }
+
+  template <class T>
+  inline basic_uint32_iterator<T>
+  operator-(const basic_uint32_iterator<T> &x, ptrdiff_t n)
+  {
+    basic_uint32_iterator<T> tmp(x);
     return tmp -= n;
+  }
+
+  template <class T>
+  inline ptrdiff_t
+  operator-(const basic_uint32_iterator<T> &x,
+	    const basic_uint32_iterator<T> &y)
+  {
+    return (x.base() - y.base()) / 2;
+  }
+
+  template <class T>
+  inline bool
+  operator<(const basic_uint32_iterator<T> &x,
+	    const basic_uint32_iterator<T> &y)
+  {
+    return x.base() < y.base();
+  }
+
+  template <class T>
+  inline uint32_type
+  basic_uint32_iterator<T>::operator[](ptrdiff_t n) const
+  {
+    return *(*this + n);
+  }
+
+  template <class T>
+  inline basic_uint32_iterator<T>::ref
+  basic_uint32_iterator<T>::operator[](ptrdiff_t n)
+  {
+    return *(*this + n);
   }
 
   template <class T>
   inline
   basic_uint32_iterator<T>::basic_uint32_iterator(const T &ptr)
     : p(ptr)
+  {
+  }
+
+  template <class T>
+  template <class U>
+  inline
+  basic_uint32_iterator<T>::basic_uint32_iterator(const
+						  basic_uint32_iterator<U> &x)
+    : p(x.base())
   {
   }
 }

@@ -59,7 +59,7 @@ exec_unit::run(context &c) const
       if (c.interrupted())
 	c.handle_interrupts();
 
-#ifdef HAVE_NANA_H
+#ifdef LG
 # ifdef DUMP_REGISTERS
       for (unsigned int i = 0; i != 8; ++i)
 	{

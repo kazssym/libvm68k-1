@@ -61,7 +61,7 @@ namespace
   {
     typename Size::svalue_type value2 = c.fetch(Size(), 2);
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\taddi%s #%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
       ea1.text(c).c_str());
 #endif
@@ -81,7 +81,7 @@ namespace
   {
     typename Size::svalue_type value2 = c.fetch(Size(), 2);
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tandi%s #%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
       ea1.text(c).c_str());
 #endif
@@ -101,7 +101,7 @@ namespace
   m68k_andi_to_ccr(uint16_type op, context &c, unsigned long data)
   {
     byte_size::uvalue_type value2 = c.ufetch(byte_size(), 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tandi%s #%#x,%%ccr\n", byte_size::suffix(), value2);
 #endif
 
@@ -117,7 +117,7 @@ namespace
   m68k_andi_to_sr(uint16_type op, context &c, unsigned long data)
   {
     word_size::uvalue_type value2 = c.ufetch(word_size(), 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tandi%s #%#x,%%sr\n", word_size::suffix(), value2);
 #endif
 
@@ -138,7 +138,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tbclr%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
@@ -160,7 +160,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2 + 2);
     unsigned int value2 = c.ufetch(word_size(), 2) % Size::value_bit();
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tbclr%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
 
@@ -181,7 +181,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tbset%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
@@ -201,7 +201,7 @@ namespace
   {
     unsigned int value2 = c.ufetch(word_size(), 2) % Size::value_bit();
     Destination ea1(op & 0x7, 2 + word_size::aligned_value_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tbset%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
 
@@ -223,7 +223,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tbtst%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
@@ -244,7 +244,7 @@ namespace
   {
     unsigned int value2 = c.ufetch(word_size(), 2) % Size::value_bit();
     Destination ea1(op & 0x7, 2 + word_size::aligned_value_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tbtst%s #%u,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
 
@@ -266,7 +266,7 @@ namespace
   {
     unsigned int bit = c.fetch(word_size(), 2) & 0x7;
     Destination ea1(op & 0x7, 2 + 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L(" btstb #%u", bit);
     L(",%s\n", ea1.textb(c));
 #endif
@@ -283,7 +283,7 @@ namespace
   {
     unsigned int reg1 = op & 0x7;
     unsigned int bit = ec.fetch(word_size(), 2) & 0x1f;
-#ifdef HAVE_NANA_H
+#ifdef L
     L(" btstl #%u", bit);
     L(",%%d%u\n", reg1);
 #endif
@@ -301,7 +301,7 @@ namespace
   {
     typename Size::svalue_type value2 = c.fetch(Size(), 2);
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tcmpi%s #%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
       ea1.text(c).c_str());
 #endif
@@ -321,7 +321,7 @@ namespace
   {
     typename Size::svalue_type value2 = c.fetch(Size(), 2);
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\teori%s #%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
       ea1.text(c).c_str());
 #endif
@@ -342,7 +342,7 @@ namespace
   {
     typename Size::svalue_type value2 = c.fetch(Size(), 2);
     Destination ea1(op & 0x7, 2 + Size::aligned_value_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tori%s #%#lx,%s", Size::suffix(), Size::uvalue(value2) + 0UL,
       ea1.text(c).c_str());
 #endif
@@ -363,7 +363,7 @@ namespace
   m68k_ori_to_ccr(uint16_type op, context &c, unsigned long data)
   {
     byte_size::uvalue_type value2 = c.ufetch(byte_size(), 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tori%s #%#x,%%ccr\n", byte_size::suffix(), value2);
 #endif
 
@@ -379,7 +379,7 @@ namespace
   m68k_ori_to_sr(uint16_type op, context &c, unsigned long data)
   {
     word_size::uvalue_type value2 = c.ufetch(word_size(), 2);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tori%s #%#x,%%sr\n", word_size::suffix(), value2);
 #endif
 
@@ -400,7 +400,7 @@ namespace
   {
     typename Size::svalue_type value2 = c.fetch(word_size(), 2);
     Destination ea1(op & 0x7, 2 + word_size::aligned_value_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tsubi%s #%#lx,%s\n", Size::suffix(), Size::uvalue(value2) + 0UL,
       ea1.text(c).c_str());
 #endif

@@ -1,3 +1,14 @@
+2001-07-03  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* vm68k/iterator.h (class basic_uint16_iterator): Add template
+	constructor.  Remove operators >, <=, and >=.  Make operators +,
+	-, ==, and != non-member.
+	(class basic_uint16_iterator): Likewise.
+
+2001-07-02  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* Change tests for Nana macros.
+
 2001-07-01  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* memory_map.cc: Move Nana inclusion first.  Use "vm68k/memory.h"

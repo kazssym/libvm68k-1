@@ -60,7 +60,7 @@ namespace
   {
     long_word_size::svalue_type value = byte_size::svalue(op);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tmoveq%s #%#x,%%d%u\n", long_word_size::suffix(),
       byte_size::uvalue(value), reg2);
 #endif

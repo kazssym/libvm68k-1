@@ -73,7 +73,7 @@ namespace
 	disp = byte_size::svalue(disp);
 	extsize = 0;
       }
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tb%s %#lx\n", Condition::text(),
       long_word_size::uvalue(c.regs.pc + 2 + disp) + 0UL);
 #endif
@@ -96,7 +96,7 @@ namespace
       }
     else
       disp = byte_size::svalue(disp);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tbra %#lx\n", long_word_size::uvalue(c.regs.pc + 2 + disp) + 0UL);
 #endif
 
@@ -117,7 +117,7 @@ namespace
       }
     else
       disp = byte_size::svalue(disp);
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tbsr %#lx\n", long_word_size::uvalue(c.regs.pc + 2 + disp) + 0UL);
 #endif
 

@@ -60,7 +60,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tcmp%s %s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
@@ -79,7 +79,7 @@ namespace
   {
     Source ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tcmpa%s %s,%%a%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
@@ -99,7 +99,7 @@ namespace
   {
     basic_postinc_indirect<Size> ea1(op & 0x7, 2);
     basic_postinc_indirect<Size> ea2(op >> 9 & 0x7, 2 + ea1.extension_size());
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\tcmpm%s %s,%s\n", Size::suffix(), ea1.text(c).c_str(),
       ea2.text(c).c_str());
 #endif
@@ -120,7 +120,7 @@ namespace
   {
     Destination ea1(op & 0x7, 2);
     unsigned int reg2 = op >> 9 & 0x7;
-#ifdef HAVE_NANA_H
+#ifdef L
     L("\teor%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
