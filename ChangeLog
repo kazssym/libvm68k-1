@@ -1,5 +1,18 @@
 2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* vm68k/addressing (class data_register_direct, class
+	address_register_direct, class indirect, class postinc_indirect,
+	class predec_indirect, class disp_indirect, class index_indirect,
+	class absolute_short, class absolute_long, class disp_pc_indirect,
+	class index_pc_indirect, class immediate): New class.
+	(class basic_d_register, class basic_a_register, class
+	basic_indirect, class basic_postinc_indirect, class
+	basic_predec_indirect, class basic_disp_indirect, class
+	basic_index_indirect, class basic_abs_short, class basic_abs_long,
+	class basic_disp_pc_indirect, class basic_index_pc_indirect, class
+	basic_immediate): Removed.  Also change all users using the new
+	classes above.
+
 	* processor.cc (_GNU_SOURCE): Defined.
 	(_POSIX_C_SOURCE): Defined.
 

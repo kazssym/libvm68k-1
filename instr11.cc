@@ -94,9 +94,9 @@ namespace vm68k
     uint32_type
     _cmpm(uint32_type pc, context &c, uint16_type w, void *)
     {
-      basic_postinc_indirect<Size> ea1(w & 7, pc + 2);
-      basic_postinc_indirect<Size> ea2(w >> 9 & 7,
-				       pc + 2 + ea1.extension_size());
+      old_addressing<postinc_indirect, Size> ea1(w & 7, pc + 2);
+      old_addressing<postinc_indirect, Size> ea2(w >> 9 & 7,
+						 pc + 2 + ea1.extension_size());
 #ifdef L
       L("\tcmpm%s %s,%s\n", Size::suffix(), ea1.text(c).c_str(),
 	ea2.text(c).c_str());
