@@ -1,6 +1,6 @@
 /* -*-C++-*- */
 /* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2001 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
    USA.  */
 
-#ifndef _VM68K_MEMORY_H
-#define _VM68K_MEMORY_H 1
+#ifndef _VM68K_BUS
+#define _VM68K_BUS 1
 
 #include <vm68k/types.h>
 #include <vector>
@@ -36,122 +36,140 @@ namespace vm68k
   const int ADDRESS_BIT = 24;
   const uint32_type NPAGES = uint32_type(1) << ADDRESS_BIT - PAGE_SHIFT;
 
-  /* Bus error or address error.  */
-  class memory_error: public exception
+  /* Function code, which identifies an access type.  */
+  enum function_code
+    {USER_DATA = 1,
+     USER_PROGRAM = 2,
+     SUPERVISOR_DATA = 5,
+     SUPERVISOR_PROGRAM = 6};
+
+  enum bus_direction
+    {WRITE = 0,
+     READ = 0x10};
+}
+
+namespace vm68k
+{
+  /* Bus error exception.  */
+  class bus_error: public exception
   {
   private:
-    uint32_type _address;
-    uint16_type _status;
+    const uint32_type _address;
+    const uint16_type _ssw;
 
-  protected:
-    memory_error(uint32_type address, uint16_type status)
-      : _address(address), _status(status) {}
+  public:
+    bus_error(uint32_type address, uint16_type ssw) throw ();
 
   public:
     uint32_type address() const throw () {return _address;}
-    uint16_type status() const throw () {return _status;}
-  };
-
-  /* Bus error exception.  */
-  struct bus_error: memory_error
-  {
-    bus_error(uint32_type address, uint16_type status) throw ();
-    int vecno() throw ();
+    uint16_type ssw() const throw () {return _ssw;}
     const char *what() const throw ();
   };
+
+  inline
+  bus_error::bus_error(uint32_type address,
+		       uint16_type ssw) throw ()
+    : _address(address),
+      _ssw(ssw)
+  {
+  }
 
   /* Address error exception.  */
-  struct address_error: memory_error
+  class address_error: public exception
   {
-    address_error(uint32_type address, uint16_type status) throw ();
-    int vecno() throw ();
+  private:
+    const uint32_type _address;
+    const uint16_type _ssw;
+
+  public:
+    address_error(uint32_type address, uint16_type ssw) throw ();
+
+  public:
+    uint32_type address() const throw () {return _address;}
+    uint16_type ssw() const throw () {return _ssw;}
     const char *what() const throw ();
   };
 
-  /* Abstract memory class.  */
-  class memory
+  inline
+  address_error::address_error(uint32_type address,
+			       uint16_type ssw) throw ()
+    : _address(address),
+      _ssw(ssw)
+  {
+  }
+}
+
+namespace vm68k
+{
+  /* Abstract bus target.  A bus target will be mapped within an address
+     space.  */
+  class bus_target
   {
   public:
-    /* Function code, which identifies an access type.  */
-    enum function_code
-    {
-      USER_DATA = 1,
-      USER_PROGRAM = 2,
-      SUPER_DATA = 5,
-      SUPER_PROGRAM = 6
-    };
-    enum access
-    {
-      WRITE = 0,
-      READ = 0x10
-    };
-
-  public:
-    virtual ~memory() {}
+    virtual ~bus_target() {}
 
   public:
     virtual int get_8(uint32_type address, function_code fc) const
-      throw (memory_error) = 0;
+      throw (bus_error) = 0;
     virtual uint16_type get_16(uint32_type address, function_code fc) const
-      throw (memory_error) = 0;
+      throw (bus_error) = 0;
     virtual uint32_type get_32(uint32_type address, function_code fc) const
-      throw (memory_error);
-
+      throw (bus_error);
     virtual void put_8(uint32_type address, int value, function_code fc)
-      throw (memory_error) = 0;
+      throw (bus_error) = 0;
     virtual void put_16(uint32_type address, uint16_type value,
-			function_code fc)
-      throw (memory_error) = 0;
+			function_code fc) throw (bus_error) = 0;
     virtual void put_32(uint32_type address, uint32_type value,
-			function_code fc)
-      throw (memory_error);
+			function_code fc) throw (bus_error);
   };
 
   /* Maps an address space to memories.  An address space is a
      software view of a target machine.  */
-  class memory_map
+  class bus
   {
-  public:
-    typedef memory::function_code function_code;
+  protected:
+    typedef vector<bus_target *> page_table_type;
 
   private:
-    vector<memory *> page_table;
+    page_table_type page_table;
 
   public:
-    memory_map();
-    virtual ~memory_map();
+    bus();
+    virtual ~bus();
 
   public:
-    static memory *null_memory() throw ();
+    static bus_target *no_target() throw ();
 
   protected:
     /* Finds a page that contains address ADDRESS.  */
-    vector<memory *>::const_iterator find_memory(uint32_type address) const;
-    vector<memory *>::iterator find_memory(uint32_type address);
+    page_table_type::iterator
+    find_memory(uint32_type address);
+    page_table_type::const_iterator
+    find_memory(uint32_type address) const;
 
   public:
     /* Fills an address range with memory.  */
-    void fill(uint32_type, uint32_type, memory *);
+    void fill_memory(uint32_type, uint32_type, bus_target *);
 
   public:
     /* Returns one byte at address ADDRESS in this address space.  */
     int get_8(uint32_type address, function_code fc) const
-      throw (memory_error);
+      throw (bus_error);
 
     /* Returns one word at address ADDRESS in this address space.  Any
        unaligned address will be handled.  */
     uint16_type get_16(uint32_type address, function_code fc) const
-      throw (memory_error);
+      throw (bus_error, address_error);
 
     /* Returns one word at address ADDRESS in this address space.
        The address must be word-aligned.  */
-    uint16_type get_16_unchecked(uint32_type address, function_code fc) const
-      throw (memory_error);
+    uint16_type get_16_aligned(uint32_type address, function_code fc) const
+      throw (bus_error);
 
     /* Returns one long word at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
     uint32_type get_32(uint32_type address, function_code fc) const
-      throw (memory_error);
+      throw (bus_error, address_error);
 
     string get_string(uint32_type address, function_code fc) const;
 
@@ -159,87 +177,71 @@ namespace vm68k
 
     /* Stores byte VALUE at address ADDRESS in this address space.  */
     void put_8(uint32_type address, int value, function_code fc)
-      throw (memory_error);
+      throw (bus_error);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        Any unaligned address will be handled.  */
     void put_16(uint32_type address, uint16_type value, function_code fc)
-      throw (memory_error);
+      throw (bus_error, address_error);
 
     /* Stores word VALUE at address ADDRESS in this address space.
        The address must be word-aligned.  */
-    void put_16_unchecked(uint32_type address, uint16_type value,
+    void put_16_aligned(uint32_type address, uint16_type value,
 			  function_code fc)
-      throw (memory_error);
+      throw (bus_error);
 
     /* Stores long word VALUE at address ADDRESS in this address
        space.  Any unaligned address will be handled.  */
     void put_32(uint32_type address, uint32_type value, function_code fc)
-      throw (memory_error);
+      throw (bus_error, address_error);
 
     void put_string(uint32_type address, const string &, function_code fc);
 
     void write(uint32_type, const void *, size_t, function_code fc);
   };
-  
-  inline
-  bus_error::bus_error(uint32_type address,
-		       uint16_type status) throw ()
-    : memory_error(address, status)
-  {
-  }
 
-  inline
-  address_error::address_error(uint32_type address,
-			       uint16_type status) throw ()
-    : memory_error(address, status)
-  {
-  }
-
-  inline vector<memory *>::const_iterator
-  memory_map::find_memory(uint32_type address) const
+  inline bus::page_table_type::iterator
+  bus::find_memory(uint32_type address)
   {
     return page_table.begin() + (address >> PAGE_SHIFT) % NPAGES;
   }
 
-  inline vector<memory *>::iterator
-  memory_map::find_memory(uint32_type address)
+  inline bus::page_table_type::const_iterator
+  bus::find_memory(uint32_type address) const
   {
-    return page_table.begin() + (address >> PAGE_SHIFT) % NPAGES;
+    return const_cast<bus *>(this)->find_memory(address);
   }
 
   inline int
-  memory_map::get_8(uint32_type address, function_code fc) const
-    throw (memory_error)
+  bus::get_8(uint32_type address, function_code fc) const throw (bus_error)
   {
-    const memory *p = *this->find_memory(address);
+    const bus_target *p = *this->find_memory(address);
     return p->get_8(address, fc);
   }
 
   inline uint16_type
-  memory_map::get_16_unchecked(uint32_type address, function_code fc) const
-    throw (memory_error)
+  bus::get_16_aligned(uint32_type address, function_code fc) const
+    throw (bus_error)
   {
-    const memory *p = *this->find_memory(address);
+    const bus_target *p = *this->find_memory(address);
     return p->get_16(address, fc);
   }
 
   inline void
-  memory_map::put_8(uint32_type address, int value, function_code fc)
-    throw (memory_error)
+  bus::put_8(uint32_type address, int value, function_code fc)
+    throw (bus_error)
   {
-    memory *p = *this->find_memory(address);
+    bus_target *p = *this->find_memory(address);
     p->put_8(address, value, fc);
   }
 
   inline void
-  memory_map::put_16_unchecked(uint32_type address, uint16_type value,
-			       function_code fc)
-    throw (memory_error)
+  bus::put_16_aligned(uint32_type address, uint16_type value,
+		      function_code fc) throw (bus_error)
   {
-    memory *p = *this->find_memory(address);
+    bus_target *p = *this->find_memory(address);
     p->put_16(address, value, fc);
   }
 }
 
-#endif /* not _VM68K_MEMORY_H */
+#endif /* not _VM68K_BUS */

@@ -1,3 +1,31 @@
+2002-05-08  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
+
+	* bus.cc (fill_memory): Renamed from fill.
+	(class no_target): Renamed from missing_memory.  Also change all
+	users.
+	(no_target): Renamed from null_memory.  Also change all users.
+	(no_target): Use a static variable for the return value.
+
+	* bus_target.cc (vecno): Removed.
+
+	* vm68k/bus: Renamed from memory.h.  Also change all users.
+	(enum function_code): Moved out of class memory.
+	(enum bus_direction): Renamed from access and moved out of class
+	memory.
+	(class memory_error): Removed.
+	(class bus_error, class address_error): Move members from
+	memory_error.  Rename member status to ssw.  Remove member vecno.
+	(class bus_target): Renamed from memory.  Also change all users.
+	(class bus_target): Change members to throw just bus errors.
+	(class bus): Renamed from memory_map.  Also change all users.
+	(class bus): Add new typedef page_table_type.  Rename member
+	null_memory to no_target.  Rename get_16_unchecked to
+	get_16_aligned, and put_16_unchecked to put_16_aligned.
+	(class bus): Change put_8, put_16_aligned, get_8 and
+	get_16_aligned to throw just bus_error.  Change put_16, put_32,
+	get_16 and get_32 to throw bus_error and address_error.
+	(find_memory): Use const_cast in the const override.
+
 2001-12-07  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* vm68k/memory.h (class memory_error): Renamed from

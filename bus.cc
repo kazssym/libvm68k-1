@@ -1,5 +1,5 @@
 /* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2001 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
    USA.  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
-#undef const			// C++ must have `const'.
+#undef const
+#undef inline
 
 #define _GNU_SOURCE 1
 #define _POSIX_C_SOURCE 199506L	// We want POSIX.1c if not GNU.
@@ -31,7 +32,7 @@
 # define I assert
 #endif
 
-#include "vm68k/memory.h"
+#include <vm68k/bus>
 
 #include <algorithm>
 
@@ -40,31 +41,31 @@ namespace vm68k
   using namespace std;
 
   uint16_type
-  memory_map::get_16(uint32_type address, function_code fc) const
-    throw (memory_error)
+  bus::get_16(uint32_type address, function_code fc) const
+    throw (bus_error, address_error)
   {
     if ((address & 1) != 0)
-      throw address_error(address, memory::READ | fc);
+      throw address_error(address, READ | fc);
 
-    return get_16_unchecked(address, fc);
+    return get_16_aligned(address, fc);
   }
 
   uint32_type
-  memory_map::get_32(uint32_type address, function_code fc) const
-    throw (memory_error)
+  bus::get_32(uint32_type address, function_code fc) const
+    throw (bus_error, address_error)
   {
     if ((address & 1) != 0)
-      throw address_error(address, memory::READ | fc);
+      throw address_error(address, READ | fc);
 
     uint32_type value;
     if ((address >> 1 & 1) != 0)
       {
-	value = uint32_type(get_16_unchecked(address, fc)) << 16;
-	value |= get_16_unchecked(address + 2, fc) & 0xffff;
+	value = uint32_type(get_16_aligned(address, fc)) << 16;
+	value |= get_16_aligned(address + 2, fc) & 0xffff;
       }
     else
       {
-	const memory *p = *find_memory(address);
+	const bus_target *p = *find_memory(address);
 	value = p->get_32(address, fc);
       }
 
@@ -72,7 +73,7 @@ namespace vm68k
   }
 
   string
-  memory_map::get_string(uint32_type address, function_code fc) const
+  bus::get_string(uint32_type address, function_code fc) const
   {
     string s;
     for (;;)
@@ -88,7 +89,7 @@ namespace vm68k
 
   /* Read a block of data from memory.  */
   void
-  memory_map::read(uint32_type address, void *data, size_t size,
+  bus::read(uint32_type address, void *data, size_t size,
 		   function_code fc) const
   {
     unsigned char *i = static_cast<unsigned char *>(data);
@@ -99,36 +100,36 @@ namespace vm68k
   }
 
   void
-  memory_map::put_16(uint32_type address, uint16_type value, function_code fc)
-    throw (memory_error)
+  bus::put_16(uint32_type address, uint16_type value, function_code fc)
+    throw (bus_error, address_error)
   {
     if ((address & 1) != 0)
-      throw address_error(address, memory::WRITE | fc);
+      throw address_error(address, WRITE | fc);
 
-    put_16_unchecked(address, value, fc);
+    put_16_aligned(address, value, fc);
   }
 
   void
-  memory_map::put_32(uint32_type address, uint32_type value, function_code fc)
-    throw (memory_error)
+  bus::put_32(uint32_type address, uint32_type value, function_code fc)
+    throw (bus_error, address_error)
   {
     if ((address & 1) != 0)
-      throw address_error(address, memory::WRITE | fc);
+      throw address_error(address, WRITE | fc);
 
     if ((address >> 1 & 1) != 0)
       {
-	put_16_unchecked(address,     value >> 16, fc);
-	put_16_unchecked(address + 2, value,       fc);
+	put_16_aligned(address,     value >> 16, fc);
+	put_16_aligned(address + 2, value,       fc);
       }
     else
       {
-	memory *p = *find_memory(address);
+	bus_target *p = *find_memory(address);
 	p->put_32(address, value, fc);
       }
   }
 
   void
-  memory_map::put_string(uint32_type address, const string &s,
+  bus::put_string(uint32_type address, const string &s,
 			 function_code fc)
   {
     for (string::const_iterator i = s.begin();
@@ -141,7 +142,7 @@ namespace vm68k
 
   /* Write a block of data to memory.  */
   void
-  memory_map::write(uint32_type address, const void *data, size_t size,
+  bus::write(uint32_type address, const void *data, size_t size,
 		    function_code fc)
   {
     const unsigned char *i = static_cast<const unsigned char *>(data);
@@ -150,79 +151,81 @@ namespace vm68k
     while (i != last)
       put_8(address++, *i++, fc);
   }
-  
+
   void
-  memory_map::fill(uint32_type first, uint32_type last, memory *p)
+  bus::fill_memory(uint32_type first, uint32_type last, bus_target *t)
   {
-    vector<memory *>::iterator i = find_memory(last + PAGE_SIZE - 1);
+    vector<bus_target *>::iterator i = find_memory(last + PAGE_SIZE - 1);
     if (i == page_table.begin())
       i = page_table.end();
-    std::fill(find_memory(first), i, p);
+
+    std::fill(find_memory(first), i, t);
   }
-  
+}
+
+namespace vm68k
+{
   namespace
   {
     /* Default memory that always raises a bus error.  */
-    class missing_memory: public memory
+    class no_target: public bus_target
     {
     public:
       int get_8(uint32_type address, function_code) const
-	throw (memory_error);
+	throw (bus_error);
       uint16_type get_16(uint32_type address, function_code) const
-	throw (memory_error);
+	throw (bus_error);
 
       void put_8(uint32_type address, int, function_code)
-	throw (memory_error);
+	throw (bus_error);
       void put_16(uint32_type address, uint16_type, function_code)
-	throw (memory_error);
+	throw (bus_error);
     };
 
     int
-    missing_memory::get_8(uint32_type address, function_code fc) const
-      throw (memory_error)
+    no_target::get_8(uint32_type address, function_code fc) const
+      throw (bus_error)
     {
       throw bus_error(address, READ | fc);
     }
 
     uint16_type
-    missing_memory::get_16(uint32_type address, function_code fc) const
-      throw (memory_error)
+    no_target::get_16(uint32_type address, function_code fc) const
+      throw (bus_error)
     {
       I((address & 1) == 0);
       throw bus_error(address, READ | fc);
     }
 
     void
-    missing_memory::put_8(uint32_type address, int value, function_code fc)
-      throw (memory_error)
+    no_target::put_8(uint32_type address, int value, function_code fc)
+      throw (bus_error)
     {
       throw bus_error(address, WRITE | fc);
     }
 
     void
-    missing_memory::put_16(uint32_type address, uint16_type value,
-			   function_code fc)
-      throw (memory_error)
+    no_target::put_16(uint32_type address, uint16_type value, function_code fc)
+      throw (bus_error)
     {
       I((address & 1) == 0);
       throw bus_error(address, WRITE | fc);
     }
-
-    missing_memory __null_memory;
   }
 
-  memory *
-  memory_map::null_memory() throw ()
+  bus_target *
+  bus::no_target() throw ()
   {
-    return &__null_memory;
+    static class no_target t;
+    return &t;
   }
 
-  memory_map::~memory_map()
+  bus::~bus()
   {
   }
 
-  memory_map::memory_map()
-    : page_table(NPAGES, null_memory())
+  bus::bus()
+    : page_table(NPAGES, no_target())
   {
   }
 }
