@@ -1,5 +1,16 @@
 2001-12-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Makefile.am (libvm68k_la_SOURCES): Change the file names.
+
+	* instr6.cc: Renamed from inst6.cc.
+	* instr7.cc: Renamed from inst7.cc.
+	* instr8.cc: Renamed from inst8.cc.
+	* instr9.cc: Renamed from inst9.cc.
+	* instr11.cc: Renamed from inst11.cc.
+	* instr12.cc: Renamed from inst12.cc.
+	* instr13.cc: Renamed from inst13.cc.
+	* instr14.cc: Renamed from inst14.cc.
+
 	* Makefile.am (libvm68k_la_SOURCES): Change the file name.
 
 	* instr5.cc: Renamed from inst5.cc.  Change the instruction
