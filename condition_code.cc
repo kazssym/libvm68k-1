@@ -24,9 +24,7 @@
 
 #include <vm68k/processor.h>
 
-using vm68k::condition_code;
-using vm68k::bitset_condition_tester;
-using namespace vm68k::types;
+using namespace vm68k;
 
 namespace
 {

@@ -20,15 +20,13 @@
 #ifndef _VM68K_BUS
 #define _VM68K_BUS 1
 
-#include <vm68k/types.h>
+#include <vm68k/type>
 #include <vector>
 #include <string>
 #include <exception>
 
 namespace vm68k
 {
-  using namespace std;
-
   const int PAGE_SHIFT = 12;
   const uint32_type PAGE_SIZE = uint32_type(1) << PAGE_SHIFT;
 
@@ -51,7 +49,7 @@ namespace vm68k
 namespace vm68k
 {
   /* Bus error exception.  */
-  class bus_error: public exception
+  class bus_error: public std::exception
   {
   private:
     const uint32_type _address;
@@ -75,7 +73,7 @@ namespace vm68k
   }
 
   /* Address error exception.  */
-  class address_error: public exception
+  class address_error: public std::exception
   {
   private:
     const uint32_type _address;
@@ -128,7 +126,7 @@ namespace vm68k
   class bus
   {
   protected:
-    typedef vector<bus_target *> page_table_type;
+    typedef std::vector<bus_target *> page_table_type;
 
   private:
     page_table_type page_table;
@@ -171,7 +169,7 @@ namespace vm68k
     uint32_type get_32(uint32_type address, function_code fc) const
       throw (bus_error, address_error);
 
-    string get_string(uint32_type address, function_code fc) const;
+    std::string get_string(uint32_type address, function_code fc) const;
 
     void read(uint32_type, void *, size_t, function_code fc) const;
 
@@ -195,7 +193,7 @@ namespace vm68k
     void put_32(uint32_type address, uint32_type value, function_code fc)
       throw (bus_error, address_error);
 
-    void put_string(uint32_type address, const string &, function_code fc);
+    void put_string(uint32_type address, const std::string &, function_code fc);
 
     void write(uint32_type, const void *, size_t, function_code fc);
   };

@@ -188,7 +188,7 @@ namespace vm68k
     /* True if the thread in this context is interrupted.  */
     bool a_interrupted;
 
-    vector<queue<unsigned int> > interrupt_queues;
+    std::vector<std::queue<unsigned int> > interrupt_queues;
 
   public:
     explicit context(bus *);
@@ -263,7 +263,7 @@ namespace vm68k
 namespace vm68k
 {
   /* Base class of processor exceptions.  */
-  class processor_exception: public exception
+  class processor_exception: public std::exception
   {
   public:
     uint32_type pc() const throw () {return _pc;}
@@ -364,7 +364,10 @@ namespace vm68k
     : processor_exception(pc)
   {
   }
-
+}
+
+namespace vm68k
+{
   /* Decodes and executes an instruction sequence.  */
   class processor
   {
@@ -374,7 +377,7 @@ namespace vm68k
     (*instruction_handler)(uint32_type pc, context &, uint16_type w, void *);
 
     /* Type of an instruction.  */
-    typedef pair<instruction_handler, void *> instruction_type;
+    typedef std::pair<instruction_handler, void *> instruction_type;
 
   public:
     /* Raises an illegal instruction exception.  */
@@ -382,7 +385,7 @@ namespace vm68k
     illegal(uint32_type pc, context &, uint16_type w, void *);
 
   private:
-    vector<instruction_type> instructions;
+    std::vector<instruction_type> instructions;
 
   public:
     processor();

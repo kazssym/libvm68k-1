@@ -1,5 +1,17 @@
 2002-05-10  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* vm68k/processor.h (class context, class processor_exception,
+	class processor): Use std:: prefix.
+
+	* vm68k/bus (class bus_error, class address_error, class bus): Use
+	std:: prefix.
+
+	* vm68k/Makefile.am (vm68kinclude_HEADERS): Replace types.h with
+	type.
+
+	* vm68k/type: Renamed from types.h.  Remove namespace types.  Also
+	change all users.
+
 	* processor.cc (run): Handle bus_error and address_error.
 
 	* vm68k/processor.h (class processor_exception): Add pure virtual

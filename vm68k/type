@@ -1,6 +1,6 @@
 /* -*-C++-*- */
 /* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2001 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,53 +17,46 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
    USA.  */
 
-#ifndef __VM68K_TYPES_H
-#define __VM68K_TYPES_H 1
+#ifndef _VM68K_TYPE
+#define _VM68K_TYPE 1
 
 #include <climits>
 
 namespace vm68k
 {
-  using namespace std;
-
-  namespace types
-  {
 #if INT_MAX >= 0xffff
-    typedef int uint16_type;
+  typedef int uint16_type;
 #else
-    typedef unsigned int uint16_type;
+  typedef unsigned int uint16_type;
 #endif
 
 #if INT_MAX >= 0xffffffff
-    typedef int uint32_type;
+  typedef int uint32_type;
 #elif UINT_MAX >= 0xffffffff
-    typedef unsigned int uint32_type;
+  typedef unsigned int uint32_type;
 #elif LONG_MAX >= 0xffffffff
-    typedef long uint32_type;
+  typedef long uint32_type;
 #else
-    typedef unsigned long uint32_type;
+  typedef unsigned long uint32_type;
 #endif
 
 #if INT_MIN >= -0x7fff
-    typedef long sint16_type;
+  typedef long sint16_type;
 #else
-    typedef int sint16_type;
+  typedef int sint16_type;
 #endif
 
 #if LONG_MIN >= -0x7fffffff
 # ifdef __GNUC__
-    typedef long long sint32_type;
+  typedef long long sint32_type;
 # else
 #  error No type that can hold a m68k signed 32-bit number.
 # endif
 #elsif INT_MIN >= -0x7fffffff
-    typedef long sint32_type;
+  typedef long sint32_type;
 #else
-    typedef int sint32_type;
+  typedef int sint32_type;
 #endif
-  }
-
-  using namespace types;
 }
 
-#endif /* not __VM68K_TYPES_H */
+#endif /* not _VM68K_TYPE */

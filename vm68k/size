@@ -21,8 +21,6 @@
 #define __VM68K_SIZE 1
 
 #include <vm68k/bus>
-#include <vm68k/types.h>
-#include <cstddef>
 
 namespace vm68k
 {
