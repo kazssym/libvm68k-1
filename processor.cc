@@ -1,5 +1,5 @@
 /* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2001 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -47,26 +47,38 @@ namespace vm68k
 {
   uint32_type
   processor::run(uint32_type pc, context &c) const
+    throw (processor_exception)
   {
-    for (;;)
+    try
       {
-	if (c.interrupted())
-	  pc = c.handle_interrupts(pc);
+	for (;;)
+	  {
+	    if (c.interrupted())
+	      pc = c.handle_interrupts(pc);
 
 #ifdef LG
 # ifdef DUMP_REGISTERS
-	for (unsigned int i = 0; i != 8; ++i)
-	  {
-	    LG(nana_instruction_trace,
-	       "| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
-	       i, (unsigned long) c.regs.d[i],
-	       i, (unsigned long) c.regs.a[i]);
-	  }
+	    for (unsigned int i = 0; i != 8; ++i)
+	      {
+		LG(nana_instruction_trace,
+		   "| %%d%u = 0x%08lx, %%a%u = 0x%08lx\n",
+		   i, (unsigned long) c.regs.d[i],
+		   i, (unsigned long) c.regs.a[i]);
+	      }
 # endif
-	LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
-	   long_word::uvalue(pc) + 0UL, c.fetch_u(word(), pc));
+	    LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
+	       long_word::uvalue(pc) + 0UL, c.fetch_u(word(), pc));
 #endif
-	pc = step(pc, c);
+	    pc = dispatch(pc, c, c.fetch_u(word(), pc));
+	  }
+      }
+    catch (const bus_error &e)
+      {
+	throw bus_error_exception(pc, e);
+      }
+    catch (const address_error &e)
+      {
+	throw address_error_exception(pc, e);
       }
   }
 

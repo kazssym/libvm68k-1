@@ -1,6 +1,6 @@
 /* -*-C++-*- */
 /* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2001 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,55 +28,6 @@
 
 namespace vm68k
 {
-  using namespace std;
-
-  /* Base class of processor exceptions.  */
-  class processor_exception: public exception
-  {
-  private:
-    uint32_type _pc;
-
-  protected:
-    explicit processor_exception(uint32_type pc)
-      : _pc(pc) {}
-
-  public:
-    uint32_type pc() const throw () {return _pc;}
-  };
-
-  class bus_error_exception: public processor_exception
-  {
-  public:
-    explicit bus_error_exception(uint32_type pc);
-  };
-
-  class address_error_exception: public processor_exception
-  {
-  public:
-    explicit address_error_exception(uint32_type pc);
-  };
-
-  /* Illegal instruction exception.  */
-  struct illegal_instruction_exception: processor_exception
-  {
-    explicit illegal_instruction_exception(uint32_type pc)
-      : processor_exception(pc) {}
-  };
-
-  /* Zero divide exception.  */
-  struct zero_divide_exception: processor_exception
-  {
-    explicit zero_divide_exception(uint32_type pc)
-      : processor_exception(pc) {}
-  };
-
-  /* Privilege violation exception.  */
-  struct privilege_violation_exception: processor_exception
-  {
-    explicit privilege_violation_exception(uint32_type pc)
-      : processor_exception(pc) {}
-  };
-  
   /* Abstruct base class for condition testers.  */
   class condition_tester
   {
@@ -307,6 +258,112 @@ namespace vm68k
     return byte::svalue(word::uget_aligned(*mem, program_fc(),
 						       address));
   }
+}
+
+namespace vm68k
+{
+  /* Base class of processor exceptions.  */
+  class processor_exception: public exception
+  {
+  public:
+    uint32_type pc() const throw () {return _pc;}
+    virtual int vecno() const throw () = 0;
+
+  protected:
+    explicit processor_exception(uint32_type pc);
+
+  private:
+    uint32_type _pc;
+  };
+
+  inline
+  processor_exception::processor_exception(uint32_type pc)
+    : _pc(pc)
+  {
+  }
+
+  /* Bus error exception.  */
+  class bus_error_exception: public processor_exception
+  {
+  public:
+    bus_error_exception(uint32_type pc, const bus_error &source);
+    const bus_error &source() const throw () {return _source;}
+    int vecno() const throw () {return 2;}
+
+  private:
+    bus_error _source;
+  };
+
+  /* Constructor.  */
+  inline
+  bus_error_exception::bus_error_exception(uint32_type pc,
+					   const bus_error &source)
+    : processor_exception(pc),
+      _source(source)
+  {
+  }
+
+  /* Address error exception.  */
+  class address_error_exception: public processor_exception
+  {
+  public:
+    address_error_exception(uint32_type pc, const address_error &source);
+    const address_error &source() const throw () {return _source;}
+    int vecno() const throw () {return 3;}
+
+  private:
+    address_error _source;
+  };
+
+  /* Constructor.  */
+  inline
+  address_error_exception::address_error_exception(uint32_type pc,
+						   const address_error &source)
+    : processor_exception(pc),
+      _source(source)
+  {
+  }
+
+  /* Illegal instruction exception.  */
+  struct illegal_instruction_exception: processor_exception
+  {
+    explicit illegal_instruction_exception(uint32_type pc);
+    int vecno() const throw () {return 4;}
+  };
+
+  /* Constructor.  */
+  inline
+  illegal_instruction_exception::illegal_instruction_exception(uint32_type pc)
+    : processor_exception(pc)
+  {
+  }
+
+  /* Zero divide exception.  */
+  struct zero_divide_exception: processor_exception
+  {
+    explicit zero_divide_exception(uint32_type pc);
+    int vecno() const throw () {return 5;}
+  };
+
+  inline
+  zero_divide_exception::zero_divide_exception(uint32_type pc)
+    : processor_exception(pc)
+  {
+  }
+
+  /* Privilege violation exception.  */
+  struct privilege_violation_exception: processor_exception
+  {
+    explicit privilege_violation_exception(uint32_type pc);
+    int vecno() const throw () {return 8;}
+  };
+
+  /* Constructor.  */
+  inline
+  privilege_violation_exception::privilege_violation_exception(uint32_type pc)
+    : processor_exception(pc)
+  {
+  }
 
   /* Decodes and executes an instruction sequence.  */
   class processor
@@ -344,19 +401,14 @@ namespace vm68k
     /* Sets an instruction to operation codes.  */
     void set_instruction(int op, int mask, const instruction_type &i);
 
-    void set_instruction(int op, int mask, instruction_handler h)
-      {set_instruction(op, mask, instruction_type(h, 0));}
-
   protected:
     /* Dispatches for instruction handlers.  */
     uint32_type dispatch(uint32_type pc, context &c, uint16_type w) const;
 
   public:
-    /* Steps one instruction.  */
-    uint32_type step(uint32_type pc, context &c) const;
-
     /* Starts the program.  */
-    uint32_type run(uint32_type pc, context &c) const;
+    uint32_type run(uint32_type pc, context &c) const
+      throw (processor_exception);
   };
 
   inline uint32_type
@@ -364,12 +416,6 @@ namespace vm68k
   {
     w &= 0xffff;
     return instructions[w].first(pc, c, w, instructions[w].second);
-  }
-
-  inline uint32_type
-  processor::step(uint32_type pc, context &c) const
-  {
-    return dispatch(pc, c, c.fetch_u(word(), pc));
   }
 }
 

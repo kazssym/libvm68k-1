@@ -1,3 +1,18 @@
+2002-05-10  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
+
+	* processor.cc (run): Handle bus_error and address_error.
+
+	* vm68k/processor.h (class processor_exception): Add pure virtual
+	method vecno.
+	(class bus_error_exception, class address_error_exception):
+	Rewrote.
+	(struct illegal_instruction_exception, struct
+	zero_divide_exception, struct privilege_violation_exception): Add
+	method vecno.
+	(class processor): Remove method set_instruction override with a
+	instruction_handler.  Remove method step.  Add throw spec to
+	method run.
+
 2002-05-09  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* vm68k/processor.h (class processor): Change the fourth argument
