@@ -24,6 +24,7 @@
 
 #include "instr.h"
 
+#include <vm68k/size>
 #include <cstdio>
 
 #ifdef HAVE_NANA_H
@@ -49,11 +50,11 @@ namespace vm68k
     uint32_type
     _moveq(uint32_type pc, context &c, uint16_type w, void *)
     {
-      long_word::svalue_type value = byte::svalue(w);
+      long_word::svalue_type value = byte::normal_s(w);
       int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tmoveq%s #%#x,%%d%u\n", long_word::suffix(),
-	byte::uvalue(value), reg2);
+	byte::normal_u(value), reg2);
 #endif
 
       long_word::put(c.regs.d[reg2], value);
