@@ -1,5 +1,12 @@
 2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* vm68k/condition: Renamed from condition.h.  Also change all
+	users.
+	(namespace vm68k): Remove use namespace std.  Add explicit std
+	prefixes.
+	(namespace condition): Renamed from conditional.  Also change all
+	users.
+
 	* instr6.cc: Remove #include <vm68k/addressing>.
 	* instr7.cc: Likewise.
 
@@ -8,6 +15,8 @@
 
 	* vm68k/addressing: Renamed from add.h.  Also change all users.
 	(namespace addressing): Renamed from add.  Also change all users.
+	(namespace addressing): Remove use namespace std.  Add explicit
+	std prefixes.
 
 	* ChangeLog: Correct mail addresses.
 

@@ -24,7 +24,7 @@
 
 #include "instr.h"
 
-#include <vm68k/conditional.h>
+#include <vm68k/condition>
 #include <cstdio>
 
 #ifdef HAVE_NANA_H
@@ -46,7 +46,7 @@ namespace vm68k
 {
   namespace instr
   {
-    using namespace conditional;
+    using namespace condition;
 
     /* Handles a Bcc instruction.  */
     template <class Condition>

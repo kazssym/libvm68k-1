@@ -1,6 +1,6 @@
 /* -*-C++-*- */
-/* Virtual X68000 - X68000 virtual machine
-   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
+/* Libvm68k - M68000 virtual machine library
+   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,20 +16,18 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _VM68K_CONDITIONAL_H
-#define _VM68K_CONDITIONAL_H 1
+#ifndef _VM68K_CONDITION
+#define _VM68K_CONDITION 1
 
 #include <vm68k/processor>
 #include <functional>
 
 namespace vm68k
 {
-  using namespace std;
-
-  namespace conditional
+  namespace condition
   {
     /* T condition.  */
-    struct t: unary_function<context, bool>
+    struct t: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return true;}
@@ -39,7 +37,7 @@ namespace vm68k
     };
 
     /* F condition.  */
-    struct f: unary_function<context, bool>
+    struct f: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return false;}
@@ -49,7 +47,7 @@ namespace vm68k
     };
 
     /* HI condition.  */
-    struct hi: unary_function<context, bool>
+    struct hi: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.hi();}
@@ -59,7 +57,7 @@ namespace vm68k
     };
 
     /* LS condition.  */
-    struct ls: unary_function<context, bool>
+    struct ls: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.ls();}
@@ -69,7 +67,7 @@ namespace vm68k
     };
 
     /* CC (HS) condition.  */
-    struct cc: unary_function<context, bool>
+    struct cc: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.cc();}
@@ -79,7 +77,7 @@ namespace vm68k
     };
 
     /* CS (LO) condition.  */
-    struct cs: unary_function<context, bool>
+    struct cs: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.cs();}
@@ -89,7 +87,7 @@ namespace vm68k
     };
 
     /* NE condition.  */
-    struct ne: unary_function<context, bool>
+    struct ne: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.ne();}
@@ -99,7 +97,7 @@ namespace vm68k
     };
 
     /* EQ condition.  */
-    struct eq: unary_function<context, bool>
+    struct eq: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.eq();}
@@ -111,7 +109,7 @@ namespace vm68k
     /* FIXME: VC and VS conditions missing.  */
 
     /* PL condition.  */
-    struct pl: unary_function<context, bool>
+    struct pl: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.pl();}
@@ -121,7 +119,7 @@ namespace vm68k
     };
 
     /* MI condition.  */
-    struct mi: unary_function<context, bool>
+    struct mi: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.mi();}
@@ -131,7 +129,7 @@ namespace vm68k
     };
 
     /* GE condition.  */
-    struct ge: unary_function<context, bool>
+    struct ge: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.ge();}
@@ -141,7 +139,7 @@ namespace vm68k
     };
 
     /* LT condition.  */
-    struct lt: unary_function<context, bool>
+    struct lt: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.lt();}
@@ -151,7 +149,7 @@ namespace vm68k
     };
 
     /* GT condition.  */
-    struct gt: unary_function<context, bool>
+    struct gt: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.gt();}
@@ -161,7 +159,7 @@ namespace vm68k
     };
 
     /* LE condition.  */
-    struct le: unary_function<context, bool>
+    struct le: std::unary_function<context, bool>
     {
       bool operator()(const context &c) const
       {return c.regs.ccr.le();}
@@ -172,4 +170,4 @@ namespace vm68k
   }
 }
 
-#endif /* not _VM68K_CONDITIONAL_H */
+#endif /* not _VM68K_CONDITION */
