@@ -1,3 +1,8 @@
+2001-12-07  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* instr13.cc: Change the instruction handlers.
+	* instr14.cc: Likewise.
+
 2001-12-06  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* instr9.cc: Change the instruction handlers.
