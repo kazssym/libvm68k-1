@@ -17,7 +17,7 @@
    02111-1307, USA.  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
 #undef const
 #undef inline
@@ -112,7 +112,7 @@ namespace vm68k
 
       // XXX: The condition codes are not affected.
       uint32_type address = ea1.address(c);
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       uint32_type sp = c.regs.a[7] - long_word_size::aligned_value_size();
       long_word_size::put(*c.mem, fc, sp,
 			  pc + 2 + Destination::extension_size());
@@ -151,7 +151,7 @@ namespace vm68k
 #endif
 
       // XXX: The condition codes are not affected.
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       uint32_type fp = c.regs.a[7] - long_word_size::aligned_value_size();
       long_word_size::put(*c.mem, fc, fp, c.regs.a[reg1]);
       long_word_size::put(c.regs.a[7], fp + disp);
@@ -254,7 +254,7 @@ namespace vm68k
 
       // This instruction does not affect the condition codes.
       uint16_type m = 1;
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       uint32_type address = ea1.address(c);
       for (uint32_type *i = c.regs.d + 0; i != c.regs.d + 8; ++i)
 	{
@@ -291,7 +291,7 @@ namespace vm68k
 
       // This instruction does not affect the condition codes.
       uint16_type m = 1;
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       sint32_type address = long_word_size::get(c.regs.a[reg1]);
       // This instruction iterates registers in reverse.
       for (uint32_type *i = c.regs.a + 8; i != c.regs.a + 0; --i)
@@ -330,7 +330,7 @@ namespace vm68k
 
       // XXX: The condition codes are not affected.
       uint16_type m = 1;
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       uint32_type address = ea1.address(c);
       for (uint32_type *i = c.regs.d + 0; i != c.regs.d + 8; ++i)
 	{
@@ -368,7 +368,7 @@ namespace vm68k
 
       // This instruction does not affect the condition codes.
       uint16_type m = 1;
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       sint32_type address = long_word_size::get(c.regs.a[reg1]);
       // This instruction sign-extends words to long words.
       for (uint32_type *i = c.regs.d + 0; i != c.regs.d + 8; ++i)
@@ -455,7 +455,7 @@ namespace vm68k
 
       // XXX: The condition codes are not affected.
       uint32_type address = ea1.address(c);
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       uint32_type sp = c.regs.a[7] - long_word_size::aligned_value_size();
       long_word_size::put(*c.mem, fc, sp, address);
       long_word_size::put(c.regs.a[7], sp);
@@ -475,7 +475,7 @@ namespace vm68k
       if (!c.supervisor_state())
 	throw privilege_violation_exception(pc);
 
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       uint16_type status = word_size::uget(*c.mem, fc, c.regs.a[7] + 0);
       uint32_type address = long_word_size::uget(*c.mem, fc, c.regs.a[7] + 2);
       c.regs.a[7] += 6;
@@ -493,7 +493,7 @@ namespace vm68k
 #endif
 
       // XXX: The condition codes are not affected.
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       sint32_type address = long_word_size::get(*c.mem, fc, c.regs.a[7]);
       long_word_size::put(c.regs.a[7], c.regs.a[7] + 4);
 
@@ -547,7 +547,7 @@ namespace vm68k
 #endif
 
       // XXX: The condition codes are not affected.
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       uint32_type fp = c.regs.a[reg1];
       long_word_size::put(c.regs.a[reg1], long_word_size::get(*c.mem, fc, fp));
       long_word_size::put(c.regs.a[7],

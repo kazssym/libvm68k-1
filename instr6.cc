@@ -17,7 +17,7 @@
    02111-1307, USA.  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
 #undef const
 #undef inline
@@ -121,7 +121,7 @@ namespace vm68k
 #endif
 
       // XXX: The condition codes are not affected.
-      memory::function_code fc = c.data_fc();
+      function_code fc = c.data_fc();
       long_word_size::put(*c.mem, fc,
 			  c.regs.a[7] - long_word_size::aligned_value_size(),
 			  pc + 2 + len);

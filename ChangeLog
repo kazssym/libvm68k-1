@@ -1,5 +1,8 @@
 2002-05-08  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* vm68k/processor.h (class bus_error_exception, class
+	address_error_exception): New classes.
+
 	* vm68k/Makefile.am (vm68kinclude_HEADERS): Replace memory.h with
 	bus.
 

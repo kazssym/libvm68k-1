@@ -20,7 +20,7 @@
 #ifndef __VM68K_SIZE_H
 #define __VM68K_SIZE_H 1
 
-#include <vm68k/memory.h>
+#include <vm68k/bus>
 #include <vm68k/types.h>
 
 namespace vm68k
@@ -43,15 +43,12 @@ namespace vm68k
     static int svalue(int value);
 
     static int uget(const uint32_type &reg);
-    static int uget(const memory_map &,
-		    memory::function_code, uint32_type address);
+    static int uget(const bus &, function_code, uint32_type address);
     static int get(const uint32_type &reg);
-    static int get(const memory_map &,
-		   memory::function_code, uint32_type address);
+    static int get(const bus &, function_code, uint32_type address);
 
     static void put(uint32_type &reg, int value);
-    static void put(memory_map &, memory::function_code,
-		    uint32_type address, int value);
+    static void put(bus &, function_code, uint32_type address, int value);
 
     static const char *suffix() {return "b";}
   };
@@ -73,20 +70,16 @@ namespace vm68k
     static sint16_type svalue(uint16_type value);
 
     static uint16_type uget(const uint32_type &reg);
-    static uint16_type uget_unchecked(const memory_map &,
-				      memory::function_code,
+    static uint16_type uget_aligned(const bus &, function_code,
 				      uint32_type address);
-    static uint16_type uget(const memory_map &,
-			    memory::function_code, uint32_type address);
+    static uint16_type uget(const bus &, function_code, uint32_type address);
     static sint16_type get(const uint32_type &reg);
-    static sint16_type get_unchecked(const memory_map &,
-				     memory::function_code,
+    static sint16_type get_aligned(const bus &, function_code,
 				     uint32_type address);
-    static sint16_type get(const memory_map &,
-			   memory::function_code, uint32_type address);
+    static sint16_type get(const bus &, function_code, uint32_type address);
 
     static void put(uint32_type &reg, uint16_type value);
-    static void put(memory_map &, memory::function_code,
+    static void put(bus &, function_code,
 		    uint32_type address, uint16_type value);
 
     static const char *suffix() {return "w";}
@@ -110,20 +103,19 @@ namespace vm68k
     static sint32_type svalue(uint32_type value);
 
     static uint32_type uget(const uint32_type &reg);
-    static uint32_type uget_unchecked(const memory_map &,
-				      memory::function_code,
+    static uint32_type uget_aligned(const bus &, function_code,
 				      uint32_type address);
-    static uint32_type uget(const memory_map &,
-			    memory::function_code, uint32_type address);
+    static uint32_type uget(const bus &,
+			    function_code, uint32_type address);
     static sint32_type get(const uint32_type &reg);
-    static sint32_type get_unchecked(const memory_map &,
-				     memory::function_code,
+    static sint32_type get_aligned(const bus &,
+				     function_code,
 				     uint32_type address);
-    static sint32_type get(const memory_map &,
-			   memory::function_code, uint32_type address);
+    static sint32_type get(const bus &,
+			   function_code, uint32_type address);
 
     static void put(uint32_type &reg, uint32_type value);
-    static void put(memory_map &, memory::function_code,
+    static void put(bus &, function_code,
 		    uint32_type address, uint32_type value);
 
     static const char *suffix() {return "l";}
@@ -153,8 +145,8 @@ namespace vm68k
   }
 
   inline int
-  byte_size::uget(const memory_map &m,
-		  memory::function_code fc, uint32_type address)
+  byte_size::uget(const bus &m,
+		  function_code fc, uint32_type address)
   {
     return m.get_8(address, fc);
   }
@@ -166,7 +158,7 @@ namespace vm68k
   }
 
   inline int
-  byte_size::get(const memory_map &m, memory::function_code fc,
+  byte_size::get(const bus &m, function_code fc,
 		 uint32_type address)
   {
     return svalue(uget(m, fc, address));
@@ -179,7 +171,7 @@ namespace vm68k
   }
 
   inline void
-  byte_size::put(memory_map &m, memory::function_code fc,
+  byte_size::put(bus &m, function_code fc,
 		 uint32_type address, int value)
   {
     m.put_8(address, value, fc);
@@ -209,15 +201,15 @@ namespace vm68k
   }
 
   inline uint16_type
-  word_size::uget_unchecked(const memory_map &m,
-			    memory::function_code fc, uint32_type address)
+  word_size::uget_aligned(const bus &m,
+			    function_code fc, uint32_type address)
   {
-    return m.get_16_unchecked(address, fc);
+    return m.get_16_aligned(address, fc);
   }
 
   inline uint16_type
-  word_size::uget(const memory_map &m,
-		  memory::function_code fc, uint32_type address)
+  word_size::uget(const bus &m,
+		  function_code fc, uint32_type address)
   {
     return m.get_16(address, fc);
   }
@@ -229,15 +221,15 @@ namespace vm68k
   }
 
   inline sint16_type
-  word_size::get_unchecked(const memory_map &m,
-			   memory::function_code fc, uint32_type address)
+  word_size::get_aligned(const bus &m,
+			   function_code fc, uint32_type address)
   {
-    return svalue(uget_unchecked(m, fc, address));
+    return svalue(uget_aligned(m, fc, address));
   }
 
   inline sint16_type
-  word_size::get(const memory_map &m,
-		 memory::function_code fc, uint32_type address)
+  word_size::get(const bus &m,
+		 function_code fc, uint32_type address)
   {
     return svalue(uget(m, fc, address));
   }
@@ -249,7 +241,7 @@ namespace vm68k
   }
 
   inline void
-  word_size::put(memory_map &m, memory::function_code fc,
+  word_size::put(bus &m, function_code fc,
 		 uint32_type address, uint16_type value)
   {
     m.put_16(address, value, fc);
@@ -279,15 +271,15 @@ namespace vm68k
   }
 
   inline uint32_type
-  long_word_size::uget_unchecked(const memory_map &m,
-				 memory::function_code fc, uint32_type address)
+  long_word_size::uget_aligned(const bus &m,
+				 function_code fc, uint32_type address)
   {
     return m.get_32(address, fc);
   }
 
   inline uint32_type
-  long_word_size::uget(const memory_map &m,
-		       memory::function_code fc, uint32_type address)
+  long_word_size::uget(const bus &m,
+		       function_code fc, uint32_type address)
   {
     return m.get_32(address, fc);
   }
@@ -299,15 +291,15 @@ namespace vm68k
   }
 
   inline sint32_type
-  long_word_size::get_unchecked(const memory_map &m,
-				memory::function_code fc, uint32_type address)
+  long_word_size::get_aligned(const bus &m,
+				function_code fc, uint32_type address)
   {
-    return svalue(uget_unchecked(m, fc, address));
+    return svalue(uget_aligned(m, fc, address));
   }
 
   inline sint32_type
-  long_word_size::get(const memory_map &m,
-		      memory::function_code fc, uint32_type address)
+  long_word_size::get(const bus &m,
+		      function_code fc, uint32_type address)
   {
     return svalue(uget(m, fc, address));
   }
@@ -319,7 +311,7 @@ namespace vm68k
   }
 
   inline void
-  long_word_size::put(memory_map &m, memory::function_code fc,
+  long_word_size::put(bus &m, function_code fc,
 		      uint32_type address, uint32_type value)
   {
     m.put_32(address, value, fc);

@@ -17,7 +17,7 @@
    02111-1307, USA.  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
 #undef const
 #undef inline
@@ -68,11 +68,11 @@ namespace vm68k
 	set_sr(old_sr & ~0x700 | prio << 8);
 	set_supervisor_state(true);
 	regs.a[7] -= 6;
-	mem->put_32(regs.a[7] + 2, pc, memory::SUPER_DATA);
-	mem->put_16(regs.a[7] + 0, old_sr, memory::SUPER_DATA);
+	mem->put_32(regs.a[7] + 2, pc, SUPERVISOR_DATA);
+	mem->put_16(regs.a[7] + 0, old_sr, SUPERVISOR_DATA);
 
 	uint32_type address = vecno * 4u;
-	pc = mem->get_32(address, memory::SUPER_DATA);
+	pc = mem->get_32(address, SUPERVISOR_DATA);
 
 	a_interrupted = false;
 	vector<queue<unsigned int> >::iterator j = i;
@@ -98,8 +98,8 @@ namespace vm68k
 	    regs.ccr.set_s_bit(true);
 	    regs.a[7] = regs.ssp;
 
-	    pfc_cache = memory::SUPER_PROGRAM;
-	    dfc_cache = memory::SUPER_DATA;
+	    pfc_cache = SUPERVISOR_PROGRAM;
+	    dfc_cache = SUPERVISOR_DATA;
 	  }
       }
     else
@@ -110,8 +110,8 @@ namespace vm68k
 	    regs.ccr.set_s_bit(false);
 	    regs.a[7] = regs.usp;
 
-	    pfc_cache = memory::USER_PROGRAM;
-	    dfc_cache = memory::USER_DATA;
+	    pfc_cache = USER_PROGRAM;
+	    dfc_cache = USER_DATA;
 	  }
       }
   }
@@ -129,10 +129,10 @@ namespace vm68k
     regs.ccr = value;
   }
   
-  context::context(memory_map *m)
+  context::context(bus *m)
     : mem(m),
-      pfc_cache(regs.ccr.supervisor_state() ? memory::SUPER_PROGRAM : memory::USER_PROGRAM),
-      dfc_cache(regs.ccr.supervisor_state() ? memory::SUPER_DATA : memory::USER_DATA),
+      pfc_cache(regs.ccr.supervisor_state() ? SUPERVISOR_PROGRAM : USER_PROGRAM),
+      dfc_cache(regs.ccr.supervisor_state() ? SUPERVISOR_DATA : USER_DATA),
       a_interrupted(false),
       interrupt_queues(7)
   {

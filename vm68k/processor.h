@@ -21,7 +21,7 @@
 #define _VM68K_PROCESSOR_H 1
 
 #include <vm68k/size.h>		// Provisionally.
-#include <vm68k/memory.h>
+#include <vm68k/bus>
 #include <queue>
 #include <vector>
 #include <utility>
@@ -42,6 +42,18 @@ namespace vm68k
 
   public:
     uint32_type pc() const throw () {return _pc;}
+  };
+
+  class bus_error_exception: public processor_exception
+  {
+  public:
+    explicit bus_error_exception(uint32_type pc);
+  };
+
+  class address_error_exception: public processor_exception
+  {
+  public:
+    explicit address_error_exception(uint32_type pc);
   };
 
   /* Illegal instruction exception.  */
@@ -215,11 +227,11 @@ namespace vm68k
   {
   public:
     registers regs;
-    memory_map *mem;
+    bus *mem;
 
   private:
     /* Cache values for program and data FC's.  */
-    memory::function_code pfc_cache, dfc_cache;
+    function_code pfc_cache, dfc_cache;
 
   private:			// interrupt
     /* True if the thread in this context is interrupted.  */
@@ -228,7 +240,7 @@ namespace vm68k
     vector<queue<unsigned int> > interrupt_queues;
 
   public:
-    explicit context(memory_map *);
+    explicit context(bus *);
 
   public:
     /* Returns true if supervisor state.  */
@@ -246,10 +258,10 @@ namespace vm68k
 
   public:
     /* Returns the FC for program in the current state.  */
-    memory::function_code program_fc() const {return pfc_cache;}
+    function_code program_fc() const {return pfc_cache;}
 
     /* Returns the FC for data in the current state.  */
-    memory::function_code data_fc() const {return dfc_cache;}
+    function_code data_fc() const {return dfc_cache;}
 
   public:
     template <class Size>
@@ -273,26 +285,26 @@ namespace vm68k
   template <class Size> inline typename Size::uvalue_type
   context::fetch_u(Size, uint32_type address) const
   {
-    return Size::uget_unchecked(*mem, program_fc(), address);
+    return Size::uget_aligned(*mem, program_fc(), address);
   }
 
   template <> inline byte_size::uvalue_type
   context::fetch_u(byte_size, uint32_type address) const
   {
-    return byte_size::uvalue(word_size::uget_unchecked(*mem, program_fc(),
+    return byte_size::uvalue(word_size::uget_aligned(*mem, program_fc(),
 						       address));
   }
 
   template <class Size> inline typename Size::svalue_type
   context::fetch_s(Size, uint32_type address) const
   {
-    return Size::get_unchecked(*mem, program_fc(), address);
+    return Size::get_aligned(*mem, program_fc(), address);
   }
 
   template <> inline byte_size::svalue_type
   context::fetch_s(byte_size, uint32_type address) const
   {
-    return byte_size::svalue(word_size::uget_unchecked(*mem, program_fc(),
+    return byte_size::svalue(word_size::uget_aligned(*mem, program_fc(),
 						       address));
   }
 

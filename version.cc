@@ -17,7 +17,7 @@
    USA.  */
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
 #undef const			// C++ must have `const'.
 
