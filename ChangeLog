@@ -1,10 +1,16 @@
-2001-12-03  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
-
-	* instr4.cc: Change the instruction handlers.
+2001-12-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Makefile.am (libvm68k_la_SOURCES): Change the file name.
 
-	* instr4.cc: Renamed rom inst4.cc.
+	* instr5.cc: Renamed from inst5.cc.  Change the instruction
+	handlers.
+
+2001-12-03  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* Makefile.am (libvm68k_la_SOURCES): Change the file name.
+
+	* instr4.cc: Renamed rom inst4.cc.  Change the instruction
+	handlers.
 
 2001-12-02  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
