@@ -25,6 +25,7 @@
 #include "instr.h"
 
 #include <vm68k/condition>
+#include <vm68k/size>
 #include <cstdio>
 
 #ifdef HAVE_NANA_H
@@ -62,12 +63,12 @@ namespace vm68k
 	}
       else
 	{
-	  disp = byte::svalue(disp);
+	  disp = byte::normal_s(disp);
 	  extsize = 0;
 	}
 #ifdef L
       L("\tb%s %#lx\n", Condition::text(),
-	long_word::uvalue(pc + 2 + disp) + 0UL);
+	long_word::normal_u(pc + 2 + disp) + 0UL);
 #endif
 
       // This instruction does not affect the condition codes.
@@ -87,12 +88,12 @@ namespace vm68k
       if (disp == 0)
 	{
 	  disp = c.fetch_s(word(), pc + 2);
-	  len = word::aligned_value_size();
+	  len = word::aligned_size();
 	}
       else
-	disp = byte::svalue(disp);
+	disp = byte::normal_s(disp);
 #ifdef L
-      L("\tbra %#lx\n", long_word::uvalue(pc + 2 + disp) + 0UL);
+      L("\tbra %#lx\n", long_word::normal_u(pc + 2 + disp) + 0UL);
 #endif
 
       // XXX: The condition codes are not affected.
@@ -108,20 +109,19 @@ namespace vm68k
       if (disp == 0)
 	{
 	  disp = c.fetch_s(word(), pc + 2);
-	  len = word::aligned_value_size();
+	  len = word::aligned_size();
 	}
       else
-	disp = byte::svalue(disp);
+	disp = byte::normal_s(disp);
 #ifdef L
-      L("\tbsr %#lx\n", long_word::uvalue(pc + 2 + disp) + 0UL);
+      L("\tbsr %#lx\n", long_word::normal_u(pc + 2 + disp) + 0UL);
 #endif
 
       // XXX: The condition codes are not affected.
       function_code fc = c.data_fc();
-      long_word::put(*c.mem, fc,
-			  c.regs.a[7] - long_word::aligned_value_size(),
-			  pc + 2 + len);
-      c.regs.a[7] -= long_word::aligned_value_size();
+      long_word::put(*c.mem, c.regs.a[7] - long_word::aligned_size(), fc,
+		     pc + 2 + len);
+      c.regs.a[7] -= long_word::aligned_size();
 
       return pc + 2 + disp;
     }
