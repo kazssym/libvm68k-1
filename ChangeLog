@@ -1,3 +1,7 @@
+2001-12-06  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* instr9.cc: Change the instruction handlers.
+
 2001-12-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* vm68k/addressing.h: Change the addressing mode to take an
