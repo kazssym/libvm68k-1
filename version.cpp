@@ -29,8 +29,8 @@
 namespace vm68k
 {
   const char *
-  version() throw ()
+  version()
   {
-    return VERSION;
+    return PACKAGE_VERSION;
   }
 }

@@ -23,7 +23,7 @@
 namespace vm68k
 {
   /** Returns the version of this library.  */
-  const char *version() throw ();
+  const char *version();
 }
 
 #endif /* not __VM68K_MISC_H */

@@ -1,3 +1,4 @@
+<<<<<<< kazssym-0.9(w)/ChangeLog Wed, 02 Oct 2002 19:59:04 +0900 kazssym (libvm68k/30_ChangeLog 1.76.1.1.1.1 644)
 2002-10-02  Kaz Sasayama  <kaz2002@hypercore.co.jp>
 
 	* instr1-3.cc (m68k_move): Replace _move.
@@ -43,6 +44,51 @@
 	(class context): Rename member mem to _bus and make it private.
 	(class processor): Change signature of instruction_handler.
 	(class processor): Likewise for dispatch.
+=======
+2003-04-10  Kaz Sasayama  <kaz2003@hypercore.co.jp>
+
+	* Makefile.am (LIBS): Removed.
+
+	* vm68k/misc.h (vm68k): Remove throw spec.
+
+	* version.cpp (version): Use PACKAGE_VERSION.  Remove throw spec.
+
+	* Makefile.am (libvm68k_la_LDFLAGS): Use LDRELEASE.
+
+	* configure.ac: Use explicit quotes.
+	Rename LTLIBRELEASE to LDRELEASE.
+
+	* Makefile.am (libvm68k_la_SOURCES): Modify file names.
+
+	* instr1_3.cpp: Renamed from instr1-3.cpp.
+
+	* Changed C++ file suffix from .cc to .cpp.
+
+	* configure.ac: Updated.
+
+	* Upgrade to Automake 1.6.  All Makefile.in's regenerated.
+
+2003-03-25  Kaz Sasayama  <kaz2003@hypercore.co.jp>
+
+	* configure.ac: Renamed from configure.in, and updated for
+	autoconf 2.50 and later.
+	* configure: Regenerated.
+	* aclocal.m4: Regenerated.
+	* config.h.in: Regenerated.
+	* Makefile.in: Regenerated.
+	* vm68k/Makefile.in: Regenerated.
+
+	* Upgrade to GNU automake 1.5.  Also regenerate aclocal.m4,
+	configure, and all Makefile.in's.
+	* depcomp: New file.
+
+2002-10-02  Kaz Sasayama  <kaz2002@hypercore.co.jp>
+
+	* instr1-3.cc (m68k_move): Replace _move.
+	(m68k_movea): Replace _movea.
+
+	* vm68k/addressing: Use std:: for sprintf.
+>>>>>>> 0.129/ChangeLog Thu, 10 Apr 2003 22:23:57 +0900 kazssym (libvm68k/30_ChangeLog 1.76.1.9 644)
 
 2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
