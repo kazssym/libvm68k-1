@@ -1,5 +1,18 @@
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* NEWS: Updated.
+
+	* vm68k/processor.h (struct byte_size): Removed.
+	(struct word_size): Removed.
+	(struct long_word_size): Removed.
+
+	* vm68k/Makefile.am (vm68kinclude_HEADERS): Add size.h.
+
+	* vm68k/size.h: New file.
+	(struct byte_size): Moved from vm68k/processor.h.
+	(struct word_size): Likewise.
+	(struct long_word_size): Likewise.
+
 	* memory.cc (get_32): Add throw-spec.
 	(put_32): Likewise.
 

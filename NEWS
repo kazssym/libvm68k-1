@@ -1,5 +1,14 @@
 History of user-visible changes in Libvm68k.  -*-Outline-*-
 
+* Version 1.0.5
+
+** Interface Changes
+
+New headers <vm68k/iterator.h> and <vm68k/size.h> were added.
+
+Throw-specs were added to the methods of `class memory'.  This could
+break binary compatibility.
+
 * Version 1.0.4
 
 ** Interface Changes
