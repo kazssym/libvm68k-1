@@ -24,7 +24,7 @@
 
 #include "instr.h"
 
-#include <vm68k/processor.h>
+#include <vm68k/processor>
 
 #include <algorithm>
 

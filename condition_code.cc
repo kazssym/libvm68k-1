@@ -22,7 +22,7 @@
 #undef const
 #undef inline
 
-#include <vm68k/processor.h>
+#include <vm68k/processor>
 
 using namespace vm68k;
 

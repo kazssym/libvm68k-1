@@ -25,7 +25,6 @@
 #include "instr.h"
 
 #include <vm68k/add.h>
-#include <vm68k/processor.h>
 
 #include <cstdio>
 

@@ -83,7 +83,7 @@ LIBS =
 lib_LTLIBRARIES = libvm68k.la
 
 libvm68k_la_LDFLAGS = $(LTLIBRELEASE) -version-info 4:0:0
-libvm68k_la_SOURCES = version.cc bus_target.cc bus.cc processor.cc instr0.cc instr1-3.cc instr4.cc instr5.cc instr6.cc instr7.cc instr8.cc instr9.cc instr11.cc instr12.cc instr13.cc instr14.cc context.cc condition_code.cc
+libvm68k_la_SOURCES = bus_target.cc bus.cc condition_code.cc processor.cc instr0.cc instr1-3.cc instr4.cc instr5.cc instr6.cc instr7.cc instr8.cc instr9.cc instr11.cc instr12.cc instr13.cc instr14.cc context.cc version.cc
 
 
 noinst_HEADERS = instr.h
@@ -104,10 +104,10 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I.
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 libvm68k_la_LIBADD = 
-libvm68k_la_OBJECTS =  version.lo bus_target.lo bus.lo processor.lo \
-instr0.lo instr1-3.lo instr4.lo instr5.lo instr6.lo instr7.lo instr8.lo \
-instr9.lo instr11.lo instr12.lo instr13.lo instr14.lo context.lo \
-condition_code.lo
+libvm68k_la_OBJECTS =  bus_target.lo bus.lo condition_code.lo \
+processor.lo instr0.lo instr1-3.lo instr4.lo instr5.lo instr6.lo \
+instr7.lo instr8.lo instr9.lo instr11.lo instr12.lo instr13.lo \
+instr14.lo context.lo version.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)

@@ -22,7 +22,7 @@
 #undef const
 #undef inline
 
-#include <vm68k/processor.h>
+#include <vm68k/processor>
 
 #ifdef HAVE_NANA_H
 # include <nana.h>

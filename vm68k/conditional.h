@@ -19,8 +19,7 @@
 #ifndef _VM68K_CONDITIONAL_H
 #define _VM68K_CONDITIONAL_H 1
 
-#include <vm68k/processor.h>
-
+#include <vm68k/processor>
 #include <functional>
 
 namespace vm68k

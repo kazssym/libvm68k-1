@@ -19,8 +19,7 @@
 #ifndef _VM68K_ADDRESSING_H
 #define _VM68K_ADDRESSING_H 1
 
-#include <vm68k/processor.h>
-
+#include <vm68k/processor>
 #include <string>
 #include <cstdio>
 

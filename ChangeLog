@@ -1,3 +1,16 @@
+2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
+
+	* bus_target.cc: Move the location of #includes.
+	* bus.cc: Likewise.
+
+	* Makefile.am (libvm68k_la_SOURCES): Reorder files.
+
+	* vm68k/Makefile.am (vm68kinclude_HEADERS): Replace processor.h
+	with processor.
+
+	* vm68k/processor: Renamed from processor.h.  Also change all
+	users.
+
 2002-05-12  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* processor.cc (processor): Remove unsigned long data.

@@ -25,16 +25,15 @@
 #define _GNU_SOURCE 1
 #define _POSIX_C_SOURCE 199506L	// We want POSIX.1c if not GNU.
 
+#include <vm68k/bus>
+#include <algorithm>
+
 #ifdef HAVE_NANA_H
 # include <nana.h>
 #else
 # include <cassert>
 # define I assert
 #endif
-
-#include <vm68k/bus>
-
-#include <algorithm>
 
 namespace vm68k
 {
