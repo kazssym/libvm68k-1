@@ -46,7 +46,7 @@ namespace vm68k
     if ((address & 1) != 0)
       throw address_error(address, memory::READ | fc);
 
-    return this->get_16_unchecked(address, fc);
+    return get_16_unchecked(address, fc);
   }
 
   uint32_type
@@ -59,12 +59,12 @@ namespace vm68k
     uint32_type value;
     if ((address >> 1 & 1) != 0)
       {
-	value = uint32_type(this->get_16_unchecked(address, fc)) << 16;
-	value |= this->get_16_unchecked(address + 2, fc) & 0xffff;
+	value = uint32_type(get_16_unchecked(address, fc)) << 16;
+	value |= get_16_unchecked(address + 2, fc) & 0xffff;
       }
     else
       {
-	const memory *p = *this->find_memory(address);
+	const memory *p = *find_memory(address);
 	value = p->get_32(address, fc);
       }
 
@@ -77,7 +77,7 @@ namespace vm68k
     string s;
     for (;;)
       {
-	int c = this->get_8(address++, fc);
+	int c = get_8(address++, fc);
 	if (c == 0)
 	  break;
 	s += c;
@@ -95,7 +95,7 @@ namespace vm68k
     unsigned char *last = i + size;
 
     while (i != last)
-      *i++ = this->get_8(address++, fc);
+      *i++ = get_8(address++, fc);
   }
 
   void
@@ -105,7 +105,7 @@ namespace vm68k
     if ((address & 1) != 0)
       throw address_error(address, memory::WRITE | fc);
 
-    this->put_16_unchecked(address, value, fc);
+    put_16_unchecked(address, value, fc);
   }
 
   void
@@ -117,12 +117,12 @@ namespace vm68k
 
     if ((address >> 1 & 1) != 0)
       {
-	this->put_16_unchecked(address,     value >> 16, fc);
-	this->put_16_unchecked(address + 2, value,       fc);
+	put_16_unchecked(address,     value >> 16, fc);
+	put_16_unchecked(address + 2, value,       fc);
       }
     else
       {
-	memory *p = *this->find_memory(address);
+	memory *p = *find_memory(address);
 	p->put_32(address, value, fc);
       }
   }
@@ -134,9 +134,9 @@ namespace vm68k
     for (string::const_iterator i = s.begin();
 	 i != s.end();
 	 ++i)
-      this->put_8(address++, *i, fc);
+      put_8(address++, *i, fc);
 
-    this->put_8(address++, 0, fc);
+    put_8(address++, 0, fc);
   }
 
   /* Write a block of data to memory.  */
@@ -148,16 +148,16 @@ namespace vm68k
     const unsigned char *last = i + size;
 
     while (i != last)
-      this->put_8(address++, *i++, fc);
+      put_8(address++, *i++, fc);
   }
   
   void
   memory_map::fill(uint32_type first, uint32_type last, memory *p)
   {
-    vector<memory *>::iterator i = this->find_memory(last + PAGE_SIZE - 1);
+    vector<memory *>::iterator i = find_memory(last + PAGE_SIZE - 1);
     if (i == page_table.begin())
       i = page_table.end();
-    std::fill(this->find_memory(first), i, p);
+    std::fill(find_memory(first), i, p);
   }
   
   namespace
