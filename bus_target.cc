@@ -28,10 +28,10 @@
 #include <vm68k/bus>
 #include <cassert>
 
+using namespace std;
+
 namespace vm68k
 {
-  using namespace std;
-
   const char *
   bus_error::what() const throw ()
   {
