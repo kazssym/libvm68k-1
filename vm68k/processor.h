@@ -1,4 +1,4 @@
-/* -*- C++ -*- */
+/* -*-C++-*- */
 /* Libvm68k - M68000 virtual machine library
    Copyright (C) 1998-2001 Hypercore Software Design, Ltd.
 
