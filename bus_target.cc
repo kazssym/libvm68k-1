@@ -23,7 +23,7 @@
 #undef inline
 
 #define _GNU_SOURCE 1
-#define _POSIX_C_SOURCE 199506L	// We want POSIX.1c if not GNU.
+#define _POSIX_C_SOURCE 199506L	// POSIX.1c
 
 #include <vm68k/bus>
 

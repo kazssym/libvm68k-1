@@ -1,5 +1,10 @@
 2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* Makefile.am (libvm68k_la_SOURCES): Reorder files.
+
+	* condition_code.cc (_GNU_SOURCE): Defined.
+	(_POSIX_C_SOURCE): Defined.
+
 	* vm68k/condition: Renamed from condition.h.  Also change all
 	users.
 	(namespace vm68k): Remove use namespace std.  Add explicit std
