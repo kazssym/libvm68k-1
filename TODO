@@ -1,6 +1,5 @@
-vm68k TO DO
+List of things to do in Libvm68k.  -*- Outline -*-
 
-$Date: Wed, 13 Jun 2001 21:12:25 +0900 $
+* Interrupts
 
-* Interrupts.
-
+Interrupts could be handled by call-back functions.
