@@ -1,5 +1,5 @@
-/* vx68k - Virtual X68000
-   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
+/* Libvm68k - M68000 virtual machine library
+   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
