@@ -17,8 +17,8 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
    USA.  */
 
-#ifndef __VM68K_PROCESSOR_H
-#define __VM68K_PROCESSOR_H 1
+#ifndef _VM68K_PROCESSOR_H
+#define _VM68K_PROCESSOR_H 1
 
 #include <vm68k/size.h>		// Provisionally.
 #include <vm68k/memory.h>
@@ -346,4 +346,4 @@ namespace vm68k
   }
 }
 
-#endif /* not __VM68K_PROCESSOR_H */
+#endif /* not _VM68K_PROCESSOR_H */

@@ -1,5 +1,8 @@
 2001-12-02  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* processor.cc (run): Updated as the interface changed.
+	(illegal): Updated.
+
 	* context.cc: Use namespace blocks.
 	(handle_interrupts): Updated as the interface changed.
 

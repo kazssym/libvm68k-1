@@ -35,8 +35,9 @@
 #else
 # include <cassert>
 # define I assert
-# define VL(EXPR)
 #endif
+
+using namespace std;
 
 #ifdef HAVE_NANA_H
 bool nana_instruction_trace = false;
@@ -44,13 +45,13 @@ bool nana_instruction_trace = false;
 
 namespace vm68k
 {
-  void
-  processor::run(context &c) const
+  uint32_type
+  processor::run(uint32_type pc, context &c) const
   {
     for (;;)
       {
 	if (c.interrupted())
-	  c.handle_interrupts();
+	  pc = c.handle_interrupts(pc);
 
 #ifdef LG
 # ifdef DUMP_REGISTERS
@@ -63,9 +64,9 @@ namespace vm68k
 	  }
 # endif
 	LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
-	   long_word_size::uvalue(c.regs.pc) + 0UL, c.ufetch(word_size(), 0));
+	   long_word_size::uvalue(pc) + 0UL, c.fetch_u(word_size(), pc));
 #endif
-	step(c);
+	pc = step(pc, c);
       }
   }
 
@@ -109,8 +110,8 @@ namespace vm68k
   }
 
   /* Executes an illegal instruction.  */
-  void
-  processor::illegal(uint16_type op, context &c, unsigned long data)
+  uint32_type
+  processor::illegal(uint32_type pc, context &, uint16_type, unsigned long)
   {
     throw illegal_instruction_exception();
   }
