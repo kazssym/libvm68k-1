@@ -19,21 +19,21 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#undef const
-#undef inline
+#undef const			// C++ must have `const'.
 
-#include <vm68k/memory.h>
-
-#include <algorithm>
-#include <cstdio>
+#define _GNU_SOURCE 1
+#define _POSIX_C_SOURCE 199506L	// We want POSIX.1c if not GNU.
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
-# undef assert
-# define assert I
 #else
 # include <cassert>
+# define I assert
 #endif
+
+#include "vm68k/memory.h"
+
+#include <algorithm>
 
 namespace vm68k
 {
@@ -44,7 +44,7 @@ namespace vm68k
     throw (memory_exception)
   {
     if ((address & 1) != 0)
-      throw address_error_exception(true, fc, address);
+      throw address_error(address, READ | fc);
 
     return this->get_16_unchecked(address, fc);
   }
@@ -54,7 +54,7 @@ namespace vm68k
     throw (memory_exception)
   {
     if ((address & 1) != 0)
-      throw address_error_exception(true, fc, address);
+      throw address_error(address, READ | fc);
 
     uint32_type value;
     if ((address >> 1 & 1) != 0)
@@ -103,7 +103,7 @@ namespace vm68k
     throw (memory_exception)
   {
     if ((address & 1) != 0)
-      throw address_error_exception(false, fc, address);
+      throw address_error(address, WRITE | fc);
 
     this->put_16_unchecked(address, value, fc);
   }
@@ -113,7 +113,7 @@ namespace vm68k
     throw (memory_exception)
   {
     if ((address & 1) != 0)
-      throw address_error_exception(false, fc, address);
+      throw address_error(address, WRITE | fc);
 
     if ((address >> 1 & 1) != 0)
       {
@@ -162,52 +162,67 @@ namespace vm68k
   
   namespace
   {
-    using vm68k::memory;
-    using vm68k::bus_error_exception;
-
     /* Default memory that always raises a bus error.  */
-    class default_memory: public memory
+    class missing_memory: public memory
     {
     public:
-      int get_8(uint32_type address, function_code) const;
-      uint16_type get_16(uint32_type address, function_code) const;
+      int get_8(uint32_type address, function_code) const
+	throw (memory_exception);
+      uint16_type get_16(uint32_type address, function_code) const
+	throw (memory_exception);
 
-      void put_8(uint32_type address, int, function_code);
-      void put_16(uint32_type address, uint16_type, function_code);
+      void put_8(uint32_type address, int, function_code)
+	throw (memory_exception);
+      void put_16(uint32_type address, uint16_type, function_code)
+	throw (memory_exception);
     };
 
     int
-    default_memory::get_8(uint32_type address, function_code fc) const
+    missing_memory::get_8(uint32_type address, function_code fc) const
+      throw (memory_exception)
     {
-      throw bus_error_exception(true, fc, address);
+      throw bus_error(address, READ | fc);
     }
 
     uint16_type
-    default_memory::get_16(uint32_type address, function_code fc) const
+    missing_memory::get_16(uint32_type address, function_code fc) const
+      throw (memory_exception)
     {
       assert((address & 1) == 0);
-      throw bus_error_exception(true, fc, address);
+      throw bus_error(address, READ | fc);
     }
 
     void
-    default_memory::put_8(uint32_type address, int value, function_code fc)
+    missing_memory::put_8(uint32_type address, int value, function_code fc)
+      throw (memory_exception)
     {
-      throw bus_error_exception(false, fc, address);
+      throw bus_error(address, WRITE | fc);
     }
 
     void
-    default_memory::put_16(uint32_type address, uint16_type value,
+    missing_memory::put_16(uint32_type address, uint16_type value,
 			   function_code fc)
+      throw (memory_exception)
     {
       assert((address & 1) == 0);
-      throw bus_error_exception(false, fc, address);
+      throw bus_error(address, WRITE | fc);
     }
 
-    default_memory null_memory;
+    missing_memory __null_memory;
+  }
+
+  memory *
+  memory_map::null_memory() throw ()
+  {
+    return &__null_memory;
+  }
+
+  memory_map::~memory_map()
+  {
   }
 
   memory_map::memory_map()
-    : page_table(NPAGES, &null_memory)
+    : page_table(NPAGES, null_memory())
   {
   }
 }

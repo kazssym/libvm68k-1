@@ -37,6 +37,30 @@ namespace vm68k
 {
   using namespace std;
 
+  int
+  bus_error::vecno() throw ()
+  {
+    return 2;
+  }
+
+  const char *
+  bus_error::what() const throw ()
+  {
+    return "vm68k::bus_error";
+  }
+
+  int
+  address_error::vecno() throw ()
+  {
+    return 3;
+  }
+
+  const char *
+  address_error::what() const throw ()
+  {
+    return "vm68k::address_error";
+  }
+  
   uint32_type
   memory::get_32(uint32_type address, function_code fc) const
     throw (memory_exception)

@@ -36,30 +36,36 @@ namespace vm68k
   const int ADDRESS_BIT = 24;
   const uint32_type NPAGES = uint32_type(1) << ADDRESS_BIT - PAGE_SHIFT;
 
+  enum memory_access {WRITE = 0, READ = 0x10};
+
   /* Bus error or address error.  */
-  struct memory_exception: exception
+  class memory_exception: public exception
   {
-    int vecno;
-    uint16_type status;
-    uint32_type address;
-    memory_exception(int v, bool read, int fc, uint32_type a)
-      : vecno(v), status(read ? fc | 0x10 : fc), address(a) {}
+  public:
+    uint32_type _address;
+    uint16_type _status;
+
+  protected:
+    memory_exception(uint32_type address, uint16_type status) throw ();
+
+  public:
+    virtual int vecno() throw () = 0;
   };
 
   /* Bus error exception.  */
-  struct bus_error_exception: memory_exception
+  struct bus_error: memory_exception
   {
-    bus_error_exception(bool read, int fc, uint32_type a)
-      : memory_exception(2, read, fc, a) {}
-    const char *what() {return "bus_error_exception";}
+    bus_error(uint32_type address, uint16_type status) throw ();
+    int vecno() throw ();
+    const char *what() const throw ();
   };
 
   /* Address error exception.  */
-  struct address_error_exception: memory_exception
+  struct address_error: memory_exception
   {
-    address_error_exception(bool read, int fc, uint32_type a)
-      : memory_exception(3, read, fc, a) {}
-    const char *what() {return "address_error_exception";}
+    address_error(uint32_type address, uint16_type status) throw ();
+    int vecno() throw ();
+    const char *what() const throw ();
   };
 
   /* Abstract memory class.  */
@@ -86,12 +92,14 @@ namespace vm68k
     virtual uint32_type get_32(uint32_type address, function_code fc) const
       throw (memory_exception);
 
-    virtual void put_8(uint32_type address, int value,
-		       function_code fc) throw (memory_exception) = 0;
+    virtual void put_8(uint32_type address, int value, function_code fc)
+      throw (memory_exception) = 0;
     virtual void put_16(uint32_type address, uint16_type value,
-			function_code fc) throw (memory_exception) = 0;
+			function_code fc)
+      throw (memory_exception) = 0;
     virtual void put_32(uint32_type address, uint32_type value,
-			function_code fc) throw (memory_exception);
+			function_code fc)
+      throw (memory_exception);
   };
 
   /* Maps an address space to memories.  An address space is a
@@ -106,7 +114,10 @@ namespace vm68k
 
   public:
     memory_map();
-    virtual ~memory_map() {}
+    virtual ~memory_map();
+
+  public:
+    static memory *null_memory() throw ();
 
   protected:
     /* Finds a page that contains address ADDRESS.  */
@@ -165,6 +176,27 @@ namespace vm68k
 
     void write(uint32_type, const void *, size_t, function_code fc);
   };
+  
+  inline
+  memory_exception::memory_exception(uint32_type address,
+				     uint16_type status) throw ()
+    : _address(address), _status(status)
+  {
+  }
+
+  inline
+  bus_error::bus_error(uint32_type address,
+		       uint16_type status) throw ()
+    : memory_exception(address, status)
+  {
+  }
+
+  inline
+  address_error::address_error(uint32_type address,
+			       uint16_type status) throw ()
+    : memory_exception(address, status)
+  {
+  }
 
   inline vector<memory *>::const_iterator
   memory_map::find_memory(uint32_type address) const

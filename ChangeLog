@@ -1,5 +1,32 @@
 2001-07-01  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* memory_map.cc: Move Nana inclusion first.  Use "vm68k/memory.h"
+	instead of <vm68k/memory.h>.
+	(_GNU_SOURCE): Defined.
+	(_POSIX_C_SOURCE): Defined.
+	(inline): Removed.
+	(class missing_memory): Renamed from default_memory.  Add
+	throw-specs to methods.
+	(__null_memory): Renamed from null_memory.
+	(null_memory): New function.
+	(memory_map): Use the function null_memory.
+
+	* memory.cc (bus_error::vecno): New function.
+	(bus_error::what): New function.
+	(address_error::vecno): New function.
+	(address_error::what): New function.
+
+	* vm68k/memory.h (enum memory_access): New enum.
+	(class memory_exception): Removed variable member vecno.  Add
+	prefix to other members.  Modify the constructor arguments and
+	move it out of the definition.  Add pure virtual function vecno.
+	(struct bus_error): Replace struct bus_error_exception.  Also
+	change all users.
+	(struct address_error): Replace struct address_error_exception.
+	Also change all users.
+	(class memory_map): Make the destructor out-of-line.  Add static
+	method null_memory.
+
 	* NEWS: Updated.
 
 	* vm68k/iterator.h (class basic_uint16_iterator): Use const
