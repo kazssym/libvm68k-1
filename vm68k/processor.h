@@ -31,23 +31,38 @@ namespace vm68k
   using namespace std;
 
   /* Base class of processor exceptions.  */
-  struct processor_exception: exception
+  class processor_exception: public exception
   {
+  private:
+    uint32_type _pc;
+
+  public:
+    explicit processor_exception(uint32_type pc)
+      : _pc(pc) {}
+
+  public:
+    uint32_type pc() const {return _pc;}
   };
 
   /* Illegal instruction exception.  */
   struct illegal_instruction_exception: processor_exception
   {
+    explicit illegal_instruction_exception(uint32_type pc)
+      : processor_exception(pc) {}
   };
 
   /* Zero divide exception.  */
   struct zero_divide_exception: processor_exception
   {
+    explicit zero_divide_exception(uint32_type pc)
+      : processor_exception(pc) {}
   };
 
   /* Privilege violation exception.  */
   struct privilege_violation_exception: processor_exception
   {
+    explicit privilege_violation_exception(uint32_type pc)
+      : processor_exception(pc) {}
   };
   
   /* Abstruct base class for condition testers.  */

@@ -120,7 +120,7 @@ namespace vm68k
 
       // This instruction is privileged.
       if (!c.supervisor_state())
-	throw privilege_violation_exception();
+	throw privilege_violation_exception(pc);
 
       word_size::uvalue_type value1 = c.sr();
       word_size::uvalue_type value = value1 & value2;
@@ -356,7 +356,7 @@ namespace vm68k
 
       // This instruction is privileged.
       if (!c.supervisor_state())
-	throw privilege_violation_exception();
+	throw privilege_violation_exception(pc);
 
       word_size::uvalue_type value1 = c.sr();
       word_size::uvalue_type value = value1 | value2;

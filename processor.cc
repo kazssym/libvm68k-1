@@ -113,6 +113,6 @@ namespace vm68k
   uint32_type
   processor::illegal(uint32_type pc, context &, uint16_type, unsigned long)
   {
-    throw illegal_instruction_exception();
+    throw illegal_instruction_exception(pc);
   }
 }

@@ -191,7 +191,7 @@ namespace vm68k
 
       // This instruction is privileged.
       if (!c.supervisor_state())
-	throw privilege_violation_exception();
+	throw privilege_violation_exception(pc);
 
       // This instruction sets the condition codes.
       word_size::uvalue_type value = ea1.get(c);
@@ -212,7 +212,7 @@ namespace vm68k
 
       // This instruction is privileged.
       if (!c.supervisor_state())
-	throw privilege_violation_exception();
+	throw privilege_violation_exception(pc);
 
       // The condition codes are not affected by this instruction.
       c.regs.a[reg1] = c.regs.usp;
@@ -233,7 +233,7 @@ namespace vm68k
 
       // This instruction is privileged.
       if (!c.supervisor_state())
-	throw privilege_violation_exception();
+	throw privilege_violation_exception(pc);
 
       // This instruction does not affect the condition codes.
       long_word_size::put(c.regs.usp, long_word_size::get(c.regs.a[reg1]));
@@ -473,7 +473,7 @@ namespace vm68k
 
       // This instruction is privileged.
       if (!c.supervisor_state())
-	throw privilege_violation_exception();
+	throw privilege_violation_exception(pc);
 
       memory::function_code fc = c.data_fc();
       uint16_type status = word_size::uget(*c.mem, fc, c.regs.a[7] + 0);
