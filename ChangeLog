@@ -16,14 +16,15 @@
 	(address_error::vecno): New function.
 	(address_error::what): New function.
 
-	* vm68k/memory.h (enum memory_access): New enum.
-	(class memory_exception): Removed variable member vecno.  Add
-	prefix to other members.  Modify the constructor arguments and
-	move it out of the definition.  Add pure virtual function vecno.
+	* vm68k/memory.h (class memory_exception): Removed variable member
+	vecno.  Add prefix to other members.  Modify the constructor
+	arguments and move it out of the definition.  Add pure virtual
+	function vecno.
 	(struct bus_error): Replace struct bus_error_exception.  Also
 	change all users.
 	(struct address_error): Replace struct address_error_exception.
 	Also change all users.
+	(class memory): Add enum access.
 	(class memory_map): Make the destructor out-of-line.  Add static
 	method null_memory.
 

@@ -44,7 +44,7 @@ namespace vm68k
     throw (memory_exception)
   {
     if ((address & 1) != 0)
-      throw address_error(address, READ | fc);
+      throw address_error(address, memory::READ | fc);
 
     return this->get_16_unchecked(address, fc);
   }
@@ -54,7 +54,7 @@ namespace vm68k
     throw (memory_exception)
   {
     if ((address & 1) != 0)
-      throw address_error(address, READ | fc);
+      throw address_error(address, memory::READ | fc);
 
     uint32_type value;
     if ((address >> 1 & 1) != 0)
@@ -103,7 +103,7 @@ namespace vm68k
     throw (memory_exception)
   {
     if ((address & 1) != 0)
-      throw address_error(address, WRITE | fc);
+      throw address_error(address, memory::WRITE | fc);
 
     this->put_16_unchecked(address, value, fc);
   }
@@ -113,7 +113,7 @@ namespace vm68k
     throw (memory_exception)
   {
     if ((address & 1) != 0)
-      throw address_error(address, WRITE | fc);
+      throw address_error(address, memory::WRITE | fc);
 
     if ((address >> 1 & 1) != 0)
       {

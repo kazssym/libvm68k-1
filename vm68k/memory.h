@@ -36,8 +36,6 @@ namespace vm68k
   const int ADDRESS_BIT = 24;
   const uint32_type NPAGES = uint32_type(1) << ADDRESS_BIT - PAGE_SHIFT;
 
-  enum memory_access {WRITE = 0, READ = 0x10};
-
   /* Bus error or address error.  */
   class memory_exception: public exception
   {
@@ -79,6 +77,11 @@ namespace vm68k
       USER_PROGRAM = 2,
       SUPER_DATA = 5,
       SUPER_PROGRAM = 6
+    };
+    enum access
+    {
+      WRITE = 0,
+      READ = 0x10
     };
 
   public:
