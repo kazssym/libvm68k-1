@@ -58,7 +58,7 @@ namespace vm68k
       }
 
     int prio = interrupt_queues.end() - i;
-    int level = sr() >> 8 & 0x7;
+    int level = sr() >> 8 & 7;
     if (prio == 7 || prio > level)
       {
 	unsigned int vecno = i->front();
