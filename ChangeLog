@@ -1,5 +1,18 @@
 2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* vm68k/processor (fetch_u, fetch_s): Remove the byte
+	specialization.
+
+	* vm68k/size (struct byte, struct word, struct long_word): Remove
+	value_type.
+	(struct byte, struct word, struct long_word): Remove value_bit.
+	Rename value_size to size and aligned_value_size to aligned_size.
+	Rename value_mask to uvalue_max.  Add svalue_max.  Rename uvalue
+	to normal_u and svalue to normal_s.  Rename uget to get_u and get
+	to get_s.  Rename uget_aligned to get_instruction_u and
+	get_aligned to get_instruction_s.  Also change all users.
+	(struct byte): Add get_instruction_u and get_instruction_s.
+
 	* Makefile.am (libvm68k_la_SOURCES): Reorder files.
 
 	* condition_code.cc (_GNU_SOURCE): Defined.

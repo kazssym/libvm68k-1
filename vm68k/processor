@@ -20,7 +20,6 @@
 #ifndef _VM68K_PROCESSOR
 #define _VM68K_PROCESSOR 1
 
-#include <vm68k/size>
 #include <vm68k/bus>
 #include <queue>
 #include <vector>
@@ -236,27 +235,13 @@ namespace vm68k
   template <class Size> inline typename Size::uvalue_type
   context::fetch_u(Size, uint32_type address) const
   {
-    return Size::uget_aligned(*mem, program_fc(), address);
-  }
-
-  template <> inline byte::uvalue_type
-  context::fetch_u(byte, uint32_type address) const
-  {
-    return byte::uvalue(word::uget_aligned(*mem, program_fc(),
-						       address));
+    return Size::get_instruction_u(*mem, address, program_fc());
   }
 
   template <class Size> inline typename Size::svalue_type
   context::fetch_s(Size, uint32_type address) const
   {
-    return Size::get_aligned(*mem, program_fc(), address);
-  }
-
-  template <> inline byte::svalue_type
-  context::fetch_s(byte, uint32_type address) const
-  {
-    return byte::svalue(word::uget_aligned(*mem, program_fc(),
-						       address));
+    return Size::get_instruction_s(*mem, address, program_fc());
   }
 }
 

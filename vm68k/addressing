@@ -20,6 +20,7 @@
 #define _VM68K_ADDRESSING 1
 
 #include <vm68k/processor>
+#include <vm68k/size>
 #include <string>
 #include <cstdio>
 
@@ -49,7 +50,8 @@ namespace vm68k
 
       typename Size::svalue_type get(const context &c) const;
 
-      void put(context &c, svalue_type value) const {Size::put(c.regs.d[r], value);}
+      void put(context &c, svalue_type value) const
+      {Size::put(c.regs.d[r], value);}
       void finish(context &c) const {}
 
     public:
@@ -59,7 +61,7 @@ namespace vm68k
     template <class Size> inline typename Size::svalue_type
     basic_d_register<Size>::get(const context &c) const
     {
-      return Size::get(c.regs.d[r]);
+      return Size::get_s(c.regs.d[r]);
     }
 
     template <class Size> std::string
@@ -96,7 +98,8 @@ namespace vm68k
 
       typename Size::svalue_type get(const context &c) const;
 
-      void put(context &c, svalue_type value) const {long_word::put(c.regs.a[r], value);}
+      void put(context &c, svalue_type value) const
+      {long_word::put(c.regs.a[r], value);}
       void finish(context &c) const {}
 
     public:
@@ -106,7 +109,7 @@ namespace vm68k
     template <class Size> inline typename Size::svalue_type
     basic_a_register<Size>::get(const context &c) const
     {
-      return Size::get(c.regs.a[r]);
+      return Size::get_s(c.regs.a[r]);
     }
 
     template <class Size> std::string
@@ -143,7 +146,8 @@ namespace vm68k
 
       typename Size::svalue_type get(const context &c) const;
 
-      void put(context &c, svalue_type value) const {Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void put(context &c, svalue_type value) const
+      {Size::put(*c.mem, address(c), c.data_fc(), value);}
       void finish(context &c) const {}
 
     public:
@@ -153,7 +157,7 @@ namespace vm68k
     template <class Size> inline typename Size::svalue_type
     basic_indirect<Size>::get(const context &c) const
     {
-      return Size::get(*c.mem, c.data_fc(), address(c));
+      return Size::get_s(*c.mem, address(c), c.data_fc());
     }
 
     template <class Size> std::string
@@ -189,9 +193,9 @@ namespace vm68k
       size_t advance_size() const
       {
 	if (r == 7)		// XXX: %a7 is special.
-	  return Size::aligned_value_size();
+	  return Size::aligned_size();
 	else
-	  return Size::value_size();
+	  return Size::size();
       }
 
     public:
@@ -199,7 +203,8 @@ namespace vm68k
 
       typename Size::svalue_type get(const context &c) const;
 
-      void put(context &c, svalue_type value) const {Size::put(*c.mem, c.data_fc(), c.regs.a[r], value);}
+      void put(context &c, svalue_type value) const
+      {Size::put(*c.mem, c.regs.a[r], c.data_fc(), value);}
 
       void finish(context &c) const {c.regs.a[r] += advance_size();}
 
@@ -210,7 +215,7 @@ namespace vm68k
     template <class Size> inline typename Size::svalue_type
     basic_postinc_indirect<Size>::get(const context &c) const
     {
-      return Size::get(*c.mem, c.data_fc(), c.regs.a[r]);
+      return Size::get_s(*c.mem, c.regs.a[r], c.data_fc());
     }
 
     template <class Size> std::string
@@ -246,9 +251,9 @@ namespace vm68k
       size_t advance_size() const
       {
 	if (r == 7)		// XXX: %a7 is special.
-	  return Size::aligned_value_size();
+	  return Size::aligned_size();
 	else
-	  return Size::value_size();
+	  return Size::size();
       }
 
     public:
@@ -256,8 +261,8 @@ namespace vm68k
 
       typename Size::svalue_type get(const context &c) const;
 
-      void put(context &c, svalue_type value) const {Size::put(*c.mem, c.data_fc(),
-							       c.regs.a[r] - advance_size(), value);}
+      void put(context &c, svalue_type value) const
+      {Size::put(*c.mem, c.regs.a[r] - advance_size(), c.data_fc(), value);}
       void finish(context &c) const {c.regs.a[r] -= advance_size();}
 
     public:
@@ -267,7 +272,7 @@ namespace vm68k
     template <class Size> inline typename Size::svalue_type
     basic_predec_indirect<Size>::get(const context &c) const
     {
-      return Size::get(*c.mem, c.data_fc(), c.regs.a[r] - advance_size());
+      return Size::get_s(*c.mem, c.regs.a[r] - advance_size(), c.data_fc());
     }
 
     template <class Size> std::string
@@ -308,7 +313,8 @@ namespace vm68k
 
       typename Size::svalue_type get(const context &c) const;
 
-      void put(context &c, svalue_type value) const {Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void put(context &c, svalue_type value) const
+      {Size::put(*c.mem, address(c), c.data_fc(), value);}
       void finish(context &c) const {}
 
     public:
@@ -324,7 +330,7 @@ namespace vm68k
     template <class Size> inline typename Size::svalue_type
     basic_disp_indirect<Size>::get(const context &c) const
     {
-      return Size::get(*c.mem, c.data_fc(), address(c));
+      return Size::get_s(*c.mem, address(c), c.data_fc());
     }
 
     template <class Size> std::string
@@ -365,7 +371,8 @@ namespace vm68k
 
       typename Size::svalue_type get(const context &c) const;
 
-      void put(context &c, svalue_type value) const {Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void put(context &c, svalue_type value) const
+      {Size::put(*c.mem, address(c), c.data_fc(), value);}
 
       void finish(context &c) const {}
 
@@ -380,15 +387,15 @@ namespace vm68k
       int r = w >> 12 & 0xf;
       uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
       if (w & 0x800)
-	return c.regs.a[r] + byte::svalue(w) + long_word::get(x);
+	return c.regs.a[r] + byte::normal_s(w) + long_word::get_s(x);
       else
-	return c.regs.a[r] + byte::svalue(w) + word::get(x);
+	return c.regs.a[r] + byte::normal_s(w) + word::get_s(x);
     }
 
     template <class Size> inline typename Size::svalue_type
     basic_index_indirect<Size>::get(const context &c) const
     {
-      return Size::get(*c.mem, c.data_fc(), address(c));
+      return Size::get_s(*c.mem, address(c), c.data_fc());
     }
 
     template <class Size> std::string
@@ -398,10 +405,10 @@ namespace vm68k
       int r = w >> 12 & 0xf;
       char buf[64];
       if (r >= 8)
-	sprintf(buf, "%%a%u@(%d,%%a%u%s)/* %#lx */", r, byte::svalue(w),
+	sprintf(buf, "%%a%u@(%d,%%a%u%s)/* %#lx */", r, byte::normal_s(w),
 		r - 8, w & 0x800 ? ":l" : ":w", address(c) + 0UL);
       else
-	sprintf(buf, "%%a%u@(%d,%%d%u%s)/* %#lx */", r, byte::svalue(w),
+	sprintf(buf, "%%a%u@(%d,%%d%u%s)/* %#lx */", r, byte::normal_s(w),
 		r, w & 0x800 ? ":l" : ":w", address(c) + 0UL);
       return buf;
     }
@@ -432,7 +439,8 @@ namespace vm68k
 
       typename Size::svalue_type get(const context &c) const;
 
-      void put(context &c, svalue_type value) const {Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void put(context &c, svalue_type value) const
+      {Size::put(*c.mem, address(c), c.data_fc(), value);}
       void finish(context &c) const {}
 
     public:
@@ -453,7 +461,7 @@ namespace vm68k
     template <class Size> inline typename Size::svalue_type
     basic_abs_short<Size>::get(const context &c) const
     {
-      return Size::get(*c.mem, c.data_fc(), address(c));
+      return Size::get_s(*c.mem, address(c), c.data_fc());
     }
 
     typedef basic_abs_short<byte> byte_abs_short;
@@ -482,7 +490,8 @@ namespace vm68k
 
       typename Size::svalue_type get(const context &c) const;
 
-      void put(context &c, svalue_type value) const {Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void put(context &c, svalue_type value) const
+      {Size::put(*c.mem, address(c), c.data_fc(), value);}
       void finish(context &c) const {}
 
     public:
@@ -498,7 +507,7 @@ namespace vm68k
     template <class Size> inline typename Size::svalue_type
     basic_abs_long<Size>::get(const context &c) const
     {
-      return Size::get(*c.mem, c.data_fc(), address(c));
+      return Size::get_s(*c.mem, address(c), c.data_fc());
     }
 
     template <class Size> std::string
@@ -551,7 +560,7 @@ namespace vm68k
     template <class Size> inline typename Size::svalue_type
     basic_disp_pc_indirect<Size>::get(const context &c) const
     {
-      return Size::get(*c.mem, c.data_fc(), address(c));
+      return Size::get_s(*c.mem, address(c), c.data_fc());
     }
 
     template <class Size> std::string
@@ -589,7 +598,8 @@ namespace vm68k
 
       typename Size::svalue_type get(const context &c) const;
 
-      void put(context &c, svalue_type value) const {Size::put(*c.mem, c.data_fc(), address(c), value);}
+      void put(context &c, svalue_type value) const
+      {Size::put(*c.mem, address(c), c.data_fc(), value);}
       void finish(context &c) const {}
 
     public:
@@ -603,15 +613,15 @@ namespace vm68k
       int r = w >> 12 & 0xf;
       uint32_type x = r >= 8 ? c.regs.a[r - 8] : c.regs.d[r];
       if (w & 0x800)
-	return add + byte::svalue(w) + long_word::get(x);
+	return add + byte::normal_s(w) + long_word::get_s(x);
       else
-	return add + byte::svalue(w) + word::get(x);
+	return add + byte::normal_s(w) + word::get_s(x);
     }
 
     template <class Size> inline typename Size::svalue_type
     basic_index_pc_indirect<Size>::get(const context &c) const
     {
-      return Size::get(*c.mem, c.data_fc(), address(c));
+      return Size::get_s(*c.mem, address(c), c.data_fc());
     }
 
     template <class Size> std::string
@@ -621,10 +631,10 @@ namespace vm68k
       int r = w >> 12 & 0xf;
       char buf[64];
       if (r >= 8)
-	sprintf(buf, "%%pc@(%d,%%a%u%s)/* %#lx */", byte::svalue(w), r - 8,
+	sprintf(buf, "%%pc@(%d,%%a%u%s)/* %#lx */", byte::normal_s(w), r - 8,
 		w & 0x800 ? ":l" : ":w", address(c) + 0UL);
       else
-	sprintf(buf, "%%pc@(%d,%%d%u%s)/* %#lx */", byte::svalue(w), r,
+	sprintf(buf, "%%pc@(%d,%%d%u%s)/* %#lx */", byte::normal_s(w), r,
 		w & 0x800 ? ":l" : ":w", address(c) + 0UL);
       return buf;
     }
@@ -642,7 +652,7 @@ namespace vm68k
       typedef typename Size::svalue_type svalue_type;
 
     public:
-      static size_t extension_size() {return Size::aligned_value_size();}
+      static size_t extension_size() {return Size::aligned_size();}
 
     private:
       uint32_type add;
@@ -673,7 +683,7 @@ namespace vm68k
     basic_immediate<Size>::text(const context &c) const
     {
       char buf[32];
-      sprintf(buf, "#%#lx", (get(c) & Size::value_mask()) + 0UL);
+      sprintf(buf, "#%#lx", Size::normal_u(get(c)) + 0UL);
       return buf;
     }
 

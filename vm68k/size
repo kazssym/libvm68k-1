@@ -28,79 +28,95 @@ namespace vm68k
   struct byte
   {
     typedef int uvalue_type;
-    typedef int value_type;
     typedef int svalue_type;
 
-    static std::size_t value_bit() {return 8;}
-    static int value_mask() {return (1 << value_bit()) - 1;}
-    static std::size_t value_size() {return 1;}
-    static std::size_t aligned_value_size() {return 2;}
+    static uint32_type size() {return 1;}
+    static uint32_type aligned_size() {return 2;}
 
-    static int uvalue(int value);
-    static int svalue(int value);
+    static int uvalue_max() {return 0xff;}
+    static int svalue_max() {return 0x7f;}
 
-    static int uget(const uint32_type &reg);
-    static int uget(const bus &, function_code, uint32_type address);
-    static int get(const uint32_type &reg);
-    static int get(const bus &, function_code, uint32_type address);
+    static int normal_u(int value);
+    static int normal_s(int value);
 
+    static int get_u(const uint32_type &reg);
+    static int get_s(const uint32_type &reg);
     static void put(uint32_type &reg, int value);
-    static void put(bus &, function_code, uint32_type address, int value);
+
+    static int get_u(const bus &, uint32_type address, function_code);
+    static int get_s(const bus &, uint32_type address, function_code);
+    static void put(bus &, uint32_type address, function_code, int value);
+
+    static int get_instruction_u(const bus &, uint32_type address,
+				 function_code);
+    static int get_instruction_s(const bus &, uint32_type address,
+				 function_code);
 
     static const char *suffix() {return "b";}
   };
 
   inline int
-  byte::uvalue(int value)
+  byte::normal_u(int value)
   {
-    return value & value_mask();
+    return value & uvalue_max();
   }
 
   inline int
-  byte::svalue(int value)
+  byte::normal_s(int value)
   {
-    value = uvalue(value);
-    const int N = 1 << value_bit() - 1;
-    if (value >= N)
-      return -int(value_mask() - value) - 1;
+    value = normal_u(value);
+    if (value > svalue_max())
+      return -int(uvalue_max() - value) - 1;
     else
       return value;
   }
 
   inline int
-  byte::uget(const uint32_type &reg)
+  byte::get_u(const uint32_type &reg)
   {
-    return uvalue(reg);
+    return reg & uvalue_max();
   }
 
   inline int
-  byte::uget(const bus &m, function_code fc, uint32_type address)
+  byte::get_s(const uint32_type &reg)
   {
-    return m.get_8(address, fc);
-  }
-
-  inline int
-  byte::get(const uint32_type &reg)
-  {
-    return svalue(uget(reg));
-  }
-
-  inline int
-  byte::get(const bus &m, function_code fc, uint32_type address)
-  {
-    return svalue(uget(m, fc, address));
+    return normal_s(get_u(reg));
   }
 
   inline void
   byte::put(uint32_type &reg, int value)
   {
-    reg = reg & ~uint32_type(value_mask()) | uvalue(value);
+    reg = reg & ~uint32_type(uvalue_max()) | normal_u(value);
+  }
+
+  inline int
+  byte::get_u(const bus &m, uint32_type address, function_code fc)
+  {
+    return m.get_8(address, fc);
+  }
+
+  inline int
+  byte::get_s(const bus &m, uint32_type address, function_code fc)
+  {
+    return normal_s(get_u(m, address, fc));
   }
 
   inline void
-  byte::put(bus &m, function_code fc, uint32_type address, int value)
+  byte::put(bus &m, uint32_type address, function_code fc, int value)
   {
     m.put_8(address, value, fc);
+  }
+
+  inline int
+  byte::get_instruction_u(const bus &m, uint32_type address, function_code fc)
+  {
+    return m.get_8(address | 1, fc);
+  }
+
+  inline int
+  byte::get_instruction_s(const bus &m, uint32_type address, function_code fc)
+  {
+    return normal_s(get_instruction_u(m, address, fc));
   }
 }
 
@@ -110,97 +126,96 @@ namespace vm68k
   struct word
   {
     typedef uint16_type uvalue_type;
-    typedef sint16_type value_type;
     typedef sint16_type svalue_type;
 
-    static std::size_t value_bit() {return 16;}
-    static uint16_type value_mask()
-    {return (uint16_type(1) << value_bit()) - 1;}
-    static std::size_t value_size() {return 2;}
-    static std::size_t aligned_value_size() {return value_size();}
+    static uint32_type size() {return 2;}
+    static uint32_type aligned_size() {return size();}
 
-    static uint16_type uvalue(uint16_type value);
-    static sint16_type svalue(uint16_type value);
+    static uint16_type uvalue_max() {return 0xffff;}
+    static sint16_type svalue_max() {return 0x7fff;}
 
-    static uint16_type uget(const uint32_type &reg);
-    static uint16_type uget_aligned(const bus &, function_code,
-				      uint32_type address);
-    static uint16_type uget(const bus &, function_code, uint32_type address);
-    static sint16_type get(const uint32_type &reg);
-    static sint16_type get_aligned(const bus &, function_code,
-				     uint32_type address);
-    static sint16_type get(const bus &, function_code, uint32_type address);
+    static uint16_type normal_u(uint16_type value);
+    static sint16_type normal_s(uint16_type value);
 
+    static uint16_type get_u(const uint32_type &reg);
+    static sint16_type get_s(const uint32_type &reg);
     static void put(uint32_type &reg, uint16_type value);
-    static void put(bus &, function_code,
-		    uint32_type address, uint16_type value);
+
+    static uint16_type get_u(const bus &, uint32_type address, function_code);
+    static sint16_type get_s(const bus &, uint32_type address, function_code);
+    static void put(bus &, uint32_type address, function_code,
+		    uint16_type value);
+
+    static uint16_type get_instruction_u(const bus &, uint32_type address,
+					 function_code);
+    static sint16_type get_instruction_s(const bus &, uint32_type address,
+					 function_code);
 
     static const char *suffix() {return "w";}
   };
 
   inline uint16_type
-  word::uvalue(uint16_type value)
+  word::normal_u(uint16_type value)
   {
-    return value & value_mask();
+    return value & uvalue_max();
   }
 
   inline sint16_type
-  word::svalue(uint16_type value)
+  word::normal_s(uint16_type value)
   {
-    value = uvalue(value);
-    const uint16_type N = uint16_type(1) << value_bit() - 1;
-    if (value >= N)
-      return -sint16_type(value_mask() - value) - 1;
+    value = normal_u(value);
+    if (value > uint16_type(svalue_max()))
+      return -sint16_type(uvalue_max() - value) - 1;
     else
       return value;
   }
 
   inline uint16_type
-  word::uget(const uint32_type &reg)
+  word::get_u(const uint32_type &reg)
   {
-    return uvalue(reg);
-  }
-
-  inline uint16_type
-  word::uget_aligned(const bus &m, function_code fc, uint32_type address)
-  {
-    return m.get_16_aligned(address, fc);
-  }
-
-  inline uint16_type
-  word::uget(const bus &m, function_code fc, uint32_type address)
-  {
-    return m.get_16(address, fc);
+    return reg & uvalue_max();
   }
 
   inline sint16_type
-  word::get(const uint32_type &reg)
+  word::get_s(const uint32_type &reg)
   {
-    return svalue(uget(reg));
-  }
-
-  inline sint16_type
-  word::get_aligned(const bus &m, function_code fc, uint32_type address)
-  {
-    return svalue(uget_aligned(m, fc, address));
-  }
-
-  inline sint16_type
-  word::get(const bus &m, function_code fc, uint32_type address)
-  {
-    return svalue(uget(m, fc, address));
+    return normal_s(get_u(reg));
   }
 
   inline void
   word::put(uint32_type &reg, uint16_type value)
   {
-    reg = reg & ~uint32_type(value_mask()) | uvalue(value);
+    reg = reg & ~uint32_type(uvalue_max()) | normal_u(value);
+  }
+
+  inline uint16_type
+  word::get_u(const bus &m, uint32_type address, function_code fc)
+  {
+    return m.get_16(address, fc);
+  }
+
+  inline sint16_type
+  word::get_s(const bus &m, uint32_type address, function_code fc)
+  {
+    return normal_s(get_u(m, address, fc));
   }
 
   inline void
-  word::put(bus &m, function_code fc, uint32_type address, uint16_type value)
+  word::put(bus &m, uint32_type address, function_code fc, uint16_type value)
   {
     m.put_16(address, value, fc);
+  }
+
+  inline uint16_type
+  word::get_instruction_u(const bus &m, uint32_type address, function_code fc)
+  {
+    return m.get_16_aligned(address, fc);
+  }
+
+  inline sint16_type
+  word::get_instruction_s(const bus &m, uint32_type address, function_code fc)
+  {
+    return normal_s(get_instruction_u(m, address, fc));
   }
 }
 
@@ -210,102 +225,99 @@ namespace vm68k
   struct long_word
   {
     typedef uint32_type uvalue_type;
-    typedef sint32_type value_type;
     typedef sint32_type svalue_type;
 
-    static std::size_t value_bit() {return 32;}
-    static uint32_type value_mask()
-      //{return (uint32_type(1) << value_bit()) - 1;}
-      {return 0xffffffffu;}
-    static std::size_t value_size() {return 4;}
-    static std::size_t aligned_value_size() {return value_size();}
+    static uint32_type size() {return 4;}
+    static uint32_type aligned_size() {return size();}
 
-    static uint32_type uvalue(uint32_type value);
-    static sint32_type svalue(uint32_type value);
+    static uint32_type uvalue_max() {return 0xffffffff;}
+    static sint32_type svalue_max() {return 0x7fffffff;}
 
-    static uint32_type uget(const uint32_type &reg);
-    static uint32_type uget_aligned(const bus &, function_code,
-				      uint32_type address);
-    static uint32_type uget(const bus &,
-			    function_code, uint32_type address);
-    static sint32_type get(const uint32_type &reg);
-    static sint32_type get_aligned(const bus &,
-				     function_code,
-				     uint32_type address);
-    static sint32_type get(const bus &,
-			   function_code, uint32_type address);
+    static uint32_type normal_u(uint32_type value);
+    static sint32_type normal_s(uint32_type value);
 
+    static uint32_type get_u(const uint32_type &reg);
+    static sint32_type get_s(const uint32_type &reg);
     static void put(uint32_type &reg, uint32_type value);
-    static void put(bus &, function_code,
-		    uint32_type address, uint32_type value);
+
+    static uint32_type get_u(const bus &, uint32_type address, function_code);
+    static sint32_type get_s(const bus &, uint32_type address, function_code);
+    static void put(bus &, uint32_type address, function_code,
+		    uint32_type value);
+
+    static uint32_type get_instruction_u(const bus &, uint32_type address,
+					 function_code);
+    static sint32_type get_instruction_s(const bus &, uint32_type address,
+					 function_code);
 
     static const char *suffix() {return "l";}
   };
 
   inline uint32_type
-  long_word::uvalue(uint32_type value)
+  long_word::normal_u(uint32_type value)
   {
-    return value & value_mask();
+    return value & uvalue_max();
   }
 
   inline sint32_type
-  long_word::svalue(uint32_type value)
+  long_word::normal_s(uint32_type value)
   {
-    value &= value_mask();
-    const uint32_type N = uint32_type(1) << value_bit() - 1;
-    if (value >= N)
-      return -sint32_type(value_mask() - value) - 1;
+    value &= uvalue_max();
+    if (value > uint32_type(svalue_max()))
+      return -sint32_type(uvalue_max() - value) - 1;
     else
       return value;
   }
 
   inline uint32_type
-  long_word::uget(const uint32_type &reg)
+  long_word::get_u(const uint32_type &reg)
   {
-    return uvalue(reg);
-  }
-
-  inline uint32_type
-  long_word::uget_aligned(const bus &m, function_code fc, uint32_type address)
-  {
-    return m.get_32(address, fc);
-  }
-
-  inline uint32_type
-  long_word::uget(const bus &m, function_code fc, uint32_type address)
-  {
-    return m.get_32(address, fc);
+    return reg;
   }
 
   inline sint32_type
-  long_word::get(const uint32_type &reg)
+  long_word::get_s(const uint32_type &reg)
   {
-    return svalue(uget(reg));
-  }
-
-  inline sint32_type
-  long_word::get_aligned(const bus &m, function_code fc, uint32_type address)
-  {
-    return svalue(uget_aligned(m, fc, address));
-  }
-
-  inline sint32_type
-  long_word::get(const bus &m, function_code fc, uint32_type address)
-  {
-    return svalue(uget(m, fc, address));
+    return normal_s(get_u(reg));
   }
 
   inline void
   long_word::put(uint32_type &reg, uint32_type value)
   {
-    reg = reg & ~uint32_type(value_mask()) | uvalue(value);
+    reg = normal_u(value);
+  }
+
+  inline uint32_type
+  long_word::get_u(const bus &m, uint32_type address, function_code fc)
+  {
+    return m.get_32(address, fc);
+  }
+
+  inline sint32_type
+  long_word::get_s(const bus &m, uint32_type address, function_code fc)
+  {
+    return normal_s(get_u(m, address, fc));
   }
 
   inline void
-  long_word::put(bus &m, function_code fc, uint32_type address,
+  long_word::put(bus &m, uint32_type address, function_code fc,
 		 uint32_type value)
   {
     m.put_32(address, value, fc);
+  }
+
+  inline uint32_type
+  long_word::get_instruction_u(const bus &m, uint32_type address,
+			       function_code fc)
+  {
+    return m.get_32(address, fc);
+  }
+
+  inline sint32_type
+  long_word::get_instruction_s(const bus &m, uint32_type address,
+			       function_code fc)
+  {
+    return normal_s(get_instruction_u(m, address, fc));
   }
 }
 
