@@ -1,5 +1,7 @@
 2001-06-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* memory_map.cc: Use a namespace block.
+
 	* configure.in: Add AC_PROG_CPP.  Uncomment AC_SEARCH_LIBS for
 	pthread.
 
