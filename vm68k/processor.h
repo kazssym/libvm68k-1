@@ -20,7 +20,7 @@
 #ifndef _VM68K_PROCESSOR_H
 #define _VM68K_PROCESSOR_H 1
 
-#include <vm68k/size.h>		// Provisionally.
+#include <vm68k/size>		// Provisionally.
 #include <vm68k/bus>
 #include <queue>
 #include <vector>

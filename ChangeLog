@@ -1,5 +1,10 @@
 2002-05-09  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* vm68k/Makefile.am (vm68kinclude_HEADERS): Replace size.h with
+	size.
+
+	* vm68k/size: Renamed from size.h.  Also change all users.
+
 	* libvm68k.texi: Updated.
 
 2002-05-08  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>

@@ -80,7 +80,7 @@ VERSION = @VERSION@
 
 vm68kincludedir = $(includedir)/vm68k
 
-vm68kinclude_HEADERS = types.h iterator.h bus size.h add.h conditional.h processor.h mutex.h misc.h
+vm68kinclude_HEADERS = types.h iterator.h bus size add.h conditional.h processor.h mutex.h misc.h
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
