@@ -1,5 +1,7 @@
 2003-04-10  Kaz Sasayama  <kaz2003@hypercore.co.jp>
 
+	* Makefile.am (LIBS): Removed.
+
 	* vm68k/misc.h (vm68k): Remove throw spec.
 
 	* version.cpp (version): Use PACKAGE_VERSION.  Remove throw spec.

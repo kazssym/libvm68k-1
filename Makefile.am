@@ -1,7 +1,5 @@
 ## Process this file with automake to produce a Makefile.in.
 
-LIBS =
-
 lib_LTLIBRARIES = libvm68k.la
 
 libvm68k_la_LDFLAGS = $(LDRELEASE) -version-info 4:0:0
