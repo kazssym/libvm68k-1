@@ -39,10 +39,10 @@ namespace vm68k
       T p;
 
     public:
-      ref(T ptr);
+      explicit ref(const T &ptr);
 
     public:
-      ref &operator=(uint16_type value);
+      ref &operator=(const uint16_type &value);
       operator uint16_type() const;
     };
 
@@ -50,8 +50,10 @@ namespace vm68k
     T p;
 
   public:
-    basic_uint16_iterator(T ptr);
-    template <class U> explicit basic_uint16_iterator(U ptr);
+    basic_uint16_iterator(const T &ptr);
+
+  public:
+    T base() const {return p;}
 
   public:
     uint16_type operator*() const {return ref(p);}
@@ -78,9 +80,6 @@ namespace vm68k
     bool operator>(const basic_uint16_iterator &x) const {return p > x.p;}
     bool operator<=(const basic_uint16_iterator &x) const {return p >= x.p;}
     bool operator>=(const basic_uint16_iterator &x) const {return p <= x.p;}
-
-  public:
-    operator T() const {return p;}
   };
 
   /* Helper iterator for 32-bit value.  This iterator reads/writes four
@@ -95,10 +94,10 @@ namespace vm68k
       T p;
 
     public:
-      ref(T ptr);
+      explicit ref(const T &ptr);
 
     public:
-      ref &operator=(uint32_type value);
+      ref &operator=(const uint32_type &value);
       operator uint32_type() const;
     };
 
@@ -106,8 +105,10 @@ namespace vm68k
     T p;
 
   public:
-    basic_uint32_iterator(T ptr);
-    template <class U> explicit basic_uint32_iterator(U ptr);
+    basic_uint32_iterator(const T &ptr);
+
+  public:
+    T base() const {return p;}
 
   public:
     uint32_type operator*() const {return ref(p);}
@@ -134,9 +135,6 @@ namespace vm68k
     bool operator>(const basic_uint32_iterator &x) const {return p > x.p;}
     bool operator<=(const basic_uint32_iterator &x) const {return p >= x.p;}
     bool operator>=(const basic_uint32_iterator &x) const {return p <= x.p;}
-
-  public:
-    operator T() const {return p;}
   };
 
   typedef basic_uint16_iterator<unsigned char *> uint16_iterator;
@@ -148,7 +146,7 @@ namespace vm68k
 
   template <class T>
   inline basic_uint16_iterator<T>::ref &
-  basic_uint16_iterator<T>::ref::operator=(uint16_type value)
+  basic_uint16_iterator<T>::ref::operator=(const uint16_type &value)
   {
     p[0] = value >> 8;
     p[1] = value;
@@ -164,7 +162,7 @@ namespace vm68k
 
   template <class T>
   inline
-  basic_uint16_iterator<T>::ref::ref(T ptr)
+  basic_uint16_iterator<T>::ref::ref(const T &ptr)
     : p(ptr)
   {
   }
@@ -237,15 +235,7 @@ namespace vm68k
 
   template <class T>
   inline
-  basic_uint16_iterator<T>::basic_uint16_iterator(T ptr)
-    : p(ptr)
-  {
-  }
-
-  template <class T>
-  template <class U>
-  inline
-  basic_uint16_iterator<T>::basic_uint16_iterator(U ptr)
+  basic_uint16_iterator<T>::basic_uint16_iterator(const T &ptr)
     : p(ptr)
   {
   }
@@ -254,7 +244,7 @@ namespace vm68k
 
   template <class T>
   inline basic_uint32_iterator<T>::ref &
-  basic_uint32_iterator<T>::ref::operator=(uint32_type value)
+  basic_uint32_iterator<T>::ref::operator=(const uint32_type &value)
   {
     p[0] = value >> 24;
     p[1] = value >> 16;
@@ -273,7 +263,7 @@ namespace vm68k
 
   template <class T>
   inline
-  basic_uint32_iterator<T>::ref::ref(T ptr)
+  basic_uint32_iterator<T>::ref::ref(const T &ptr)
     : p(ptr)
   {
   }
@@ -346,14 +336,7 @@ namespace vm68k
 
   template <class T>
   inline
-  basic_uint32_iterator<T>::basic_uint32_iterator(T ptr)
-    : p(ptr)
-  {
-  }
-
-  template <class T>
-  template <class U>
-  basic_uint32_iterator<T>::basic_uint32_iterator(U ptr)
+  basic_uint32_iterator<T>::basic_uint32_iterator(const T &ptr)
     : p(ptr)
   {
   }

@@ -1,3 +1,8 @@
+2001-07-01  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* vm68k/iterator.h (class uint16_iterator): Use const references
+	for T argumrnts.
+
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Version 1.0.5.
