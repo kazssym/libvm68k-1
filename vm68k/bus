@@ -40,8 +40,8 @@ namespace vm68k
   enum function_code
     {USER_DATA = 1,
      USER_PROGRAM = 2,
-     SUPERVISOR_DATA = 5,
-     SUPERVISOR_PROGRAM = 6};
+     SUPER_DATA = 5,
+     SUPER_PROGRAM = 6};
 
   enum bus_direction
     {WRITE = 0,
