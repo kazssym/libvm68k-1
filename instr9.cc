@@ -50,13 +50,13 @@ namespace vm68k
   {
     using namespace addressing;
 
-    /* Handles a SUB instruction (register destination).  */
+    /* Handles a SUB instruction (data register destination).  */
     template <class Size, class Source>
     uint32_type
-    _sub_r(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _sub_d(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Source ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tsub%s %s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
@@ -77,7 +77,7 @@ namespace vm68k
     _sub_m(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tsub%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
@@ -98,7 +98,7 @@ namespace vm68k
     _suba(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Source ea1(w & 7, pc + 2);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tsuba%s %s,%%a%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
@@ -121,41 +121,41 @@ namespace vm68k
   install_instructions_9(processor &p, unsigned long d)
   {
     static const instruction_map inst[]
-      = {{0x9000, 0xe07, &_sub_r<byte_size, byte_d_register>},
-	 {0x9010, 0xe07, &_sub_r<byte_size, byte_indirect>},
-	 {0x9018, 0xe07, &_sub_r<byte_size, byte_postinc_indirect>},
-	 {0x9020, 0xe07, &_sub_r<byte_size, byte_predec_indirect>},
-	 {0x9028, 0xe07, &_sub_r<byte_size, byte_disp_indirect>},
-	 {0x9030, 0xe07, &_sub_r<byte_size, byte_index_indirect>},
-	 {0x9038, 0xe00, &_sub_r<byte_size, byte_abs_short>},
-	 {0x9039, 0xe00, &_sub_r<byte_size, byte_abs_long>},
-	 {0x903a, 0xe00, &_sub_r<byte_size, byte_disp_pc_indirect>},
-	 {0x903b, 0xe00, &_sub_r<byte_size, byte_index_pc_indirect>},
-	 {0x903c, 0xe00, &_sub_r<byte_size, byte_immediate>},
-	 {0x9040, 0xe07, &_sub_r<word_size, word_d_register>},
-	 {0x9048, 0xe07, &_sub_r<word_size, word_a_register>},
-	 {0x9050, 0xe07, &_sub_r<word_size, word_indirect>},
-	 {0x9058, 0xe07, &_sub_r<word_size, word_postinc_indirect>},
-	 {0x9060, 0xe07, &_sub_r<word_size, word_predec_indirect>},
-	 {0x9068, 0xe07, &_sub_r<word_size, word_disp_indirect>},
-	 {0x9070, 0xe07, &_sub_r<word_size, word_index_indirect>},
-	 {0x9078, 0xe00, &_sub_r<word_size, word_abs_short>},
-	 {0x9079, 0xe00, &_sub_r<word_size, word_abs_long>},
-	 {0x907a, 0xe00, &_sub_r<word_size, word_disp_pc_indirect>},
-	 {0x907b, 0xe00, &_sub_r<word_size, word_index_pc_indirect>},
-	 {0x907c, 0xe00, &_sub_r<word_size, word_immediate>},
-	 {0x9080, 0xe07, &_sub_r<long_word_size, long_word_d_register>},
-	 {0x9088, 0xe07, &_sub_r<long_word_size, long_word_a_register>},
-	 {0x9090, 0xe07, &_sub_r<long_word_size, long_word_indirect>},
-	 {0x9098, 0xe07, &_sub_r<long_word_size, long_word_postinc_indirect>},
-	 {0x90a0, 0xe07, &_sub_r<long_word_size, long_word_predec_indirect>},
-	 {0x90a8, 0xe07, &_sub_r<long_word_size, long_word_disp_indirect>},
-	 {0x90b0, 0xe07, &_sub_r<long_word_size, long_word_index_indirect>},
-	 {0x90b8, 0xe00, &_sub_r<long_word_size, long_word_abs_short>},
-	 {0x90b9, 0xe00, &_sub_r<long_word_size, long_word_abs_long>},
-	 {0x90ba, 0xe00, &_sub_r<long_word_size, long_word_disp_pc_indirect>},
-	 {0x90bb, 0xe00, &_sub_r<long_word_size, long_word_index_pc_indirect>},
-	 {0x90bc, 0xe00, &_sub_r<long_word_size, long_word_immediate>},
+      = {{0x9000, 0xe07, &_sub_d<byte_size, byte_d_register>},
+	 {0x9010, 0xe07, &_sub_d<byte_size, byte_indirect>},
+	 {0x9018, 0xe07, &_sub_d<byte_size, byte_postinc_indirect>},
+	 {0x9020, 0xe07, &_sub_d<byte_size, byte_predec_indirect>},
+	 {0x9028, 0xe07, &_sub_d<byte_size, byte_disp_indirect>},
+	 {0x9030, 0xe07, &_sub_d<byte_size, byte_index_indirect>},
+	 {0x9038, 0xe00, &_sub_d<byte_size, byte_abs_short>},
+	 {0x9039, 0xe00, &_sub_d<byte_size, byte_abs_long>},
+	 {0x903a, 0xe00, &_sub_d<byte_size, byte_disp_pc_indirect>},
+	 {0x903b, 0xe00, &_sub_d<byte_size, byte_index_pc_indirect>},
+	 {0x903c, 0xe00, &_sub_d<byte_size, byte_immediate>},
+	 {0x9040, 0xe07, &_sub_d<word_size, word_d_register>},
+	 {0x9048, 0xe07, &_sub_d<word_size, word_a_register>},
+	 {0x9050, 0xe07, &_sub_d<word_size, word_indirect>},
+	 {0x9058, 0xe07, &_sub_d<word_size, word_postinc_indirect>},
+	 {0x9060, 0xe07, &_sub_d<word_size, word_predec_indirect>},
+	 {0x9068, 0xe07, &_sub_d<word_size, word_disp_indirect>},
+	 {0x9070, 0xe07, &_sub_d<word_size, word_index_indirect>},
+	 {0x9078, 0xe00, &_sub_d<word_size, word_abs_short>},
+	 {0x9079, 0xe00, &_sub_d<word_size, word_abs_long>},
+	 {0x907a, 0xe00, &_sub_d<word_size, word_disp_pc_indirect>},
+	 {0x907b, 0xe00, &_sub_d<word_size, word_index_pc_indirect>},
+	 {0x907c, 0xe00, &_sub_d<word_size, word_immediate>},
+	 {0x9080, 0xe07, &_sub_d<long_word_size, long_word_d_register>},
+	 {0x9088, 0xe07, &_sub_d<long_word_size, long_word_a_register>},
+	 {0x9090, 0xe07, &_sub_d<long_word_size, long_word_indirect>},
+	 {0x9098, 0xe07, &_sub_d<long_word_size, long_word_postinc_indirect>},
+	 {0x90a0, 0xe07, &_sub_d<long_word_size, long_word_predec_indirect>},
+	 {0x90a8, 0xe07, &_sub_d<long_word_size, long_word_disp_indirect>},
+	 {0x90b0, 0xe07, &_sub_d<long_word_size, long_word_index_indirect>},
+	 {0x90b8, 0xe00, &_sub_d<long_word_size, long_word_abs_short>},
+	 {0x90b9, 0xe00, &_sub_d<long_word_size, long_word_abs_long>},
+	 {0x90ba, 0xe00, &_sub_d<long_word_size, long_word_disp_pc_indirect>},
+	 {0x90bb, 0xe00, &_sub_d<long_word_size, long_word_index_pc_indirect>},
+	 {0x90bc, 0xe00, &_sub_d<long_word_size, long_word_immediate>},
 	 {0x90c0, 0xe07, &_suba<word_size, word_d_register>},
 	 {0x90c8, 0xe07, &_suba<word_size, word_a_register>},
 	 {0x90d0, 0xe07, &_suba<word_size, word_indirect>},

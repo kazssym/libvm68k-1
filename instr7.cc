@@ -55,7 +55,7 @@ namespace vm68k
     _moveq(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       long_word_size::svalue_type value = byte_size::svalue(w);
-      unsigned int reg2 = w >> 9 & 7;
+      int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tmoveq%s #%#x,%%d%u\n", long_word_size::suffix(),
 	byte_size::uvalue(value), reg2);

@@ -79,7 +79,7 @@ namespace vm68k
     uint32_type
     _addq_a(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      unsigned int reg1 = w & 7;
+      int reg1 = w & 7;
       int value2 = w >> 9 & 7;
       if (value2 == 0)
 	value2 = 8;
@@ -102,7 +102,7 @@ namespace vm68k
     _db(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Condition cond;
-      unsigned int reg1 = w & 7;
+      int reg1 = w & 7;
       word_size::svalue_type disp = c.fetch_s(word_size(), pc + 2);
 #ifdef L
       L("\tdb%s %%d%u,%#lx\n", Condition::text(), reg1,
@@ -168,7 +168,7 @@ namespace vm68k
     uint32_type
     _subq_a(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      unsigned int reg1 = w & 7;
+      int reg1 = w & 7;
       int value2 = w >> 9 & 7;
       if (value2 == 0)
 	value2 = 8;

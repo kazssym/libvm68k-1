@@ -129,10 +129,10 @@ namespace vm68k
       return pc + 2 + word_size::aligned_value_size();
     }
 
-    /* Handles a BCLR instruction (register).  */
+    /* Handles a BCLR instruction (data register).  */
     template <class Size, class Destination>
     uint32_type
-    _bclr_r(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _bclr_d(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -174,10 +174,10 @@ namespace vm68k
       return pc + 2 + 2 + ea1.extension_size();
     }
 
-    /* Handles a BSET instruction (register).  */
+    /* Handles a BSET instruction (data register).  */
     template <class Size, class Destination>
     uint32_type
-    _bset_r(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _bset_d(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -219,10 +219,10 @@ namespace vm68k
 	+ Destination::extension_size();
     }
 
-    /* Handles a BTST instruction (register).  */
+    /* Handles a BTST instruction (data register).  */
     template <class Size, class Destination>
     uint32_type
-    _btst_r(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _btst_d(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -420,30 +420,30 @@ namespace vm68k
 	 {  0xb0,     7, &_ori<long_word_size, long_word_index_indirect>},
 	 {  0xb8,     0, &_ori<long_word_size, long_word_abs_short>},
 	 {  0xb9,     0, &_ori<long_word_size, long_word_abs_long>},
-	 { 0x100, 0xe07, &_btst_r<long_word_size, long_word_d_register>},
-	 { 0x110, 0xe07, &_btst_r<byte_size, byte_indirect>},
-	 { 0x118, 0xe07, &_btst_r<byte_size, byte_postinc_indirect>},
-	 { 0x120, 0xe07, &_btst_r<byte_size, byte_predec_indirect>},
-	 { 0x128, 0xe07, &_btst_r<byte_size, byte_disp_indirect>},
-	 { 0x130, 0xe07, &_btst_r<byte_size, byte_index_indirect>},
-	 { 0x138, 0xe00, &_btst_r<byte_size, byte_abs_short>},
-	 { 0x139, 0xe00, &_btst_r<byte_size, byte_abs_long>},
-	 { 0x180, 0xe07, &_bclr_r<long_word_size, long_word_d_register>},
-	 { 0x190, 0xe07, &_bclr_r<byte_size, byte_indirect>},
-	 { 0x198, 0xe07, &_bclr_r<byte_size, byte_postinc_indirect>},
-	 { 0x1a0, 0xe07, &_bclr_r<byte_size, byte_predec_indirect>},
-	 { 0x1a8, 0xe07, &_bclr_r<byte_size, byte_disp_indirect>},
-	 { 0x1b0, 0xe07, &_bclr_r<byte_size, byte_index_indirect>},
-	 { 0x1b8, 0xe00, &_bclr_r<byte_size, byte_abs_short>},
-	 { 0x1b9, 0xe00, &_bclr_r<byte_size, byte_abs_long>},
-	 { 0x1c0, 0xe07, &_bset_r<long_word_size, long_word_d_register>},
-	 { 0x1d0, 0xe07, &_bset_r<byte_size, byte_indirect>},
-	 { 0x1d8, 0xe07, &_bset_r<byte_size, byte_postinc_indirect>},
-	 { 0x1e0, 0xe07, &_bset_r<byte_size, byte_predec_indirect>},
-	 { 0x1e8, 0xe07, &_bset_r<byte_size, byte_disp_indirect>},
-	 { 0x1f0, 0xe07, &_bset_r<byte_size, byte_index_indirect>},
-	 { 0x1f8, 0xe00, &_bset_r<byte_size, byte_abs_short>},
-	 { 0x1f9, 0xe00, &_bset_r<byte_size, byte_abs_long>},
+	 { 0x100, 0xe07, &_btst_d<long_word_size, long_word_d_register>},
+	 { 0x110, 0xe07, &_btst_d<byte_size, byte_indirect>},
+	 { 0x118, 0xe07, &_btst_d<byte_size, byte_postinc_indirect>},
+	 { 0x120, 0xe07, &_btst_d<byte_size, byte_predec_indirect>},
+	 { 0x128, 0xe07, &_btst_d<byte_size, byte_disp_indirect>},
+	 { 0x130, 0xe07, &_btst_d<byte_size, byte_index_indirect>},
+	 { 0x138, 0xe00, &_btst_d<byte_size, byte_abs_short>},
+	 { 0x139, 0xe00, &_btst_d<byte_size, byte_abs_long>},
+	 { 0x180, 0xe07, &_bclr_d<long_word_size, long_word_d_register>},
+	 { 0x190, 0xe07, &_bclr_d<byte_size, byte_indirect>},
+	 { 0x198, 0xe07, &_bclr_d<byte_size, byte_postinc_indirect>},
+	 { 0x1a0, 0xe07, &_bclr_d<byte_size, byte_predec_indirect>},
+	 { 0x1a8, 0xe07, &_bclr_d<byte_size, byte_disp_indirect>},
+	 { 0x1b0, 0xe07, &_bclr_d<byte_size, byte_index_indirect>},
+	 { 0x1b8, 0xe00, &_bclr_d<byte_size, byte_abs_short>},
+	 { 0x1b9, 0xe00, &_bclr_d<byte_size, byte_abs_long>},
+	 { 0x1c0, 0xe07, &_bset_d<long_word_size, long_word_d_register>},
+	 { 0x1d0, 0xe07, &_bset_d<byte_size, byte_indirect>},
+	 { 0x1d8, 0xe07, &_bset_d<byte_size, byte_postinc_indirect>},
+	 { 0x1e0, 0xe07, &_bset_d<byte_size, byte_predec_indirect>},
+	 { 0x1e8, 0xe07, &_bset_d<byte_size, byte_disp_indirect>},
+	 { 0x1f0, 0xe07, &_bset_d<byte_size, byte_index_indirect>},
+	 { 0x1f8, 0xe00, &_bset_d<byte_size, byte_abs_short>},
+	 { 0x1f9, 0xe00, &_bset_d<byte_size, byte_abs_long>},
 	 { 0x200,     7, &_andi<byte_size, byte_d_register>},
 	 { 0x210,     7, &_andi<byte_size, byte_indirect>},
 	 { 0x218,     7, &_andi<byte_size, byte_postinc_indirect>},
