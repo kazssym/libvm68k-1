@@ -2,6 +2,6 @@
 
 vm68kincludedir = $(includedir)/vm68k
 
-vm68kinclude_HEADERS = type bus size processor \
-add.h conditional.h iterator.h \
+vm68kinclude_HEADERS = type bus size processor conditional.h addressing \
+iterator.h \
 mutex.h misc.h

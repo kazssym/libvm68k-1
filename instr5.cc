@@ -24,7 +24,7 @@
 
 #include "instr.h"
 
-#include <vm68k/add.h>
+#include <vm68k/addressing>
 #include <vm68k/conditional.h>
 #include <cstdio>
 
@@ -48,7 +48,7 @@ namespace vm68k
   namespace instr
   { 
     using namespace conditional;
-    using namespace add;
+    using namespace addressing;
 
     /* Handles an ADDQ instruction.  */
     template <class Size, class Destination>

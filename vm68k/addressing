@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _VM68K_ADDRESSING_H
-#define _VM68K_ADDRESSING_H 1
+#ifndef _VM68K_ADDRESSING
+#define _VM68K_ADDRESSING 1
 
 #include <vm68k/processor>
 #include <string>
@@ -25,10 +25,8 @@
 
 namespace vm68k
 {
-  namespace add
+  namespace addressing
   {
-    using namespace std;
-
     template <class Size> class basic_d_register
     {
     public:
@@ -55,7 +53,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
@@ -64,7 +62,7 @@ namespace vm68k
       return Size::get(c.regs.d[r]);
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_d_register<Size>::text(const context &c) const
     {
       char buf[8];
@@ -102,7 +100,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
@@ -111,7 +109,7 @@ namespace vm68k
       return Size::get(c.regs.a[r]);
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_a_register<Size>::text(const context &c) const
     {
       char buf[8];
@@ -149,7 +147,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
@@ -158,7 +156,7 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_indirect<Size>::text(const context &c) const
     {
       char buf[64];
@@ -206,7 +204,7 @@ namespace vm68k
       void finish(context &c) const {c.regs.a[r] += advance_size();}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
@@ -215,7 +213,7 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), c.regs.a[r]);
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_postinc_indirect<Size>::text(const context &c) const
     {
       char buf[64];
@@ -263,7 +261,7 @@ namespace vm68k
       void finish(context &c) const {c.regs.a[r] -= advance_size();}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
@@ -272,7 +270,7 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), c.regs.a[r] - advance_size());
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_predec_indirect<Size>::text(const context &c) const
     {
       char buf[64];
@@ -314,7 +312,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline uint32_type
@@ -329,7 +327,7 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_disp_indirect<Size>::text(const context &c) const
     {
       char buf[64];
@@ -372,7 +370,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline uint32_type
@@ -393,7 +391,7 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_index_indirect<Size>::text(const context &c) const
     {
       uint16_type w = c.fetch_u(word(), add);
@@ -438,7 +436,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      string text(const context &c) const
+      std::string text(const context &c) const
       {
 	char buf[32];
 	sprintf(buf, "%#lx:s", address(c) + 0UL);
@@ -488,7 +486,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline uint32_type
@@ -503,7 +501,7 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_abs_long<Size>::text(const context &c) const
     {
       char buf[32];
@@ -541,7 +539,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline uint32_type
@@ -556,7 +554,7 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_disp_pc_indirect<Size>::text(const context &c) const
     {
       char buf[64];
@@ -595,7 +593,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline uint32_type
@@ -616,7 +614,7 @@ namespace vm68k
       return Size::get(*c.mem, c.data_fc(), address(c));
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_index_pc_indirect<Size>::text(const context &c) const
     {
       uint16_type w = c.fetch_u(word(), add);
@@ -662,7 +660,7 @@ namespace vm68k
       void finish(context &c) const {}
 
     public:
-      string text(const context &c) const;
+      std::string text(const context &c) const;
     };
 
     template <class Size> inline typename Size::svalue_type
@@ -671,7 +669,7 @@ namespace vm68k
       return c.fetch_s(Size(), add);
     }
 
-    template <class Size> string
+    template <class Size> std::string
     basic_immediate<Size>::text(const context &c) const
     {
       char buf[32];
@@ -685,5 +683,4 @@ namespace vm68k
   }
 }
 
-#endif /* not _VM68K_ADDRESSING_H */
-
+#endif /* not _VM68K_ADDRESSING */

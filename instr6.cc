@@ -24,7 +24,6 @@
 
 #include "instr.h"
 
-#include <vm68k/add.h>
 #include <vm68k/conditional.h>
 #include <cstdio>
 
@@ -48,7 +47,6 @@ namespace vm68k
   namespace instr
   {
     using namespace conditional;
-    using namespace add;
 
     /* Handles a Bcc instruction.  */
     template <class Condition>

@@ -1,5 +1,14 @@
 2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* instr6.cc: Remove #include <vm68k/addressing>.
+	* instr7.cc: Likewise.
+
+	* vm68k/Makefile.am (vm68kinclude_HEADERS): Replace add.h with
+	addressing.
+
+	* vm68k/addressing: Renamed from add.h.  Also change all users.
+	(namespace addressing): Renamed from add.  Also change all users.
+
 	* ChangeLog: Correct mail addresses.
 
 	* bus_target.cc: Move the location of #includes.

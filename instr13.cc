@@ -24,7 +24,7 @@
 
 #include "instr.h"
 
-#include <vm68k/add.h>
+#include <vm68k/addressing>
 #include <cstdio>
 
 #ifdef HAVE_NANA_H
@@ -46,7 +46,7 @@ namespace vm68k
 {
   namespace instr
   {
-    using namespace add;
+    using namespace addressing;
 
     /* Handles an ADD instruction (data register destination).  */
     template <class Size, class Source>

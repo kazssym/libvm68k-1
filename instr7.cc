@@ -24,7 +24,6 @@
 
 #include "instr.h"
 
-#include <vm68k/add.h>
 #include <cstdio>
 
 #ifdef HAVE_NANA_H
@@ -46,8 +45,6 @@ namespace vm68k
 {
   namespace instr
   {
-    using namespace add;
-
     /* Handles a MOVEQ instruction.  */
     uint32_type
     _moveq(uint32_type pc, context &c, uint16_type w, void *)
