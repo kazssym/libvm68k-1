@@ -68,11 +68,11 @@ namespace vm68k
 	set_sr(old_sr & ~0x700 | prio << 8);
 	set_supervisor_state(true);
 	regs.a[7] -= 6;
-	mem->put_32(regs.a[7] + 2, pc, SUPERVISOR_DATA);
-	mem->put_16(regs.a[7] + 0, old_sr, SUPERVISOR_DATA);
+	mem->put_32(regs.a[7] + 2, pc, SUPER_DATA);
+	mem->put_16(regs.a[7] + 0, old_sr, SUPER_DATA);
 
 	uint32_type address = vecno * 4u;
-	pc = mem->get_32(address, SUPERVISOR_DATA);
+	pc = mem->get_32(address, SUPER_DATA);
 
 	a_interrupted = false;
 	vector<queue<unsigned int> >::iterator j = i;
@@ -98,8 +98,8 @@ namespace vm68k
 	    regs.ccr.set_s_bit(true);
 	    regs.a[7] = regs.ssp;
 
-	    pfc_cache = SUPERVISOR_PROGRAM;
-	    dfc_cache = SUPERVISOR_DATA;
+	    pfc_cache = SUPER_PROGRAM;
+	    dfc_cache = SUPER_DATA;
 	  }
       }
     else
@@ -131,8 +131,8 @@ namespace vm68k
   
   context::context(bus *m)
     : mem(m),
-      pfc_cache(regs.ccr.supervisor_state() ? SUPERVISOR_PROGRAM : USER_PROGRAM),
-      dfc_cache(regs.ccr.supervisor_state() ? SUPERVISOR_DATA : USER_DATA),
+      pfc_cache(regs.ccr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),
+      dfc_cache(regs.ccr.supervisor_state() ? SUPER_DATA : USER_DATA),
       a_interrupted(false),
       interrupt_queues(7)
   {
