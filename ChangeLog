@@ -1,5 +1,14 @@
 2001-06-27  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* vm68k/memory.h (class basic_uint16_iterator): Removed.
+	(class basic_uint32_iterator): Removed.
+
+	* vm68k/Makefile.am (vm68kinclude_HEADERS): Add iterator.h.
+
+	* vm68k/iterator.h: New file.
+	(class basic_uint16_iterator): Moved from memory.h.
+	(class basic_uint32_iterator): Likewise.
+
 	* configure.in: Move the test for `--with-nana' later.  Add
 	AC_C_CONST.  Improve warning messages for missing C++ features.
 

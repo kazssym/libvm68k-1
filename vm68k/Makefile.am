@@ -2,6 +2,6 @@
 
 vm68kincludedir = $(includedir)/vm68k
 
-vm68kinclude_HEADERS = types.h memory.h \
+vm68kinclude_HEADERS = types.h iterator.h memory.h \
 addressing.h conditional.h processor.h \
 mutex.h misc.h
