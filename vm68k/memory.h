@@ -30,37 +30,13 @@ namespace vm68k
 {
   using namespace std;
 
-  const unsigned int PAGE_SHIFT = 12;
+  const int PAGE_SHIFT = 12;
   const uint32_type PAGE_SIZE = uint32_type(1) << PAGE_SHIFT;
 
   // External mc68000 address is 24-bit size.
-  const unsigned int ADDRESS_BIT = 24;
+  const int ADDRESS_BIT = 24;
   const uint32_type NPAGES = uint32_type(1) << ADDRESS_BIT - PAGE_SHIFT;
-  
-  inline uint16_type
-  getw(const void *p)
-  {
-    return *const_uint16_iterator(p);
-  }
 
-  inline uint32_type
-  getl(const void *p)
-  {
-    return *const_uint32_iterator(p);
-  }
-
-  inline void
-  putw(void *p, uint16_type v)
-  {
-    *uint16_iterator(p) = v;
-  }
-
-  inline void
-  putl(void *p, uint32_type v)
-  {
-    *uint32_iterator(p) = v;
-  }
-
   /* Bus error or address error.  */
   struct memory_exception: exception
   {

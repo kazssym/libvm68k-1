@@ -1,5 +1,9 @@
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* vm68k/memory.h (PAGE_SHIFT): Changed to signed.
+	(ADDRESS_BIT): Likewise.
+	(getw, getl, putw, putl): Removed.
+
 	* Makefile.am (LTLIBRELEASE): Removed.
 
 	* configure.in (LTLIBRELEASE): Set for substitution.
