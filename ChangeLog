@@ -1,5 +1,8 @@
 2001-06-26  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* vm68k/types.h: Update comments.
+	(__VM68K_TYPES_H): Renamed from _VM68K_TYPES_H.
+
 	* memory.cc: Use a namespace block.  Include <nana.h> before other
 	headers.
 
