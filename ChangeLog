@@ -1,12 +1,20 @@
 2002-05-08  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
-	* bus.cc (fill_memory): Renamed from fill.
+	* vm68k/Makefile.am (vm68kinclude_HEADERS): Replace memory.h with
+	bus.
+
+	* Makefile.am (libvm68k_la_SOURCES): Replace memory.cc and
+	memory_map.cc with bus_target.cc and bus.cc.
+
+	* bus.cc: Renamed from memory_map.cc.
+	(fill_memory): Renamed from fill.
 	(class no_target): Renamed from missing_memory.  Also change all
 	users.
 	(no_target): Renamed from null_memory.  Also change all users.
 	(no_target): Use a static variable for the return value.
 
-	* bus_target.cc (vecno): Removed.
+	* bus_target.cc: Renamed from memory.cc.
+	(vecno): Removed.
 
 	* vm68k/bus: Renamed from memory.h.  Also change all users.
 	(enum function_code): Moved out of class memory.
