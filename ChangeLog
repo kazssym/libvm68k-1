@@ -1,5 +1,9 @@
 2001-12-02  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Makefile.am (libvm68k_la_SOURCES): Change the file name.
+
+	* instr1-3.cc: Renamed inst1to3.cc.
+
 	* processor.cc (run): Updated as the interface changed.
 	(illegal): Updated.
 
