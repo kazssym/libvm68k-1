@@ -50,15 +50,15 @@ namespace vm68k
     uint32_type
     _moveq(uint32_type pc, context &c, uint16_type w, void *)
     {
-      long_word::svalue_type value = byte::normal_s(w);
+      long_word::sint_type value = normal_s(byte(), w);
       int reg2 = w >> 9 & 7;
 #ifdef L
       L("\tmoveq%s #%#x,%%d%u\n", long_word::suffix(),
 	byte::normal_u(value), reg2);
 #endif
 
-      long_word::put(c.regs.d[reg2], value);
-      c.regs.ccr.set_cc(value);
+      long_word::put((&c.d0)[reg2], value);
+      c.ccr.set_cc(value);
 
       return pc + 2;
     }

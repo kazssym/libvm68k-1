@@ -63,8 +63,8 @@ namespace vm68k
       L("\taddq%s #%d,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
 
-      typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value = Size::normal_s(value1 + value2);
+      typename Size::sint_type value1 = ea1.get(c);
+      typename Size::sint_type value = Size::normal_s(value1 + value2);
       ea1.put(c, value);
       c.regs.ccr.set_cc_as_add(value, value1, value2);
 
@@ -86,8 +86,8 @@ namespace vm68k
 #endif
 
       // The condition codes are not affected by this instruction.
-      long_word::svalue_type value1 = long_word::get_s(c.regs.a[reg1]);
-      long_word::svalue_type value = long_word::normal_s(value1 + value2);
+      long_word::sint_type value1 = long_word::get_s(c.regs.a[reg1]);
+      long_word::sint_type value = long_word::normal_s(value1 + value2);
       long_word::put(c.regs.a[reg1], value);
 
       return pc + 2;
@@ -100,7 +100,7 @@ namespace vm68k
     {
       Condition cond;
       int reg1 = w & 7;
-      word::svalue_type disp = c.fetch_s(word(), pc + 2);
+      word::sint_type disp = c.fetch_s(word(), pc + 2);
 #ifdef L
       L("\tdb%s %%d%u,%#lx\n", Condition::text(), reg1,
 	long_word::normal_u(pc + 2 + disp) + 0UL);
@@ -151,8 +151,8 @@ namespace vm68k
       L("\tsubq%s #%d,%s\n", Size::suffix(), value2, ea1.text(c).c_str());
 #endif
 
-      typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value = Size::normal_s(value1 - value2);
+      typename Size::sint_type value1 = ea1.get(c);
+      typename Size::sint_type value = Size::normal_s(value1 - value2);
       ea1.put(c, value);
       c.regs.ccr.set_cc_sub(value, value1, value2);
 
@@ -174,8 +174,8 @@ namespace vm68k
 #endif
 
       // This instruction does not affect the condition codes.
-      long_word::svalue_type value1 = long_word::get_s(c.regs.a[reg1]);
-      long_word::svalue_type value = long_word::normal_s(value1 - value2);
+      long_word::sint_type value1 = long_word::get_s(c.regs.a[reg1]);
+      long_word::sint_type value = long_word::normal_s(value1 - value2);
       long_word::put(c.regs.a[reg1], value);
 
       return pc + 2;

@@ -24,99 +24,111 @@
 
 namespace vm68k
 {
+  template <class Size>
+  struct size_methods
+  {
+    typedef typename Size::uint_type uint_type;
+    typedef typename Size::sint_type sint_type;
+
+    static uint_type load_aligned_u(const memory &, uint32_type address,
+				    function_code);
+    static sint_type load_aligned_s(const memory &, uint32_type address,
+				    function_code);
+  };
+
+  template <class Size>
+  inline typename Size::uint_type
+  normal_u(Size, typename Size::uint_type value)
+  {
+    value &= Size::max();
+    return value;
+  }
+
+  template <class Size>
+  inline typename Size::sint_type
+  normal_s(Size, typename Size::uint_type value)
+  {
+    value &= Size::max();
+    if (value > Size::max() / 2)
+      return -typename Size::sint_type(Size::max() - value) - 1;
+    else
+      return typename Size::sint_type(value);
+  }
+
+  template <class Size>
+  inline uint32_type
+  make_32(Size, uint32_type old, typename Size::uint_type value)
+  {
+    return old & ~uint32_type(Size::max()) | normal_u(Size(), value);
+  }
+
+  template <class Size>
+  inline typename Size::uint_type
+  size_methods<Size>::load_aligned_u(const memory &m, uint32_type address,
+		       function_code fc)
+  {
+    return m.load_32(address, fc);
+  }
+
+  template <class Size>
+  inline typename Size::sint_type
+  size_methods<Size>::load_aligned_s(const memory &m, uint32_type address,
+		       function_code fc)
+  {
+    return normal_sint(Size(), load_aligned_u(m, address, fc));
+  }
+}
+
+namespace vm68k
+{
   /* Access methods for byte data.  */
   struct byte
   {
-    typedef int uvalue_type;
-    typedef int svalue_type;
+    typedef int uint_type;
+    typedef int sint_type;
 
     static uint32_type size() {return 1;}
     static uint32_type aligned_size() {return 2;}
-
-    static int uvalue_max() {return 0xff;}
-    static int svalue_max() {return 0x7f;}
-
-    static int normal_u(int value);
-    static int normal_s(int value);
-
-    static int get_u(const uint32_type &reg);
-    static int get_s(const uint32_type &reg);
-    static void put(uint32_type &reg, int value);
-
-    static int get_u(const bus &, uint32_type address, function_code);
-    static int get_s(const bus &, uint32_type address, function_code);
-    static void put(bus &, uint32_type address, function_code, int value);
-
-    static int get_instruction_u(const bus &, uint32_type address,
-				 function_code);
-    static int get_instruction_s(const bus &, uint32_type address,
-				 function_code);
-
+    static int max() {return 0xff;}
     static const char *suffix() {return "b";}
+
+    static int load(const memory &, uint32_type address,
+		    function_code);
+    static void store(memory &, uint32_type address, int value,
+		      function_code);
+
+    static int load_aligned_u(const memory &, uint32_type address,
+			      function_code);
+    static int load_aligned_s(const memory &, uint32_type address,
+			      function_code);
   };
 
   inline int
-  byte::normal_u(int value)
+  byte::load(const memory &m, uint32_type address,
+	     function_code fc)
   {
-    return value & uvalue_max();
-  }
-
-  inline int
-  byte::normal_s(int value)
-  {
-    value = normal_u(value);
-    if (value > svalue_max())
-      return -int(uvalue_max() - value) - 1;
-    else
-      return value;
-  }
-
-  inline int
-  byte::get_u(const uint32_type &reg)
-  {
-    return reg & uvalue_max();
-  }
-
-  inline int
-  byte::get_s(const uint32_type &reg)
-  {
-    return normal_s(get_u(reg));
+    return m.load_8(address, fc);
   }
 
   inline void
-  byte::put(uint32_type &reg, int value)
+  byte::store(memory &m, uint32_type address, int value,
+	      function_code fc)
   {
-    reg = reg & ~uint32_type(uvalue_max()) | normal_u(value);
+    m.store_8(address, value, fc);
   }
 
   inline int
-  byte::get_u(const bus &m, uint32_type address, function_code fc)
+  byte::load_aligned_u(const memory &m, uint32_type address,
+		       function_code fc)
   {
-    return m.get_8(address, fc);
+    return m.load_8(address | 1, fc);
   }
 
   inline int
-  byte::get_s(const bus &m, uint32_type address, function_code fc)
+  byte::load_aligned_s(const memory &m, uint32_type address,
+		       function_code fc)
   {
-    return normal_s(get_u(m, address, fc));
-  }
-
-  inline void
-  byte::put(bus &m, uint32_type address, function_code fc, int value)
-  {
-    m.put_8(address, value, fc);
-  }
-
-  inline int
-  byte::get_instruction_u(const bus &m, uint32_type address, function_code fc)
-  {
-    return m.get_8(address | 1, fc);
-  }
-
-  inline int
-  byte::get_instruction_s(const bus &m, uint32_type address, function_code fc)
-  {
-    return normal_s(get_instruction_u(m, address, fc));
+    return normal_s(byte(), load_aligned_u(m, address, fc));
   }
 }
 
@@ -125,97 +137,49 @@ namespace vm68k
   /* Access methods for word data.  */
   struct word
   {
-    typedef uint16_type uvalue_type;
-    typedef sint16_type svalue_type;
+    typedef uint16_type uint_type;
+    typedef sint16_type sint_type;
 
     static uint32_type size() {return 2;}
     static uint32_type aligned_size() {return size();}
+    static uint16_type max() {return 0xffff;}
 
-    static uint16_type uvalue_max() {return 0xffff;}
-    static sint16_type svalue_max() {return 0x7fff;}
+    static uint16_type load(const memory &, uint32_type address,
+			    function_code);
+    static void store(memory &, uint32_type address, uint16_type value,
+		      function_code);
 
-    static uint16_type normal_u(uint16_type value);
-    static sint16_type normal_s(uint16_type value);
-
-    static uint16_type get_u(const uint32_type &reg);
-    static sint16_type get_s(const uint32_type &reg);
-    static void put(uint32_type &reg, uint16_type value);
-
-    static uint16_type get_u(const bus &, uint32_type address, function_code);
-    static sint16_type get_s(const bus &, uint32_type address, function_code);
-    static void put(bus &, uint32_type address, function_code,
-		    uint16_type value);
-
-    static uint16_type get_instruction_u(const bus &, uint32_type address,
-					 function_code);
-    static sint16_type get_instruction_s(const bus &, uint32_type address,
-					 function_code);
+    static uint16_type load_aligned_u(const memory &, uint32_type address,
+				      function_code);
+    static sint16_type load_aligned_s(const memory &, uint32_type address,
+				      function_code);
 
     static const char *suffix() {return "w";}
   };
 
   inline uint16_type
-  word::normal_u(uint16_type value)
+  word::load(const memory &m, uint32_type address,
+	     function_code fc)
   {
-    return value & uvalue_max();
-  }
-
-  inline sint16_type
-  word::normal_s(uint16_type value)
-  {
-    value = normal_u(value);
-    if (value > uint16_type(svalue_max()))
-      return -sint16_type(uvalue_max() - value) - 1;
-    else
-      return value;
-  }
-
-  inline uint16_type
-  word::get_u(const uint32_type &reg)
-  {
-    return reg & uvalue_max();
-  }
-
-  inline sint16_type
-  word::get_s(const uint32_type &reg)
-  {
-    return normal_s(get_u(reg));
+    return m.load_16(address, fc);
   }
 
   inline void
-  word::put(uint32_type &reg, uint16_type value)
+  word::store(memory &m, uint32_type address, uint16_type value, function_code fc)
   {
-    reg = reg & ~uint32_type(uvalue_max()) | normal_u(value);
+    m.store_16(address, value, fc);
   }
 
   inline uint16_type
-  word::get_u(const bus &m, uint32_type address, function_code fc)
+  word::load_aligned_u(const memory &m, uint32_type address, function_code fc)
   {
-    return m.get_16(address, fc);
+    return m.load_16_aligned(address, fc);
   }
 
   inline sint16_type
-  word::get_s(const bus &m, uint32_type address, function_code fc)
+  word::load_aligned_s(const memory &m, uint32_type address, function_code fc)
   {
-    return normal_s(get_u(m, address, fc));
-  }
-
-  inline void
-  word::put(bus &m, uint32_type address, function_code fc, uint16_type value)
-  {
-    m.put_16(address, value, fc);
-  }
-
-  inline uint16_type
-  word::get_instruction_u(const bus &m, uint32_type address, function_code fc)
-  {
-    return m.get_16_aligned(address, fc);
-  }
-
-  inline sint16_type
-  word::get_instruction_s(const bus &m, uint32_type address, function_code fc)
-  {
-    return normal_s(get_instruction_u(m, address, fc));
+    return normal_s(word(), load_aligned_u(m, address, fc));
   }
 }
 
@@ -224,100 +188,51 @@ namespace vm68k
   /* Access methods for long word data.  */
   struct long_word
   {
-    typedef uint32_type uvalue_type;
-    typedef sint32_type svalue_type;
+    typedef uint32_type uint_type;
+    typedef sint32_type sint_type;
 
     static uint32_type size() {return 4;}
     static uint32_type aligned_size() {return size();}
+    static uint32_type max() {return 0xffffffff;}
 
-    static uint32_type uvalue_max() {return 0xffffffff;}
-    static sint32_type svalue_max() {return 0x7fffffff;}
+    static uint32_type load(const memory &, uint32_type address,
+			    function_code);
+    static void store(memory &, uint32_type address,
+		    uint32_type value, function_code);
 
-    static uint32_type normal_u(uint32_type value);
-    static sint32_type normal_s(uint32_type value);
-
-    static uint32_type get_u(const uint32_type &reg);
-    static sint32_type get_s(const uint32_type &reg);
-    static void put(uint32_type &reg, uint32_type value);
-
-    static uint32_type get_u(const bus &, uint32_type address, function_code);
-    static sint32_type get_s(const bus &, uint32_type address, function_code);
-    static void put(bus &, uint32_type address, function_code,
-		    uint32_type value);
-
-    static uint32_type get_instruction_u(const bus &, uint32_type address,
+    static uint32_type load_aligned_u(const memory &, uint32_type address,
 					 function_code);
-    static sint32_type get_instruction_s(const bus &, uint32_type address,
+    static sint32_type load_aligned_s(const memory &, uint32_type address,
 					 function_code);
 
     static const char *suffix() {return "l";}
   };
 
   inline uint32_type
-  long_word::normal_u(uint32_type value)
+  long_word::load(const memory &m, uint32_type address, function_code fc)
   {
-    return value & uvalue_max();
-  }
-
-  inline sint32_type
-  long_word::normal_s(uint32_type value)
-  {
-    value &= uvalue_max();
-    if (value > uint32_type(svalue_max()))
-      return -sint32_type(uvalue_max() - value) - 1;
-    else
-      return value;
-  }
-
-  inline uint32_type
-  long_word::get_u(const uint32_type &reg)
-  {
-    return reg;
-  }
-
-  inline sint32_type
-  long_word::get_s(const uint32_type &reg)
-  {
-    return normal_s(get_u(reg));
+    return m.load_32(address, fc);
   }
 
   inline void
-  long_word::put(uint32_type &reg, uint32_type value)
+  long_word::store(memory &m, uint32_type address,
+		 uint32_type value, function_code fc)
   {
-    reg = normal_u(value);
+    m.store_32(address, value, fc);
   }
 
   inline uint32_type
-  long_word::get_u(const bus &m, uint32_type address, function_code fc)
+  long_word::load_aligned_u(const memory &m, uint32_type address,
+			       function_code fc)
   {
-    return m.get_32(address, fc);
+    return m.load_32(address, fc);
   }
 
   inline sint32_type
-  long_word::get_s(const bus &m, uint32_type address, function_code fc)
-  {
-    return normal_s(get_u(m, address, fc));
-  }
-
-  inline void
-  long_word::put(bus &m, uint32_type address, function_code fc,
-		 uint32_type value)
-  {
-    m.put_32(address, value, fc);
-  }
-
-  inline uint32_type
-  long_word::get_instruction_u(const bus &m, uint32_type address,
+  long_word::load_aligned_s(const memory &m, uint32_type address,
 			       function_code fc)
   {
-    return m.get_32(address, fc);
-  }
-
-  inline sint32_type
-  long_word::get_instruction_s(const bus &m, uint32_type address,
-			       function_code fc)
-  {
-    return normal_s(get_instruction_u(m, address, fc));
+    return normal_s(long_word(), load_aligned_u(m, address, fc));
   }
 }
 

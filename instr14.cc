@@ -230,8 +230,8 @@ namespace vm68k
       L("\tlsr%s %s\n", word::suffix(), ea1.text(c).c_str());
 #endif
 
-      word::svalue_type value1 = ea1.get(c);
-      word::svalue_type value
+      word::sint_type value1 = ea1.get(c);
+      word::sint_type value
 	= word::normal_s(word::normal_u(value1) >> 1);
       ea1.put(c, value);
       c.regs.ccr.set_cc_lsr(value, value1, 1);
@@ -254,8 +254,8 @@ namespace vm68k
 #endif
 
       int count = c.regs.d[reg2] % (Size::size() * 8);
-      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
-      typename Size::svalue_type value
+      typename Size::sint_type value1 = Size::get_s(c.regs.d[reg1]);
+      typename Size::sint_type value
 	= Size::normal_s(Size::normal_u(value1) << count
 			 | (Size::normal_u(value1)
 			    >> Size::size() * 8 - count));
@@ -278,8 +278,8 @@ namespace vm68k
       L("\trol%s #%u,%%d%u\n", Size::suffix(), value2, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
-      typename Size::svalue_type value
+      typename Size::sint_type value1 = Size::get_s(c.regs.d[reg1]);
+      typename Size::sint_type value
 	= Size::normal_s(Size::normal_u(value1) << value2
 			 | (Size::normal_u(value1)
 			    >> Size::size() * 8 - value2));
@@ -302,8 +302,8 @@ namespace vm68k
       L("\tror%s #%u,%%d%u\n", Size::suffix(), count, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
-      typename Size::svalue_type value
+      typename Size::sint_type value1 = Size::get_s(c.regs.d[reg1]);
+      typename Size::sint_type value
 	= Size::normal_s(Size::normal_u(value1) >> count
 			 | (Size::normal_u(value1)
 			    << Size::size() * 8 - count));
@@ -326,8 +326,8 @@ namespace vm68k
       L("\troxl%s #%u,%%d%u", Size::suffix(), value2, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
-      typename Size::svalue_type value
+      typename Size::sint_type value1 = Size::get_s(c.regs.d[reg1]);
+      typename Size::sint_type value
 	= Size::normal_s(Size::normal_u(value1) << value2
 			 | c.regs.ccr.x() << value2 - 1
 			 | (Size::normal_u(value1)
@@ -351,8 +351,8 @@ namespace vm68k
       L("\troxr%s #%u,%%d%u", Size::suffix(), value2, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
-      typename Size::svalue_type value
+      typename Size::sint_type value1 = Size::get_s(c.regs.d[reg1]);
+      typename Size::sint_type value
 	= Size::normal_s(Size::normal_u(value1) >> value2
 			 | c.regs.ccr.x() << Size::size() * 8 - value2
 			 | (Size::normal_u(value1)

@@ -95,14 +95,14 @@ namespace vm68k
     uint32_type
     _andi_to_ccr(uint32_type pc, context &c, uint16_type, void *)
     {
-      byte::uvalue_type value2 = c.fetch_u(byte(), pc + 2);
+      byte::uint_type value2 = c.fetch_u(byte(), pc + 2);
 #ifdef L
       L("\tandi%s #%#x,%%ccr\n", byte::suffix(), value2);
 #endif
 
-      byte::uvalue_type value1 = c.regs.ccr & 0xff;
-      byte::uvalue_type value = value1 & value2;
-      c.regs.ccr = c.regs.ccr & ~0xff | value & 0xff; // FIXME
+      byte::uint_type value1 = c.ccr & 0xff;
+      byte::uint_type value = value1 & value2;
+      c.ccr = c.ccr & ~0xff | value & 0xff; // FIXME
 
       return pc + 2 + byte::aligned_size();
     }
@@ -111,7 +111,7 @@ namespace vm68k
     uint32_type
     _andi_to_sr(uint32_type pc, context &c, uint16_type, void *)
     {
-      word::uvalue_type value2 = c.fetch_u(word(), pc + 2);
+      word::uint_type value2 = c.fetch_u(word(), pc + 2);
 #ifdef L
       L("\tandi%s #%#x,%%sr\n", word::suffix(), value2);
 #endif
@@ -120,8 +120,8 @@ namespace vm68k
       if (!c.supervisor_state())
 	throw privilege_violation_exception(pc);
 
-      word::uvalue_type value1 = c.sr();
-      word::uvalue_type value = value1 & value2;
+      word::uint_type value1 = c.sr();
+      word::uint_type value = value1 & value2;
       c.set_sr(value);
 
       return pc + 2 + word::aligned_size();
@@ -140,12 +140,12 @@ namespace vm68k
 
       // This instruction affects only the Z bit of the condition codes.
       int value2 = c.regs.d[reg2] % (Size::size() * 8);
-      typename Size::uvalue_type mask
-	= typename Size::uvalue_type(1) << value2;
-      typename Size::uvalue_type value1 = ea1.get(c);
+      typename Size::uint_type mask
+	= typename Size::uint_type(1) << value2;
+      typename Size::uint_type value1 = ea1.get(c);
       bool value = value1 & mask;
       ea1.put(c, value1 & ~mask);
-      c.regs.ccr.set_cc(value);	// FIXME.
+      c.ccr.set_cc(value);	// FIXME.
 
       ea1.finish(c);
       return pc + 2 + ea1.extension_size();
@@ -163,12 +163,12 @@ namespace vm68k
 #endif
 
       // This instruction affects only the Z bit of the condition codes.
-      typename Size::uvalue_type mask
-	= typename Size::uvalue_type(1) << value2;
-      typename Size::uvalue_type value1 = ea1.get(c);
+      typename Size::uint_type mask
+	= typename Size::uint_type(1) << value2;
+      typename Size::uint_type value1 = ea1.get(c);
       bool value = value1 & mask;
       ea1.put(c, value1 & ~mask);
-      c.regs.ccr.set_cc(value);	// FIXME.
+      c.ccr.set_cc(value);	// FIXME.
 
       ea1.finish(c);
       return pc + 2 + 2 + ea1.extension_size();
@@ -187,12 +187,12 @@ namespace vm68k
 
       // This instruction affects only the Z bit of the condition codes.
       int value2 = c.regs.d[reg2] % (Size::size() * 8);
-      typename Size::uvalue_type mask
-	= typename Size::uvalue_type(1) << value2;
-      typename Size::uvalue_type value1 = ea1.get(c);
+      typename Size::uint_type mask
+	= typename Size::uint_type(1) << value2;
+      typename Size::uint_type value1 = ea1.get(c);
       bool value = value1 & mask;
       ea1.put(c, value1 | mask);
-      c.regs.ccr.set_cc(value);	// FIXME.
+      c.ccr.set_cc(value);	// FIXME.
 
       ea1.finish(c);
       return pc + 2 + ea1.extension_size();
@@ -210,12 +210,12 @@ namespace vm68k
 #endif
 
       // This instruction affects only the Z bit of the condition codes.
-      typename Size::uvalue_type mask
-	= typename Size::uvalue_type(1) << value2;
-      typename Size::uvalue_type value1 = ea1.get(c);
+      typename Size::uint_type mask
+	= typename Size::uint_type(1) << value2;
+      typename Size::uint_type value1 = ea1.get(c);
       bool value = value1 & mask;
       ea1.put(c, value1 | mask);
-      c.regs.ccr.set_cc(value);	// FIXME.
+      c.ccr.set_cc(value);	// FIXME.
 
       ea1.finish(c);
       return pc + 2 + word::aligned_size()
@@ -235,11 +235,11 @@ namespace vm68k
 
       // This instruction affects only the Z bit of the condition codes.
       int value2 = c.regs.d[reg2] % (Size::size() * 8);
-      typename Size::uvalue_type mask
-	= typename Size::uvalue_type(1) << value2;
-      typename Size::uvalue_type value1 = ea1.get(c);
+      typename Size::uint_type mask
+	= typename Size::uint_type(1) << value2;
+      typename Size::uint_type value1 = ea1.get(c);
       bool value = value1 & mask;
-      c.regs.ccr.set_cc(value);	// FIXME.
+      c.ccr.set_cc(value);	// FIXME.
 
       ea1.finish(c);
       return pc + 2 + ea1.extension_size();
@@ -257,11 +257,11 @@ namespace vm68k
 #endif
 
       // This instruction affects only the Z bit of the condition codes.
-      typename Size::uvalue_type mask
-	= typename Size::uvalue_type(1) << value2;
+      typename Size::uint_type mask
+	= typename Size::uint_type(1) << value2;
       typename Size::svalue_type value1 = ea1.get(c);
       bool value = Size::normal_u(value1) & mask;
-      c.regs.ccr.set_cc(value);	// FIXME.
+      c.ccr.set_cc(value);	// FIXME.
 
       ea1.finish(c);
       return pc + 2 + word::aligned_size()
@@ -282,7 +282,7 @@ namespace vm68k
 
       typename Size::svalue_type value1 = ea1.get(c);
       typename Size::svalue_type value = Size::normal_s(value1 - value2);
-      c.regs.ccr.set_cc_cmp(value, value1, value2);
+      c.ccr.set_cc_cmp(value, value1, value2);
 
       ea1.finish(c);
       return pc + 2 + Size::aligned_size()
@@ -305,7 +305,7 @@ namespace vm68k
       typename Size::svalue_type value
 	= Size::normal_s(Size::normal_u(value1) ^ Size::normal_u(value2));
       ea1.put(c, value);
-      c.regs.ccr.set_cc(value);
+      c.ccr.set_cc(value);
 
       ea1.finish(c);
       return pc + 2 + Size::aligned_size() + ea1.extension_size();
@@ -327,7 +327,7 @@ namespace vm68k
       typename Size::svalue_type value
 	= Size::normal_s(Size::normal_u(value1) | Size::normal_u(value2));
       ea1.put(c, value);
-      c.regs.ccr.set_cc(value);
+      c.ccr.set_cc(value);
 
       ea1.finish(c);
       return pc + 2 + Size::aligned_size()
@@ -338,14 +338,14 @@ namespace vm68k
     uint32_type
     _ori_to_ccr(uint32_type pc, context &c, uint16_type, void *)
     {
-      byte::uvalue_type value2 = c.fetch_u(byte(), pc + 2);
+      byte::uint_type value2 = c.fetch_u(byte(), pc + 2);
 #ifdef L
       L("\tori%s #%#x,%%ccr\n", byte::suffix(), value2);
 #endif
 
-      byte::uvalue_type value1 = c.regs.ccr & 0xff;
-      byte::uvalue_type value = value1 | value2;
-      c.regs.ccr = c.regs.ccr & ~0xff | value & 0xff; // FIXME
+      byte::uint_type value1 = c.ccr & 0xff;
+      byte::uint_type value = value1 | value2;
+      c.ccr = c.ccr & ~0xff | value & 0xff; // FIXME
 
       return pc + 2 + byte::aligned_size();
     }
@@ -354,7 +354,7 @@ namespace vm68k
     uint32_type
     _ori_to_sr(uint32_type pc, context &c, uint16_type, void *)
     {
-      word::uvalue_type value2 = c.fetch_u(word(), pc + 2);
+      word::uint_type value2 = c.fetch_u(word(), pc + 2);
 #ifdef L
       L("\tori%s #%#x,%%sr\n", word::suffix(), value2);
 #endif
@@ -363,8 +363,8 @@ namespace vm68k
       if (!c.supervisor_state())
 	throw privilege_violation_exception(pc);
 
-      word::uvalue_type value1 = c.sr();
-      word::uvalue_type value = value1 | value2;
+      word::uint_type value1 = c.sr();
+      word::uint_type value = value1 | value2;
       c.set_sr(value);
 
       return pc + 2 + word::aligned_size();
@@ -385,7 +385,7 @@ namespace vm68k
       typename Size::svalue_type value1 = ea1.get(c);
       typename Size::svalue_type value = Size::normal_s(value1 - value2);
       ea1.put(c, value);
-      c.regs.ccr.set_cc_sub(value, value1, value2);
+      c.ccr.set_cc_sub(value, value1, value2);
 
       ea1.finish(c);
       return pc + 2 + word::aligned_size()

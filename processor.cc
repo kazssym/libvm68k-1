@@ -48,15 +48,15 @@ bool nana_instruction_trace = false;
 namespace vm68k
 {
   uint32_type
-  processor::run(uint32_type pc, context &c) const
+  processor::run(uint32_type pc, context *c) const
     throw (processor_exception)
   {
     try
       {
 	for (;;)
 	  {
-	    if (c.interrupted())
-	      pc = c.handle_interrupts(pc);
+	    if (c->interrupted())
+	      pc = c->handle_interrupts(pc);
 
 #ifdef LG
 # ifdef DUMP_REGISTERS
@@ -71,7 +71,7 @@ namespace vm68k
 	    LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
 	       long_word::normal_u(pc) + 0UL, c.fetch_u(word(), pc));
 #endif
-	    pc = dispatch(pc, c, c.fetch_u(word(), pc));
+	    pc = dispatch(c->fetch_u(word(), pc), c);
 	  }
       }
     catch (const bus_error &e)
@@ -124,8 +124,8 @@ namespace vm68k
   
   /* Executes an illegal instruction.  */
   uint32_type
-  processor::illegal(uint32_type pc, context &, uint16_type, void *)
+  processor::illegal(uint16_type iw, context *c, void *)
   {
-    throw illegal_instruction_exception(pc);
+    throw illegal_instruction_exception(c->pc);
   }
 }

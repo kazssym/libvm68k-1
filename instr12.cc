@@ -59,9 +59,9 @@ namespace vm68k
       L("\tand%s %s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
-      typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value2 = Size::get_s(c.regs.d[reg2]);
-      typename Size::svalue_type value
+      typename Size::sint_type value1 = ea1.get(c);
+      typename Size::sint_type value2 = Size::load_s(c.regs.d[reg2]);
+      typename Size::sint_type value
 	= Size::normal_s(Size::normal_u(value2) & Size::normal_u(value1));
       Size::put(c.regs.d[reg2], value);
       c.regs.ccr.set_cc(value);
@@ -81,9 +81,9 @@ namespace vm68k
       L("\tand%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
-      typename Size::svalue_type value2 = Size::get_s(c.regs.d[reg2]);
-      typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value
+      typename Size::sint_type value2 = Size::load_s(c.regs.d[reg2]);
+      typename Size::sint_type value1 = ea1.get(c);
+      typename Size::sint_type value
 	= Size::normal_s(Size::normal_u(value1) & Size::normal_u(value2));
       ea1.put(c, value);
       c.regs.ccr.set_cc(value);
@@ -103,9 +103,9 @@ namespace vm68k
 #endif
 
       // The condition codes are not affected by this instruction.
-      long_word::svalue_type value = long_word::get_s(c.regs.d[reg1]);
-      long_word::put(c.regs.d[reg1], long_word::get_s(c.regs.d[reg2]));
-      long_word::put(c.regs.d[reg2], value);
+      long_word::sint_type value = long_word::load_s((&c.d0)[reg1]);
+      long_word::store((&c.d0)[reg1], long_word::load_s((&c.d0)[reg2]));
+      long_word::store((&c.d0)[reg2], value);
 
       return pc + 2;
     }
@@ -121,9 +121,9 @@ namespace vm68k
 #endif
 
       // The condition codes are not affected by this instruction.
-      long_word::svalue_type value = long_word::get_s(c.regs.a[reg1]);
-      long_word::put(c.regs.a[reg1], long_word::get_s(c.regs.a[reg2]));
-      long_word::put(c.regs.a[reg2], value);
+      long_word::sint_type value = long_word::load_s((&c.a0)[reg1]);
+      long_word::store((&c.a0)[reg1], long_word::load_s((&c.a0)[reg2]));
+      long_word::store((&c.a0)[reg2], value);
 
       return pc + 2;
     }
@@ -139,9 +139,9 @@ namespace vm68k
 #endif
 
       // The condition codes are not affected by this instruction.
-      long_word::svalue_type value = long_word::get_s(c.regs.a[reg1]);
-      long_word::put(c.regs.a[reg1], long_word::get_s(c.regs.d[reg2]));
-      long_word::put(c.regs.d[reg2], value);
+      long_word::sint_type value = long_word::load_s((&c.a0)[reg1]);
+      long_word::store((&c.a0)[reg1], long_word::load_s((&c.d0)[reg2]));
+      long_word::store((&c.d0)[reg2], value);
 
       return pc + 2;
     }
@@ -157,11 +157,11 @@ namespace vm68k
       L("\tmuls%s %s,%%d%u\n", word::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
-      word::svalue_type value1 = ea1.get(c);
-      word::svalue_type value2 = word::get_s(c.regs.d[reg2]);
-      long_word::svalue_type value
-	= (long_word::svalue_type(value2) * long_word::svalue_type(value1));
-      long_word::put(c.regs.d[reg2], value);
+      word::sint_type value1 = ea1.get(c);
+      word::sint_type value2 = word::load_s((&c.d0)[reg2]);
+      long_word::sint_type value
+	= (long_word::sint_type(value2) * long_word::sint_type(value1));
+      long_word::store((&c.d0)[reg2], value);
       c.regs.ccr.set_cc(value);	// FIXME.
 
       ea1.finish(c);
@@ -179,13 +179,13 @@ namespace vm68k
       L("\tmulu%s %s,%%d%u\n", word::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
-      word::svalue_type value1 = ea1.get(c);
-      word::svalue_type value2 = word::get_s(c.regs.d[reg2]);
-      long_word::svalue_type value
+      word::sint_type value1 = ea1.get(c);
+      word::sint_type value2 = word::load_s((&c.d0)[reg2]);
+      long_word::sint_type value
 	= (long_word::normal_s
 	   (long_word::uvalue_type(word::normal_u(value2))
 	    * long_word::uvalue_type(word::normal_u(value1))));
-      long_word::put(c.regs.d[reg2], value);
+      long_word::store((&c.d0)[reg2], value);
       c.regs.ccr.set_cc(value); // FIXME.
 
       ea1.finish(c);

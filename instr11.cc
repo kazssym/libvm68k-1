@@ -59,9 +59,9 @@ namespace vm68k
       L("\tcmp%s %s,%%d%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
-      typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value2 = Size::get_s(c.regs.d[reg2]);
-      typename Size::svalue_type value = Size::normal_s(value2 - value1);
+      typename Size::sint_type value1 = ea1.get(c);
+      typename Size::sint_type value2 = Size::get_s(c.regs.d[reg2]);
+      typename Size::sint_type value = Size::normal_s(value2 - value1);
       c.regs.ccr.set_cc_cmp(value, value2, value1);
 
       ea1.finish(c);
@@ -79,9 +79,9 @@ namespace vm68k
       L("\tcmpa%s %s,%%a%u\n", Size::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
-      long_word::svalue_type value1 = ea1.get(c);
-      long_word::svalue_type value2 = long_word::get_s(c.regs.a[reg2]);
-      long_word::svalue_type value
+      long_word::sint_type value1 = ea1.get(c);
+      long_word::sint_type value2 = long_word::get_s(c.regs.a[reg2]);
+      long_word::sint_type value
 	= long_word::normal_s(value2 - value1);
       c.regs.ccr.set_cc_cmp(value, value2, value1);
 
@@ -102,9 +102,9 @@ namespace vm68k
 	ea2.text(c).c_str());
 #endif
 
-      typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value2 = ea2.get(c);
-      typename Size::svalue_type value = Size::normal_s(value2 - value1);
+      typename Size::sint_type value1 = ea1.get(c);
+      typename Size::sint_type value2 = ea2.get(c);
+      typename Size::sint_type value = Size::normal_s(value2 - value1);
       c.regs.ccr.set_cc_cmp(value, value2, value1);
 
       ea1.finish(c);
@@ -123,9 +123,9 @@ namespace vm68k
       L("\teor%s %%d%u,%s\n", Size::suffix(), reg2, ea1.text(c).c_str());
 #endif
 
-      typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value2 = Size::get_s(c.regs.d[reg2]);
-      typename Size::svalue_type value
+      typename Size::sint_type value1 = ea1.get(c);
+      typename Size::sint_type value2 = Size::get_s(c.regs.d[reg2]);
+      typename Size::sint_type value
 	= Size::normal_s(Size::normal_u(value1) ^ Size::normal_u(value2));
       ea1.put(c, value);
       c.regs.ccr.set_cc(value);

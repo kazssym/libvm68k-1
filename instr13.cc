@@ -102,9 +102,9 @@ namespace vm68k
 #endif
 
       // The condition codes are not affected by this instruction.
-      long_word::svalue_type value1 = ea1.get(c);
-      long_word::svalue_type value2 = long_word::get_s(c.regs.a[reg2]);
-      long_word::svalue_type value = long_word::normal_s(value2 + value1);
+      long_word::sint_type value1 = ea1.get(c);
+      long_word::sint_type value2 = long_word::get_s(c.regs.a[reg2]);
+      long_word::sint_type value = long_word::normal_s(value2 + value1);
       long_word::put(c.regs.a[reg2], value);
 
       ea1.finish(c);
@@ -122,9 +122,9 @@ namespace vm68k
       L("\taddx%s %%d%u,%%d%u\n", Size::suffix(), reg1, reg2);
 #endif
 
-      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
-      typename Size::svalue_type value2 = Size::get_s(c.regs.d[reg2]);
-      typename Size::svalue_type value
+      typename Size::sint_type value1 = Size::get_s(c.regs.d[reg1]);
+      typename Size::sint_type value2 = Size::get_s(c.regs.d[reg2]);
+      typename Size::sint_type value
 	= Size::normal_s(value2 + value1 + c.regs.ccr.x());
       Size::put(c.regs.d[reg2], value);
       c.regs.ccr.set_cc_as_add(value, value2, value1);

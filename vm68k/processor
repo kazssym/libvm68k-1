@@ -165,10 +165,10 @@ namespace vm68k
     uint32_type usp, saved_ssp;
 
   private:
-    class bus *_bus;
+    class memory *_bus;
 
   public:
-    inline class bus *bus() const;
+    inline class memory *bus() const;
 
   private:
     /* Cache values for program and data FC's.  */
@@ -181,7 +181,7 @@ namespace vm68k
     std::vector<std::queue<unsigned int> > interrupt_queues;
 
   public:
-    explicit context(class bus *);
+    explicit context(class memory *);
 
   public:
     /* Returns true if supervisor state.  */
@@ -206,9 +206,9 @@ namespace vm68k
 
   public:
     template <class Size>
-    typename Size::uvalue_type fetch_u(Size, uint32_type address) const;
+    typename Size::uint_type fetch_u(Size, uint32_type address) const;
     template <class Size>
-    typename Size::svalue_type fetch_s(Size, uint32_type address) const;
+    typename Size::sint_type fetch_s(Size, uint32_type address) const;
 
   public:			// interrupt
     /* Returns true if the thread in this context is interrupted.  */
@@ -223,16 +223,16 @@ namespace vm68k
     uint32_type handle_interrupts(uint32_type pc);
   };
 
-  template <class Size> inline typename Size::uvalue_type
+  template <class Size> inline typename Size::uint_type
   context::fetch_u(Size, uint32_type address) const
   {
-    return Size::get_instruction_u(*_bus, address, program_fc());
+    return Size::load_aligned_u(*_bus, address, program_fc());
   }
 
-  template <class Size> inline typename Size::svalue_type
+  template <class Size> inline typename Size::sint_type
   context::fetch_s(Size, uint32_type address) const
   {
-    return Size::get_instruction_s(*_bus, address, program_fc());
+    return Size::load_aligned_s(*_bus, address, program_fc());
   }
 }
 
@@ -350,15 +350,14 @@ namespace vm68k
   public:
     /* Type of an instruction handler.  */
     typedef uint32_type
-    (*instruction_handler)(uint16_type w, context &, void *);
+    (*instruction_handler)(uint16_type op, context *, void *);
 
     /* Type of an instruction.  */
     typedef std::pair<instruction_handler, void *> instruction_type;
 
   public:
     /* Raises an illegal instruction exception.  */
-    static uint32_type
-    illegal(uint16_type w, context &, void *);
+    static uint32_type illegal(uint16_type op, context *, void *);
 
   private:
     std::vector<instruction_type> instructions;
@@ -382,19 +381,19 @@ namespace vm68k
 
   protected:
     /* Dispatches for instruction handlers.  */
-    uint32_type dispatch(uint16_type w, context &c) const;
+    uint32_type dispatch(uint16_type op, context *c) const;
 
   public:
     /* Starts the program.  */
-    uint32_type run(uint32_type pc, context &c) const
+    uint32_type run(uint32_type pc, context *c) const
       throw (processor_exception);
   };
 
   inline uint32_type
-  processor::dispatch(uint16_type w, context &c) const
+  processor::dispatch(uint16_type op, context *c) const
   {
-    w &= 0xffff;
-    return instructions[w].first(w, c, instructions[w].second);
+    op &= 0xffff;
+    return instructions[op].first(op, c, instructions[op].second);
   }
 }
 

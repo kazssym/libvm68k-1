@@ -40,18 +40,18 @@ namespace vm68k
       // XXX: address is left unimplemented.
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
       template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
+      void store(Size, context *c, typename Size::uint_type value) const;
 
       template <class Size>
-      void finish(Size, context &c) const {}
+      void finish(Size, context *c) const {}
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      std::string text(Size, const context *c) const;
 
     protected:
       int _reg;
@@ -64,33 +64,33 @@ namespace vm68k
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    data_register_direct::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    data_register_direct::load_u(Size, const context *c) const
     {
-      return Size::get_u(c.regs.d[_reg]);
+      return Size::load_u((&c->d0)[_reg]);
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    data_register_direct::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    data_register_direct::load_s(Size, const context *c) const
     {
-      return Size::get_s(c.regs.d[_reg]);
+      return normal_s(Size(), (&c->d0)[_reg]);
     }
 
     template <class Size>
     inline void
-    data_register_direct::put(Size, context &c,
-			      typename Size::uvalue_type value) const
+    data_register_direct::store(Size, context *c,
+				typename Size::uint_type value) const
     {
-      Size::put(c.regs.d[_reg], value);
+      (&c->d0)[_reg] = make_32(Size(), (&c->d0)[_reg], value);
     }
 
     template <class Size>
     inline std::string
-    data_register_direct::text(Size, const context &c) const
+    data_register_direct::text(Size, const context *c) const
     {
       char buf[64];
-      sprintf(buf, "%%d%d", _reg);
+      std::sprintf(buf, "%%d%d", _reg);
       return buf;
     }
 
@@ -106,18 +106,18 @@ namespace vm68k
       // XXX: address is left unimplemented.
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
       template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
+      void store(Size, context *c, typename Size::uint_type value) const;
 
       template <class Size>
-      void finish(Size, context &c) const {}
+      void finish(Size, context *c) const {}
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      std::string text(Size, const context *c) const;
 
     protected:
       int _reg;
@@ -131,33 +131,33 @@ namespace vm68k
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    address_register_direct::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    address_register_direct::load_u(Size, const context *c) const
     {
-      return Size::get_u(c.regs.a[_reg]);
+      return Size::load_u((&c->a0)[_reg]);
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    address_register_direct::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    address_register_direct::load_s(Size, const context *c) const
     {
-      return Size::get_s(c.regs.a[_reg]);
+      return normal_s(Size(), (&c->a0)[_reg]);
     }
 
     template <class Size>
     inline void
-    address_register_direct::put(Size, context &c,
-				 typename Size::uvalue_type value) const
+    address_register_direct::store(Size, context *c,
+				 typename Size::uint_type value) const
     {
-      c.regs.a[_reg] = long_word::normal_u(value);
+      (&c->a0)[_reg] = long_word::normal_u(value);
     }
 
     template <class Size>
     inline std::string
-    address_register_direct::text(Size, const context &c) const
+    address_register_direct::text(Size, const context *c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%d", _reg);
+      std::sprintf(buf, "%%a%d", _reg);
       return buf;
     }
 
@@ -171,21 +171,21 @@ namespace vm68k
       indirect(int reg, uint32_type address);
 
       template <class Size>
-      uint32_type address(Size, const context &c) const;
+      uint32_type address(Size, const context *c) const;
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
       template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
+      void store(Size, context *c, typename Size::uint_type value) const;
 
       template <class Size>
-      void finish(Size, context &c) const {}
+      void finish(Size, context *c) const {}
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      std::string text(Size, const context *c) const;
 
     protected:
       int _reg;
@@ -199,38 +199,38 @@ namespace vm68k
 
     template <class Size>
     inline uint32_type
-    indirect::address(Size, const context &c) const
+    indirect::address(Size, const context *c) const
     {
-      return c.regs.a[_reg];
+      return (&c->a0)[_reg];
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    indirect::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    indirect::load_u(Size, const context *c) const
     {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
+      return Size::load_u(*c.mem, address(Size(), c), c->data_fc());
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    indirect::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    indirect::load_s(Size, const context *c) const
     {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
+      return vm68k::load_s(Size(), *c->bus(), address(Size(), c), c->data_fc());
     }
 
     template <class Size>
     inline void
-    indirect::put(Size, context &c, typename Size::uvalue_type value) const
+    indirect::store(Size, context *c, typename Size::uint_type value) const
     {
-      Size::put(*c.mem, address(Size(), c), c.data_fc(), value);
+      Size::store(*c->bus(), address(Size(), c), value, c->data_fc());
     }
 
     template <class Size>
     inline std::string
-    indirect::text(Size, const context &c) const
+    indirect::text(Size, const context *c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%d@/*%#lx*/", _reg, address(Size(), c) + 0UL);
+      std::sprintf(buf, "%%a%d@/*%#lx*/", _reg, address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -246,18 +246,18 @@ namespace vm68k
       // XXX: address is left unimplemented.
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
       template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
+      void store(Size, context *c, typename Size::uint_type value) const;
 
       template <class Size>
-      void finish(Size, context &c) const;
+      void finish(Size, context *c) const;
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      std::string text(Size, const context *c) const;
 
     protected:
       int _reg;
@@ -283,41 +283,41 @@ namespace vm68k
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    postinc_indirect::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    postinc_indirect::load_u(Size, const context *c) const
     {
-      return Size::get_u(*c.mem, c.regs.a[_reg], c.data_fc());
+      return Size::load_u(*c->bus(), (&c->a0)[_reg], c->data_fc());
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    postinc_indirect::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    postinc_indirect::load_s(Size, const context *c) const
     {
-      return Size::get_s(*c.mem, c.regs.a[_reg], c.data_fc());
-    }
-
-    template <class Size>
-    inline void
-    postinc_indirect::put(Size, context &c,
-			  typename Size::uvalue_type value) const
-    {
-      Size::put(*c.mem, c.regs.a[_reg], c.data_fc(), value);
+      return vm68k::load_s(Size(), *c->bus(), (&c->a0)[_reg], c->data_fc());
     }
 
     template <class Size>
     inline void
-    postinc_indirect::finish(Size, context &c) const
+    postinc_indirect::store(Size, context *c,
+			  typename Size::uint_type value) const
     {
-      c.regs.a[_reg]
-	= long_word::normal_u(c.regs.a[_reg] + increment_size(Size()));
+      Size::store(*c->bus(), (&c->a0)[_reg], value, c->data_fc());
+    }
+
+    template <class Size>
+    inline void
+    postinc_indirect::finish(Size, context *c) const
+    {
+      (&c->a0)[_reg]
+	= normal_u(long_word(), (&c->a0)[_reg] + increment_size(Size()));
     }
 
     template <class Size>
     inline std::string
-    postinc_indirect::text(Size, const context &c) const
+    postinc_indirect::text(Size, const context *c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%d@+/*%#lx*/", _reg, c.regs.a[_reg] + 0UL);
+      std::sprintf(buf, "%%a%d@+/*%#lx*/", _reg, (&c->a0)[_reg] + 0UL);
       return buf;
     }
 
@@ -333,18 +333,18 @@ namespace vm68k
       // XXX: address is left unimplemented.
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
       template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
+      void store(Size, context *c, typename Size::uint_type value) const;
 
       template <class Size>
-      void finish(Size, context &c) const;
+      void finish(Size, context *c) const;
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      std::string text(Size, const context *c) const;
 
     protected:
       int _reg;
@@ -370,46 +370,47 @@ namespace vm68k
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    predec_indirect::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    predec_indirect::load_u(Size, const context *c) const
     {
-      return Size::get_u(*c.mem, c.regs.a[_reg] - decrement_size(Size()),
-			 c.data_fc());
+      return Size::load_u(*c->bus(), (&c->a0)[_reg] - decrement_size(Size()),
+			 c->data_fc());
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    predec_indirect::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    predec_indirect::load_s(Size, const context *c) const
     {
-      return Size::get_s(*c.mem, c.regs.a[_reg] - decrement_size(Size()),
-			 c.data_fc());
-    }
-
-    template <class Size>
-    inline void
-    predec_indirect::put(Size, context &c,
-			  typename Size::uvalue_type value) const
-    {
-      Size::put(*c.mem, c.regs.a[_reg] - decrement_size(Size()), c.data_fc(),
-		value);
+      return vm68k::load_s(Size(), *c->bus(),
+			   (&c->a0)[_reg] - decrement_size(Size()),
+			   c->data_fc());
     }
 
     template <class Size>
     inline void
-    predec_indirect::finish(Size, context &c) const
+    predec_indirect::store(Size, context *c,
+			  typename Size::uint_type value) const
     {
-      c.regs.a[_reg]
-	= long_word::normal_u(c.regs.a[_reg] - decrement_size(Size()));
+      Size::store(*c->bus(), (&c->a0)[_reg] - decrement_size(Size()), value,
+		  c->data_fc());
+    }
+
+    template <class Size>
+    inline void
+    predec_indirect::finish(Size, context *c) const
+    {
+      (&c->a0)[_reg]
+	= normal_u(long_word(), (&c->a0)[_reg] - decrement_size(Size()));
     }
 
     template <class Size>
     inline std::string
-    predec_indirect::text(Size, const context &c) const
+    predec_indirect::text(Size, const context *c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%d@-/*%#lx*/", _reg,
-	      long_word::normal_u(c.regs.a[_reg] - decrement_size(Size()))
-	      + 0UL);
+      std::sprintf(buf, "%%a%d@-/*%#lx*/", _reg,
+		   long_word::normal_u((&c->a0)[_reg] - decrement_size(Size()))
+		   + 0UL);
       return buf;
     }
 
@@ -423,21 +424,21 @@ namespace vm68k
       disp_indirect(int reg, uint32_type address);
 
       template <class Size>
-      uint32_type address(Size, const context &c) const;
+      uint32_type address(Size, const context *c) const;
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
       template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
+      void store(Size, context *c, typename Size::uint_type value) const;
 
       template <class Size>
-      void finish(Size, context &c) const {}
+      void finish(Size, context *c) const {}
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      std::string text(Size, const context *c) const;
 
     protected:
       int _reg;
@@ -453,40 +454,41 @@ namespace vm68k
 
     template <class Size>
     inline uint32_type
-    disp_indirect::address(Size, const context &c) const
+    disp_indirect::address(Size, const context *c) const
     {
-      return long_word::normal_u(c.regs.a[_reg] + c.fetch_s(word(), _address));
+      return normal_u(long_word(), (&c->a0)[_reg] + c->fetch_s(word(), _address));
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    disp_indirect::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    disp_indirect::load_u(Size, const context *c) const
     {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
+      return Size::load_u(*c->bus(), address(Size(), c), c->data_fc());
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    disp_indirect::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    disp_indirect::load_s(Size, const context *c) const
     {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
+      return vm68k::load_s(Size(), *c->bus(), address(Size(), c),
+			   c->data_fc());
     }
 
     template <class Size>
     inline void
-    disp_indirect::put(Size, context &c,
-		       typename Size::uvalue_type value) const
+    disp_indirect::store(Size, context *c,
+		       typename Size::uint_type value) const
     {
-      Size::put(*c.mem, address(Size(), c), c.data_fc(), value);
+      Size::store(*c->bus(), address(Size(), c), value, c->data_fc());
     }
 
     template <class Size>
     inline std::string
-    disp_indirect::text(Size, const context &c) const
+    disp_indirect::text(Size, const context *c) const
     {
       char buf[64];
-      sprintf(buf, "%%a%d@(%d)/*%#lx*/", _reg, c.fetch_s(word(), _address),
-	      address(Size(), c) + 0UL);
+      std::sprintf(buf, "%%a%d@(%d)/*%#lx*/", _reg,
+		   c->fetch_s(word(), _address), address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -500,21 +502,21 @@ namespace vm68k
       index_indirect(int reg, uint32_type address);
 
       template <class Size>
-      uint32_type address(Size, const context &c) const;
+      uint32_type address(Size, const context *c) const;
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
       template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
+      void store(Size, context *c, typename Size::uint_type value) const;
 
       template <class Size>
-      void finish(Size, context &c) const {}
+      void finish(Size, context *c) const {}
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      std::string text(Size, const context *c) const;
 
     protected:
       int _reg;
@@ -530,55 +532,55 @@ namespace vm68k
 
     template <class Size>
     inline uint32_type
-    index_indirect::address(Size, const context &c) const
+    index_indirect::address(Size, const context *c) const
     {
-      uint16_type w = c.fetch_u(word(), _address);
+      uint16_type w = c->fetch_u(word(), _address);
       int xreg = w >> 12 & 0xf;
-      uint32_type x = xreg >= 8 ? c.regs.a[xreg - 8] : c.regs.d[xreg];
+      uint32_type x = xreg >= 8 ? (&c->a0)[xreg - 8] : (&c->d0)[xreg];
       if (w & 0x800)
-	return long_word::normal_u(c.regs.a[_reg] + long_word::get_s(x)
-				   + byte::normal_s(w));
+	return normal_u(long_word(), (&c->a0)[_reg] + normal_s(long_word(), x)
+			+ normal_s(byte(), w));
       else
-	return long_word::normal_u(c.regs.a[_reg] + word::get_s(x)
-				   + byte::normal_s(w));
+	return normal_u(long_word(), (&c->a0)[_reg] + normal_s(word(), x)
+			+ normal_s(byte(), w));
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    index_indirect::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    index_indirect::load_u(Size, const context *c) const
     {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
+      return Size::load_u(*c->bus(), address(Size(), c), c->data_fc());
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    index_indirect::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    index_indirect::load_s(Size, const context *c) const
     {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
+      return vm68k::load_s(Size(), *c->bus(), address(Size(), c), c->data_fc());
     }
 
     template <class Size>
     inline void
-    index_indirect::put(Size, context &c,
-		       typename Size::uvalue_type value) const
+    index_indirect::store(Size, context *c,
+		       typename Size::uint_type value) const
     {
-      Size::put(*c.mem, address(Size(), c), c.data_fc(), value);
+      Size::store(*c->bus(), address(Size(), c), value, c->data_fc());
     }
 
     template <class Size>
     inline std::string
-    index_indirect::text(Size, const context &c) const
+    index_indirect::text(Size, const context *c) const
     {
-      uint16_type w = c.fetch_u(word(), _address);
+      uint16_type w = c->fetch_u(word(), _address);
       int xreg = w >> 12 & 0xf;
       const char *x = xreg >= 8 ? "%a" : "%d";
       char buf[64];
       if (w & 0x800)
-	sprintf(buf, "%%a%d@(%d,%s%d:l)/*%#lx*/", _reg, byte::normal_s(w),
-		x, xreg & 7, address(Size(), c) + 0UL);
+	std::sprintf(buf, "%%a%d@(%d,%s%d:l)/*%#lx*/", _reg, byte::normal_s(w),
+		     x, xreg & 7, address(Size(), c) + 0UL);
       else
-	sprintf(buf, "%%a%d@(%d,%s%d:w)/*%#lx*/", _reg, byte::normal_s(w),
-		x, xreg & 7, address(Size(), c) + 0UL);
+	std::sprintf(buf, "%%a%d@(%d,%s%d:w)/*%#lx*/", _reg, byte::normal_s(w),
+		     x, xreg & 7, address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -592,21 +594,21 @@ namespace vm68k
       absolute_short(int reg, uint32_type address);
 
       template <class Size>
-      uint32_type address(Size, const context &c) const;
+      uint32_type address(Size, const context *c) const;
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
       template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
+      void store(Size, context *c, typename Size::uint_type value) const;
 
       template <class Size>
-      void finish(Size, context &c) const {}
+      void finish(Size, context *c) const {}
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      std::string text(Size, const context *c) const;
 
     protected:
       uint32_type _address;
@@ -620,39 +622,39 @@ namespace vm68k
 
     template <class Size>
     inline uint32_type
-    absolute_short::address(Size, const context &c) const
+    absolute_short::address(Size, const context *c) const
     {
-      return long_word::normal_u(c.fetch_s(word(), _address));
+      return normal_u(long_word(), c->fetch_s(word(), _address));
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    absolute_short::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    absolute_short::load_u(Size, const context *c) const
     {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
+      return Size::load_u(*c->bus(), address(Size(), c), c->data_fc());
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    absolute_short::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    absolute_short::load_s(Size, const context *c) const
     {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
+      return load_s(Size(), *c->bus(), address(Size(), c), c->data_fc());
     }
 
     template <class Size>
     inline void
-    absolute_short::put(Size, context &c,
-			typename Size::uvalue_type value) const
+    absolute_short::store(Size, context *c,
+			typename Size::uint_type value) const
     {
-      Size::put(*c.mem, address(Size(), c), c.data_fc(), value);
+      Size::store(*c->bus(), address(Size(), c), value, c->data_fc());
     }
 
     template <class Size>
     inline std::string
-    absolute_short::text(Size, const context &c) const
+    absolute_short::text(Size, const context *c) const
     {
       char buf[64];
-      sprintf(buf, "%#lx:w", address(Size(), c) + 0UL);
+      std::sprintf(buf, "%#lx:w", address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -666,21 +668,21 @@ namespace vm68k
       absolute_long(int reg, uint32_type address);
 
       template <class Size>
-      uint32_type address(Size, const context &c) const;
+      uint32_type address(Size, const context *c) const;
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
       template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
+      void store(Size, context *c, typename Size::uint_type value) const;
 
       template <class Size>
-      void finish(Size, context &c) const {}
+      void finish(Size, context *c) const {}
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      std::string text(Size, const context *c) const;
 
     protected:
       uint32_type _address;
@@ -694,39 +696,39 @@ namespace vm68k
 
     template <class Size>
     inline uint32_type
-    absolute_long::address(Size, const context &c) const
+    absolute_long::address(Size, const context *c) const
     {
-      return c.fetch_u(long_word(), _address);
+      return c->fetch_u(long_word(), _address);
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    absolute_long::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    absolute_long::load_u(Size, const context *c) const
     {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
+      return Size::load_u(*c->bus(), address(Size(), c), c->data_fc());
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    absolute_long::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    absolute_long::load_s(Size, const context *c) const
     {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
+      return Size::load_s(*c->bus(), address(Size(), c), c->data_fc());
     }
 
     template <class Size>
     inline void
-    absolute_long::put(Size, context &c,
-		       typename Size::uvalue_type value) const
+    absolute_long::store(Size, context *c,
+		       typename Size::uint_type value) const
     {
-      Size::put(*c.mem, address(Size(), c), c.data_fc(), value);
+      Size::store(*c->bus(), address(Size(), c), value, c->data_fc());
     }
 
     template <class Size>
     inline std::string
-    absolute_long::text(Size, const context &c) const
+    absolute_long::text(Size, const context *c) const
     {
       char buf[64];
-      sprintf(buf, "%#lx", address(Size(), c) + 0UL);
+      std::sprintf(buf, "%#lx", address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -740,20 +742,20 @@ namespace vm68k
       disp_pc_indirect(int reg, uint32_type address);
 
       template <class Size>
-      uint32_type address(Size, const context &c) const;
+      uint32_type address(Size, const context *c) const;
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
-      // XXX: put is left unimplemented.
-
-      template <class Size>
-      void finish(Size, context &c) const {}
+      // XXX: store is left unimplemented.
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      void finish(Size, context *c) const {}
+
+      template <class Size>
+      std::string text(Size, const context *c) const;
 
     protected:
       uint32_type _address;
@@ -767,32 +769,32 @@ namespace vm68k
 
     template <class Size>
     inline uint32_type
-    disp_pc_indirect::address(Size, const context &c) const
+    disp_pc_indirect::address(Size, const context *c) const
     {
-      return long_word::normal_u(_address + c.fetch_s(word(), _address));
+      return normal_u(long_word(), _address + c->fetch_s(word(), _address));
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    disp_pc_indirect::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    disp_pc_indirect::load_u(Size, const context *c) const
     {
-      return Size::get_u(*c.mem, address(Size(), c), c.program_fc());
+      return Size::load_u(*c->bus(), address(Size(), c), c->program_fc());
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    disp_pc_indirect::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    disp_pc_indirect::load_s(Size, const context *c) const
     {
-      return Size::get_s(*c.mem, address(Size(), c), c.program_fc());
+      return Size::load_s(*c->bus(), address(Size(), c), c->program_fc());
     }
 
     template <class Size>
     inline std::string
-    disp_pc_indirect::text(Size, const context &c) const
+    disp_pc_indirect::text(Size, const context *c) const
     {
       char buf[64];
-      sprintf(buf, "%%pc@(%d)/*%#lx*/", c.fetch_s(word(), _address),
-	      address(Size(), c) + 0UL);
+      std::sprintf(buf, "%%pc@(%d)/*%#lx*/", c->fetch_s(word(), _address),
+		   address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -806,20 +808,20 @@ namespace vm68k
       index_pc_indirect(int reg, uint32_type address);
 
       template <class Size>
-      uint32_type address(Size, const context &c) const;
+      uint32_type address(Size, const context *c) const;
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
-      // XXX: put is left unimplemented.
-
-      template <class Size>
-      void finish(Size, context &c) const {}
+      // XXX: store is left unimplemented.
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      void finish(Size, context *c) const {}
+
+      template <class Size>
+      std::string text(Size, const context *c) const;
 
     protected:
        uint32_type _address;
@@ -833,47 +835,47 @@ namespace vm68k
 
     template <class Size>
     inline uint32_type
-    index_pc_indirect::address(Size, const context &c) const
+    index_pc_indirect::address(Size, const context *c) const
     {
-      uint16_type w = c.fetch_u(word(), _address);
+      uint16_type w = c->fetch_u(word(), _address);
       int xreg = w >> 12 & 0xf;
-      uint32_type x = xreg >= 8 ? c.regs.a[xreg - 8] : c.regs.d[xreg];
+      uint32_type x = xreg >= 8 ? (&c->a0)[xreg - 8] : (&c->d0)[xreg];
       if (w & 0x800)
-	return long_word::normal_u(_address + long_word::get_s(x)
-				   + byte::normal_s(w));
+	return normal_u(long_word(), _address + normal_s(long_word(), x)
+			+ normal_s(byte(), w));
       else
-	return long_word::normal_u(_address + word::get_s(x)
-				   + byte::normal_s(w));
+	return normal_u(long_word(), _address + normal_s(word(), x)
+			+ normal_s(byte(), w));
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    index_pc_indirect::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    index_pc_indirect::load_u(Size, const context *c) const
     {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
+      return Size::load_u(*c->bus(), address(Size(), c), c->data_fc());
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    index_pc_indirect::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    index_pc_indirect::load_s(Size, const context *c) const
     {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
+      return Size::load_s(*c->bus(), address(Size(), c), c->data_fc());
     }
 
     template <class Size>
     inline std::string
-    index_pc_indirect::text(Size, const context &c) const
+    index_pc_indirect::text(Size, const context *c) const
     {
-      uint16_type w = c.fetch_u(word(), _address);
+      uint16_type w = c->fetch_u(word(), _address);
       int xreg = w >> 12 & 0xf;
       const char *x = xreg >= 8 ? "%a" : "%d";
       char buf[64];
       if (w & 0x800)
-	sprintf(buf, "%%pc@(%d,%s%d:l)/*%#lx*/", byte::normal_s(w),
-		x, xreg & 7, address(Size(), c) + 0UL);
+	std::sprintf(buf, "%%pc@(%d,%s%d:l)/*%#lx*/", normal_s(byte(), w),
+		     x, xreg & 7, address(Size(), c) + 0UL);
       else
-	sprintf(buf, "%%pc@(%d,%s%d:w)/*%#lx*/", byte::normal_s(w),
-		x, xreg & 7, address(Size(), c) + 0UL);
+	std::sprintf(buf, "%%pc@(%d,%s%d:w)/*%#lx*/", normal_s(byte(), w),
+		     x, xreg & 7, address(Size(), c) + 0UL);
       return buf;
     }
 
@@ -889,17 +891,17 @@ namespace vm68k
       // XXX: address is left unimplemented.
 
       template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
+      typename Size::uint_type load_u(Size, const context *c) const;
       template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+      typename Size::sint_type load_s(Size, const context *c) const;
 
-      // XXX: put is left unimplemented.
-
-      template <class Size>
-      void finish(Size, context &c) const {}
+      // XXX: store is left unimplemented.
 
       template <class Size>
-      std::string text(Size, const context &c) const;
+      void finish(Size, context *c) const {}
+
+      template <class Size>
+      std::string text(Size, const context *c) const;
 
     protected:
       uint32_type _address;
@@ -912,25 +914,25 @@ namespace vm68k
     }
 
     template <class Size>
-    inline typename Size::uvalue_type
-    immediate::get_u(Size, const context &c) const
+    inline typename Size::uint_type
+    immediate::load_u(Size, const context *c) const
     {
-      return c.fetch_u(Size(), _address);
+      return c->fetch_u(Size(), _address);
     }
 
     template <class Size>
-    inline typename Size::svalue_type
-    immediate::get_s(Size, const context &c) const
+    inline typename Size::sint_type
+    immediate::load_s(Size, const context *c) const
     {
-      return c.fetch_s(Size(), _address);
+      return c->fetch_s(Size(), _address);
     }
 
     template <class Size>
     inline std::string
-    immediate::text(Size, const context &c) const
+    immediate::text(Size, const context *c) const
     {
       char buf[64];
-      sprintf(buf, "#%#lx", get_u(Size(), c) + 0UL);
+      std::sprintf(buf, "#%#lx", load_u(Size(), c) + 0UL);
       return buf;
     }
   }
@@ -944,8 +946,8 @@ namespace vm68k
     {
     public:
       typedef Size size_type;
-      typedef typename Size::uvalue_type uvalue_type;
-      typedef typename Size::svalue_type svalue_type;
+      typedef typename Size::uint_type uint_type;
+      typedef typename Size::sint_type sint_type;
 
     public:
       static uint32_type extension_size()
@@ -957,10 +959,10 @@ namespace vm68k
       uint32_type address(const context &c) const
       {return addressing.address(Size(), c);}
 
-      typename Size::svalue_type get(const context &c) const
+      typename Size::sint_type get(const context &c) const
       {return addressing.get_s(Size(), c);}
 
-      void put(context &c, svalue_type value) const
+      void put(context &c, sint_type value) const
       {addressing.put(Size(), c, value);}
 
       void finish(context &c) const {addressing.finish(Size(), c);}

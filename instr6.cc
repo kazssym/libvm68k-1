@@ -54,7 +54,7 @@ namespace vm68k
     uint32_type 
     _b(uint32_type pc, context &c, uint16_type w, void *)
     {
-      word::svalue_type disp = w & 0xff;
+      word::sint_type disp = w & 0xff;
       size_t extsize;
       if (disp == 0)
 	{
@@ -83,7 +83,7 @@ namespace vm68k
     uint32_type
     _bra(uint32_type pc, context &c, uint16_type w, void *)
     {
-      word::svalue_type disp = w & 0xff;
+      word::sint_type disp = w & 0xff;
       size_t len = 0;
       if (disp == 0)
 	{
@@ -91,7 +91,7 @@ namespace vm68k
 	  len = word::aligned_size();
 	}
       else
-	disp = byte::normal_s(disp);
+	disp = normal_s(byte(), disp);
 #ifdef L
       L("\tbra %#lx\n", long_word::normal_u(pc + 2 + disp) + 0UL);
 #endif
@@ -104,7 +104,7 @@ namespace vm68k
     uint32_type
     _bsr(uint32_type pc, context &c, uint16_type w, void *)
     {
-      word::svalue_type disp = w & 0xff;
+      word::sint_type disp = w & 0xff;
       size_t len = 0;
       if (disp == 0)
 	{
@@ -112,16 +112,16 @@ namespace vm68k
 	  len = word::aligned_size();
 	}
       else
-	disp = byte::normal_s(disp);
+	disp = normal_s(byte(), disp);
 #ifdef L
       L("\tbsr %#lx\n", long_word::normal_u(pc + 2 + disp) + 0UL);
 #endif
 
       // XXX: The condition codes are not affected.
       function_code fc = c.data_fc();
-      long_word::put(*c.mem, c.regs.a[7] - long_word::aligned_size(), fc,
-		     pc + 2 + len);
-      c.regs.a[7] -= long_word::aligned_size();
+      long_word::store(*c.bus(), c.sp - long_word::aligned_size(),
+		       pc + 2 + len, fc);
+      c.sp -= long_word::aligned_size();
 
       return pc + 2 + disp;
     }

@@ -1,5 +1,10 @@
 2002-10-02  Kaz Sasayama  <kaz2002@hypercore.co.jp>
 
+	* instr1-3.cc (m68k_move): Replace _move.
+	(m68k_movea): Replace _movea.
+
+	* vm68k/addressing: Use std:: for sprintf.
+
 	* memory_device.cc: Renamed from bus_target.cc.
 
 	* memory.cc: Renamed from bus.cc.
