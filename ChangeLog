@@ -1,5 +1,10 @@
 2001-07-03  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Makefile.am (libvm68k_la_LDFLAGS): Updates the version
+	information.
+
+	* configure.in: Set VERSION to 1.0.6.
+
 	* vm68k/iterator.h (class basic_uint16_iterator): Add template
 	constructor.  Remove operators >, <=, and >=.  Make operators +,
 	-, ==, and != non-member.
