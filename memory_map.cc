@@ -188,7 +188,7 @@ namespace vm68k
     missing_memory::get_16(uint32_type address, function_code fc) const
       throw (memory_exception)
     {
-      assert((address & 1) == 0);
+      I((address & 1) == 0);
       throw bus_error(address, READ | fc);
     }
 
@@ -204,7 +204,7 @@ namespace vm68k
 			   function_code fc)
       throw (memory_exception)
     {
-      assert((address & 1) == 0);
+      I((address & 1) == 0);
       throw bus_error(address, WRITE | fc);
     }
 
