@@ -1,5 +1,11 @@
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* memory.cc (get_32): Add throw-spec.
+	(put_32): Likewise.
+
+	* vm68k/memory.h (class memory): Add throw-spec to get_8, get_16,
+	get_32, put_8, put_16, and put_32.
+
 	* configure.in: Set _GNU_SOURCE to 1.
 
 	* vm68k/memory.h: Remove #include <vm68k/iterator.h>.

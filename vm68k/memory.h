@@ -79,13 +79,19 @@ namespace vm68k
     virtual ~memory() {}
 
   public:
-    virtual int get_8(uint32_type address, function_code) const = 0;
-    virtual uint16_type get_16(uint32_type address, function_code) const = 0;
-    virtual uint32_type get_32(uint32_type address, function_code) const;
+    virtual int get_8(uint32_type address, function_code fc) const
+      throw (memory_exception) = 0;
+    virtual uint16_type get_16(uint32_type address, function_code fc) const
+      throw (memory_exception) = 0;
+    virtual uint32_type get_32(uint32_type address, function_code fc) const
+      throw (memory_exception);
 
-    virtual void put_8(uint32_type address, int, function_code) = 0;
-    virtual void put_16(uint32_type address, uint16_type, function_code) = 0;
-    virtual void put_32(uint32_type address, uint32_type, function_code);
+    virtual void put_8(uint32_type address, int value,
+		       function_code fc) throw (memory_exception) = 0;
+    virtual void put_16(uint32_type address, uint16_type value,
+			function_code fc) throw (memory_exception) = 0;
+    virtual void put_32(uint32_type address, uint32_type value,
+			function_code fc) throw (memory_exception);
   };
 
   /* Maps an address space to memories.  An address space is a
