@@ -1,3 +1,9 @@
+2003-04-10  Kaz Sasayama  <kaz2003@hypercore.co.jp>
+
+	* configure.ac: Updated.
+
+	* Upgrade to Automake 1.6.  All Makefile.in's regenerated.
+
 2003-03-25  Kaz Sasayama  <kaz2003@hypercore.co.jp>
 
 	* configure.ac: Renamed from configure.in, and updated for

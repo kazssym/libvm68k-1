@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT([Libvm68k], 1.0.6, [vx68k@lists.hypercore.co.jp], libvm68k)
 AC_CONFIG_SRCDIR(context.cc)
-AM_INIT_AUTOMAKE(AC_PACKAGE_TARNAME, AC_PACKAGE_VERSION)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 LTLIBRELEASE="-release 1.0"
 AC_SUBST(LTLIBRELEASE)dnl
@@ -20,7 +20,7 @@ AC_TYPE_SIZE_T
 AC_CXX_EXCEPTIONS
 AC_CXX_TEMPLATES
 AC_CXX_NAMESPACES
-AM_PROG_LIBTOOL
+AC_PROG_LIBTOOL
 if test "$ac_cv_cxx_exceptions" != yes; then
   AC_MSG_WARN([the C++ compiler does not support exceptions])
   AC_MSG_WARN([this program cannot be built without exceptions])
