@@ -64,9 +64,9 @@ namespace vm68k
 	unsigned int vecno = i->front();
 	i->pop();
 
-	uint16_type old_sr = this->sr();
-	this->set_sr(old_sr & ~0x700 | prio << 8);
-	this->set_supervisor_state(true);
+	uint16_type old_sr = sr();
+	set_sr(old_sr & ~0x700 | prio << 8);
+	set_supervisor_state(true);
 	regs.a[7] -= 6;
 	mem->put_32(regs.a[7] + 2, pc, memory::SUPER_DATA);
 	mem->put_16(regs.a[7] + 0, old_sr, memory::SUPER_DATA);
