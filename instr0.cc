@@ -34,7 +34,6 @@
 #else
 # include <cassert>
 # define I assert
-# define VL(EXPR)
 #endif
 
 #ifdef HAVE_NANA_H
@@ -50,7 +49,8 @@ namespace vm68k
     using namespace vm68k::addressing;
 
     /* Handles an ADDI instruction.  */
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     addi(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
@@ -70,7 +70,8 @@ namespace vm68k
     }
 
     /* Handles an ANDI instruction.  */
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     andi(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
@@ -127,7 +128,8 @@ namespace vm68k
     }
 
     /* Handles a BCLR instruction (register).  */
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     bclr_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 0x7, pc + 2);
@@ -149,7 +151,8 @@ namespace vm68k
     }
 
     /* Handles a BCLR instruction (immediate).  */
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     bclr_i(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       unsigned int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
@@ -170,7 +173,8 @@ namespace vm68k
     }
 
     /* Handles a BSET instruction (register).  */
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     bset_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 0x7, pc + 2);
@@ -191,7 +195,8 @@ namespace vm68k
     }
 
     /* Handles a BSET instruction (immediate).  */
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     bset_i(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       unsigned int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
@@ -213,7 +218,8 @@ namespace vm68k
     }
 
     /* Handles a BTST instruction (register).  */
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     btst_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       Destination ea1(w & 0x7, pc + 2);
@@ -234,7 +240,8 @@ namespace vm68k
     }
 
     /* Handles a BTST instruction (immediate).  */
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     btst_i(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       unsigned int value2 = c.fetch_u(word_size(), pc + 2) % Size::value_bit();
@@ -254,7 +261,8 @@ namespace vm68k
 	+ Destination::extension_size();
     }
 
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     cmpi(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
@@ -274,7 +282,8 @@ namespace vm68k
     }
 
     /* Handles an EORI instruction.  */
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     eori(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
@@ -354,7 +363,8 @@ namespace vm68k
     }
 
     /* Handles a SUBI instruction.  */
-    template <class Size, class Destination> uint32_type
+    template <class Size, class Destination>
+    uint32_type
     subi(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       typename Size::svalue_type value2 = c.fetch_s(word_size(), pc + 2);
