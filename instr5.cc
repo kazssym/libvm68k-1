@@ -64,7 +64,7 @@ namespace vm68k
 #endif
 
       typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value = Size::svalue(value1 + value2);
+      typename Size::svalue_type value = Size::normal_s(value1 + value2);
       ea1.put(c, value);
       c.regs.ccr.set_cc_as_add(value, value1, value2);
 
@@ -86,9 +86,8 @@ namespace vm68k
 #endif
 
       // The condition codes are not affected by this instruction.
-      long_word::svalue_type value1 = long_word::get(c.regs.a[reg1]);
-      long_word::svalue_type value
-	= long_word::svalue(value1 + value2);
+      long_word::svalue_type value1 = long_word::get_s(c.regs.a[reg1]);
+      long_word::svalue_type value = long_word::normal_s(value1 + value2);
       long_word::put(c.regs.a[reg1], value);
 
       return pc + 2;
@@ -104,14 +103,14 @@ namespace vm68k
       word::svalue_type disp = c.fetch_s(word(), pc + 2);
 #ifdef L
       L("\tdb%s %%d%u,%#lx\n", Condition::text(), reg1,
-	long_word::uvalue(pc + 2 + disp) + 0UL);
+	long_word::normal_u(pc + 2 + disp) + 0UL);
 #endif
 
       // This instruction does not affect the condition codes.
       if (!cond(c))
 	{
-	  sint16_type value = word::get(c.regs.d[reg1]);
-	  value = word::svalue(value - 1);
+	  sint16_type value = word::get_s(c.regs.d[reg1]);
+	  value = word::normal_s(value - 1);
 	  word::put(c.regs.d[reg1], value);
 	  if (value != -1)
 	    return pc + 2 + disp;
@@ -153,7 +152,7 @@ namespace vm68k
 #endif
 
       typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value = Size::svalue(value1 - value2);
+      typename Size::svalue_type value = Size::normal_s(value1 - value2);
       ea1.put(c, value);
       c.regs.ccr.set_cc_sub(value, value1, value2);
 
@@ -175,9 +174,8 @@ namespace vm68k
 #endif
 
       // This instruction does not affect the condition codes.
-      long_word::svalue_type value1 = long_word::get(c.regs.a[reg1]);
-      long_word::svalue_type value
-	= long_word::svalue(value1 - value2);
+      long_word::svalue_type value1 = long_word::get_s(c.regs.a[reg1]);
+      long_word::svalue_type value = long_word::normal_s(value1 - value2);
       long_word::put(c.regs.a[reg1], value);
 
       return pc + 2;
