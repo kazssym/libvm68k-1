@@ -28,8 +28,6 @@ namespace vm68k
 
   namespace types
   {
-    typedef unsigned int uint_type;
-
 #if INT_MAX >= 0xffff
     typedef int uint16_type;
 #else
@@ -47,10 +45,8 @@ namespace vm68k
 #endif
 
 #if INT_MIN >= -0x7fff
-    typedef long sint_type;
     typedef long sint16_type;
 #else
-    typedef int sint_type;
     typedef int sint16_type;
 #endif
 

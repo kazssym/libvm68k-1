@@ -22,7 +22,7 @@ namespace vm68k
 {
   struct instruction_map
   {
-    uint_type base, mask;
+    uint16_type base, mask;
     exec_unit::instruction_handler handler;
   };
 

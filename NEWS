@@ -2,6 +2,14 @@ History of user-visible changes in Libvm68k.  -*-Outline-*-
 
 * Version 1.0.4
 
+** Interface Changes
+
+The header <vm68k/except.h> was merged into <vm68k/processor.h> and
+removed.
+
+The typedefs uint_type and sint_type were removed.  This would break
+binary compatibility.
+
 * Version 1.0.3
 
 ** Updates for GCC 3.0
@@ -11,7 +19,8 @@ Code was modified to fix errors detected by GCC 3.0.
 ** Interface Changes
 
 Part of the library interface changed.  Now the library version can be
-retrieved by the function vm68k::version.
+retrieved by the function vm68k::version.  This broke binary
+compatibility.
 
 * Version 1.0.2
 

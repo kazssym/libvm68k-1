@@ -115,7 +115,7 @@ namespace
       c.regs.pc += 2 + 2;
     else
       {
-	sint_type value = word_size::get(c.regs.d[reg1]);
+	sint16_type value = word_size::get(c.regs.d[reg1]);
 	value = word_size::svalue(value - 1);
 	word_size::put(c.regs.d[reg1], value);
 	c.regs.pc += 2 + (value != -1 ? disp : 2);

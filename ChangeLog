@@ -1,5 +1,10 @@
 2001-06-26  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* NEWS: Updated.
+
+	* vm68k/types.h: Remove uint_type and sint_type.  Also change all
+	users.
+
 	* vm68k/processor.h: Remove #include <cassert>.
 
 	* vm68k/types.h: Update comments.

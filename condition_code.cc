@@ -137,7 +137,7 @@ condition_code::set_cc_sub(sint32_type r, sint32_type d, sint32_type s)
 }
 
 void
-condition_code::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
+condition_code::set_cc_asr(sint32_type r, sint32_type d, sint32_type s)
 {
   x_eval = cc_eval = &const_asr_condition_tester;
   x_values[0] = cc_values[0] = r;
@@ -146,7 +146,7 @@ condition_code::set_cc_asr(sint32_type r, sint32_type d, uint_type s)
 }
 
 void
-condition_code::set_cc_lsl(sint32_type r, sint32_type d, uint_type s)
+condition_code::set_cc_lsl(sint32_type r, sint32_type d, sint32_type s)
 {
   x_eval = cc_eval = &const_lsl_condition_tester;
   x_values[0] = cc_values[0] = r;

@@ -457,10 +457,10 @@ namespace vm68k
 
     void set_cc_cmp(sint32_type, sint32_type, sint32_type);
     void set_cc_sub(sint32_type, sint32_type, sint32_type);
-    void set_cc_asr(sint32_type, sint32_type, unsigned int);
-    void set_cc_lsr(sint32_type r, sint32_type d, unsigned int s)
+    void set_cc_asr(sint32_type, sint32_type, sint32_type);
+    void set_cc_lsr(sint32_type r, sint32_type d, sint32_type s)
       {set_cc_asr(r, d, s);}
-    void set_cc_lsl(sint32_type, sint32_type, unsigned int);
+    void set_cc_lsl(sint32_type, sint32_type, sint32_type);
 
   public:
     /* Returns whether supervisor state.  */
