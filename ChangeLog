@@ -1,5 +1,10 @@
 2001-06-26  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* memory.cc: Use a namespace block.  Include <nana.h> before other
+	headers.
+
+	* version.cc: Comment fix.
+
 	* vm68k/Makefile.am (vm68kinclude_HEADERS): Remove except.h.
 
 	* vm68k/except.h: Removed.

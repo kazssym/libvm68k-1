@@ -1,5 +1,5 @@
 /* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
+   Copyright (C) 1998-2001 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,6 @@
 #undef const
 #undef inline
 
-#include "vm68k/memory.h"
-
-#include <algorithm>
-
 #ifdef HAVE_NANA_H
 # include <nana.h>
 # undef assert
@@ -34,24 +30,26 @@
 # include <cassert>
 #endif
 
-using vm68k::memory;
-using vm68k::bus_error_exception;
-using namespace vm68k::types;
-using namespace std;
+#include "vm68k/memory.h"
 
-uint32_type
-memory::get_32(uint32_type address, function_code fc) const
+namespace vm68k
 {
-  assert((address & 3) == 0);
-  uint32_type value = uint32_type(get_16(address, fc)) << 16;
-  value |= get_16(address + 2, fc) & 0xffff;
-  return value;
-}
+  using namespace std;
 
-void
-memory::put_32(uint32_type address, uint32_type value, function_code fc)
-{
-  assert((address & 3) == 0);
-  put_16(address,     value >> 16, fc);
-  put_16(address + 2, value,       fc);
+  uint32_type
+  memory::get_32(uint32_type address, function_code fc) const
+  {
+    assert((address & 3) == 0);
+    uint32_type value = uint32_type(get_16(address, fc)) << 16;
+    value |= get_16(address + 2, fc) & 0xffff;
+    return value;
+  }
+
+  void
+  memory::put_32(uint32_type address, uint32_type value, function_code fc)
+  {
+    assert((address & 3) == 0);
+    put_16(address,     value >> 16, fc);
+    put_16(address + 2, value,       fc);
+  }
 }
