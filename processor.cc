@@ -22,12 +22,14 @@
 #undef const
 #undef inline
 
+#define _GNU_SOURCE 1
+#define _POSIX_C_SOURCE 199506L	// POSIX.1c
+
 #include "instr.h"
 
 #include <vm68k/processor>
-
+#include <vm68k/size>
 #include <algorithm>
-
 #include <cstdio>
 
 #ifdef HAVE_NANA_H
@@ -67,7 +69,7 @@ namespace vm68k
 	      }
 # endif
 	    LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
-	       long_word::uvalue(pc) + 0UL, c.fetch_u(word(), pc));
+	       long_word::normal_u(pc) + 0UL, c.fetch_u(word(), pc));
 #endif
 	    pc = dispatch(pc, c, c.fetch_u(word(), pc));
 	  }

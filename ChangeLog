@@ -1,5 +1,8 @@
 2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* processor.cc (_GNU_SOURCE): Defined.
+	(_POSIX_C_SOURCE): Defined.
+
 	* vm68k/processor (fetch_u, fetch_s): Remove the byte
 	specialization.
 
