@@ -1,10 +1,18 @@
-This is libvm68k, an M68000 virtual machine library written in C++.
+This is Libvm68k, an M68000 virtual machine library written in C++.
 
-This library implements a virtual machine that emulats a Motorola
+This library implements a virtual machine that emulates a Motorola
 M68000-family processor.
 
 Please report bugs to <bugs@Hypercore.co.jp>.
 
 See the file NEWS for information on user-visible changes.
 
-$ProjectHeader: libvm68k 0.4 Wed, 13 Jun 2001 22:44:32 +0900 kaz $
+PREREQUISITE
+
+This library requires a C++ compiler that understands templates and
+exceptions.  GCC 2.95 or later should be OK.
+
+This version is intended to be used with POSIX threads.
+
+---
+$ProjectHeader: libvm68k 0.8 Sun, 17 Jun 2001 21:02:47 +0900 kaz $

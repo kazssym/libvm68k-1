@@ -1,3 +1,9 @@
+2001-06-17  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* README: Updated.
+
+	* NEWS: Updated for new release.
+
 2001-06-16  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Makefile.am (info_TEXINFOS): New macro.
