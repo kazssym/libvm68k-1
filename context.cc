@@ -86,7 +86,7 @@ namespace vm68k
 
     return pc;
   }
-
+  
   void
   context::set_supervisor_state(bool state)
   {
@@ -128,7 +128,7 @@ namespace vm68k
     set_supervisor_state(value & 0x2000);
     regs.ccr = value;
   }
-
+  
   context::context(memory_map *m)
     : mem(m),
       pfc_cache(regs.ccr.supervisor_state() ? memory::SUPER_PROGRAM : memory::USER_PROGRAM),

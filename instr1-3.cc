@@ -90,7 +90,7 @@ namespace vm68k
       return pc + 2 + ea1.extension_size();
     }
   }
-
+  
   using namespace instr;
 
   void

@@ -554,7 +554,7 @@ namespace vm68k
       return pc + 2;
     }
   }
-
+  
   using namespace instr;
 
   void

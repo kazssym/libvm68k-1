@@ -387,7 +387,7 @@ namespace vm68k
 	+ Destination::extension_size();
     }
   }
-
+  
   using namespace instr;
 
   void

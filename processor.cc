@@ -88,7 +88,7 @@ namespace vm68k
 	  }
       }
   }
-
+  
   processor::processor()
     : instructions(0x10000, instruction_type(&illegal, 0))
   {
@@ -108,7 +108,7 @@ namespace vm68k
     install_instructions_13(*this, data);
     install_instructions_14(*this, data);
   }
-
+  
   /* Executes an illegal instruction.  */
   uint32_type
   processor::illegal(uint32_type pc, context &, uint16_type, unsigned long)
