@@ -1,5 +1,9 @@
 2002-10-02  Kaz Sasayama  <kaz2002@hypercore.co.jp>
 
+	* memory_device.cc: Renamed from bus_target.cc.
+
+	* memory.cc: Renamed from bus.cc.
+
 	* vm68k/bus (class memory): Rename address_mask to address_max.
 
 2002-10-01  Kaz Sasayama  <kaz2002@hypercore.co.jp>
