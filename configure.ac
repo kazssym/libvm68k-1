@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT([Libvm68k], 1.0.6, [vx68k@lists.hypercore.co.jp], libvm68k)
-AC_CONFIG_SRCDIR(context.cc)
+AC_CONFIG_SRCDIR(processor.cpp)
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 LTLIBRELEASE="-release 1.0"

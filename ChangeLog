@@ -2,6 +2,8 @@
 
 	* Makefile.am (libvm68k_la_SOURCES): Modify file names.
 
+	* instr1_3.cpp: Renamed from instr1-3.cpp.
+
 	* Changed C++ file suffix from .cc to .cpp.
 
 	* configure.ac: Updated.
