@@ -1,3 +1,20 @@
+2001-12-02  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* context.cc: Use namespace blocks.
+	(handle_interrupts): Updated as the interface changed.
+
+	* Makefile.am (libvm68k_la_SOURCES): Change the file name.
+
+	* instr0.cc: Renamed from inst0.  Change instruction handlers.
+
+	* vm68k/processor.h (struct registers): Remove member pc, set_pc,
+	and advance_pc.
+	(class context): Replace ufetch and fetch with fetch_u and
+	fetch_s.  Change handle_interrupts to take and return the PC.
+	(class processor): Change typedef instruction_handler.  Also
+	change static method illegal.  Change dispatch, step, run to take
+	and return the PC.
+
 2001-11-30  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* libvm68k.texi (Processor Class): Updated as the code changed.

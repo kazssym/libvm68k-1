@@ -181,7 +181,6 @@ namespace vm68k
   {
     uint32_type d[8];		/* %d0-%d7 */
     uint32_type a[8];		/* %a0-%a6/%sp */
-    uint32_type pc;
     condition_code ccr;
     uint32_type usp;
     uint32_type ssp;
@@ -193,9 +192,6 @@ namespace vm68k
     void set_data_register(unsigned int regno, Size,
 			   typename Size::uvalue_type value)
     {Size::put(d[regno], value);}
-
-    void set_pc(uint32_type value) {long_word_size::put(pc, value);}
-    void advance_pc(uint32_type value) {long_word_size::put(pc, pc + value);}
   };
 
   /* Context of execution.  A context represents all the state of
@@ -242,9 +238,9 @@ namespace vm68k
 
   public:
     template <class Size>
-    typename Size::uvalue_type ufetch(Size, size_t offset) const;
+    typename Size::uvalue_type fetch_u(Size, uint32_type address) const;
     template <class Size>
-    typename Size::svalue_type fetch(Size, size_t offset) const;
+    typename Size::svalue_type fetch_s(Size, uint32_type address) const;
 
   public:			// interrupt
     /* Returns true if the thread in this context is interrupted.  */
@@ -254,47 +250,52 @@ namespace vm68k
     /* Interrupts.  */
     void interrupt(int prio, unsigned int vecno);
 
+    /* XXX This should be in class processor.  */
     /* Handles interrupts.  */
-    void handle_interrupts();
+    uint32_type handle_interrupts(uint32_type pc);
   };
 
   template <class Size> inline typename Size::uvalue_type
-  context::ufetch(Size, size_t offset) const
+  context::fetch_u(Size, uint32_type address) const
   {
-    return Size::uget_unchecked(*mem, program_fc(), regs.pc + offset);
+    return Size::uget_unchecked(*mem, program_fc(), address);
   }
 
   template <> inline byte_size::uvalue_type
-  context::ufetch(byte_size, size_t offset) const
+  context::fetch_u(byte_size, uint32_type address) const
   {
     return byte_size::uvalue(word_size::uget_unchecked(*mem, program_fc(),
-						       regs.pc + offset));
+						       address));
   }
 
   template <class Size> inline typename Size::svalue_type
-  context::fetch(Size, size_t offset) const
+  context::fetch_s(Size, uint32_type address) const
   {
-    return Size::get_unchecked(*mem, program_fc(), regs.pc + offset);
+    return Size::get_unchecked(*mem, program_fc(), address);
   }
 
   template <> inline byte_size::svalue_type
-  context::fetch(byte_size, size_t offset) const
+  context::fetch_s(byte_size, uint32_type address) const
   {
     return byte_size::svalue(word_size::uget_unchecked(*mem, program_fc(),
-						       regs.pc + offset));
+						       address));
   }
 
   /* Decodes and executes an instruction sequence.  */
   class processor
   {
   public:
-    typedef void (*instruction_handler)(uint16_type, context &, unsigned long);
+    /* Type of an instruction handler.  */
+    typedef uint32_type (*instruction_handler)
+      (uint32_type pc, context &, uint16_type w, unsigned long d);
 
     /* Type of an instruction.  */
     typedef pair<instruction_handler, unsigned long> instruction_type;
 
   public:
-    static void illegal(uint16_type, context &, unsigned long);
+    /* Raises an illegal instruction exception.  */
+    static uint32_type illegal(uint32_type pc, context &,
+			       uint16_type w, unsigned long d);
 
   private:
     vector<instruction_type> instructions;
@@ -321,24 +322,27 @@ namespace vm68k
 
   protected:
     /* Dispatches for instruction handlers.  */
-    void dispatch(uint16_type op, context &ec) const
-      {
-	op &= 0xffffu;
-	instructions[op].first(op, ec, instructions[op].second);
-      }
+    uint32_type dispatch(uint32_type pc, context &c, uint16_type w) const;
 
   public:
     /* Steps one instruction.  */
-    void step(context &c) const;
+    uint32_type step(uint32_type pc, context &c) const;
 
     /* Starts the program.  */
-    void run(context &c) const;
+    uint32_type run(uint32_type pc, context &c) const;
   };
 
-  inline void
-  processor::step(context &c) const
+  inline uint32_type
+  processor::dispatch(uint32_type pc, context &c, uint16_type w) const
   {
-    dispatch(c.ufetch(word_size(), 0), c);
+    w &= 0xffff;
+    return instructions[w].first(pc, c, w, instructions[w].second);
+  }
+
+  inline uint32_type
+  processor::step(uint32_type pc, context &c) const
+  {
+    return dispatch(pc, c, c.fetch_u(word_size(), pc));
   }
 }
 

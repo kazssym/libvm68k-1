@@ -32,106 +32,109 @@
 # define I assert
 #endif
 
-using vm68k::context;
-using namespace vm68k::types;
 using namespace std;
 
-void
-context::interrupt(int prio, unsigned int vecno)
+namespace vm68k
 {
-  if (prio < 1 || prio > 7)
-    return;
+  void
+  context::interrupt(int prio, unsigned int vecno)
+  {
+    if (prio < 1 || prio > 7)
+      return;
 
-  vecno &= 0xffu;
-  interrupt_queues[7 - prio].push(vecno);
-  a_interrupted = true;
-}
+    vecno &= 0xffu;
+    interrupt_queues[7 - prio].push(vecno);
+    a_interrupted = true;
+  }
 
-void
-context::handle_interrupts()
-{
-  vector<queue<unsigned int> >::iterator i = interrupt_queues.begin();
-  while (i->empty())
-    {
-      ++i;
-      I(i != interrupt_queues.end());
-    }
+  uint32_type
+  context::handle_interrupts(uint32_type pc)
+  {
+    vector<queue<unsigned int> >::iterator i = interrupt_queues.begin();
+    while (i->empty())
+      {
+	++i;
+	I(i != interrupt_queues.end());
+      }
 
-  int prio = interrupt_queues.end() - i;
-  int level = sr() >> 8 & 0x7;
-  if (prio == 7 || prio > level)
-    {
-      unsigned int vecno = i->front();
-      i->pop();
+    int prio = interrupt_queues.end() - i;
+    int level = sr() >> 8 & 0x7;
+    if (prio == 7 || prio > level)
+      {
+	unsigned int vecno = i->front();
+	i->pop();
 
-      uint16_type old_sr = this->sr();
-      this->set_sr(old_sr & ~0x700 | prio << 8);
-      this->set_supervisor_state(true);
-      regs.a[7] -= 6;
-      mem->put_32(regs.a[7] + 2, regs.pc, memory::SUPER_DATA);
-      mem->put_16(regs.a[7] + 0, old_sr, memory::SUPER_DATA);
+	uint16_type old_sr = this->sr();
+	this->set_sr(old_sr & ~0x700 | prio << 8);
+	this->set_supervisor_state(true);
+	regs.a[7] -= 6;
+	mem->put_32(regs.a[7] + 2, pc, memory::SUPER_DATA);
+	mem->put_16(regs.a[7] + 0, old_sr, memory::SUPER_DATA);
 
-      uint32_type address = vecno * 4u;
-      regs.pc = mem->get_32(address, memory::SUPER_DATA);
+	uint32_type address = vecno * 4u;
+	pc = mem->get_32(address, memory::SUPER_DATA);
 
-      a_interrupted = false;
-      vector<queue<unsigned int> >::iterator j = i;
-      while (j != interrupt_queues.end())
-	{
-	  if (!j->empty())
-	    a_interrupted = true;
-	  ++j;
-	}
-    }
-}
+	a_interrupted = false;
+	vector<queue<unsigned int> >::iterator j = i;
+	while (j != interrupt_queues.end())
+	  {
+	    if (!j->empty())
+	      a_interrupted = true;
+	    ++j;
+	  }
+      }
+
+    return pc;
+  }
 
-void
-context::set_supervisor_state(bool state)
-{
-  if (state)
-    {
-      if (!supervisor_state())
-	{
-	  regs.usp = regs.a[7];
-	  regs.ccr.set_s_bit(true);
-	  regs.a[7] = regs.ssp;
+  void
+  context::set_supervisor_state(bool state)
+  {
+    if (state)
+      {
+	if (!supervisor_state())
+	  {
+	    regs.usp = regs.a[7];
+	    regs.ccr.set_s_bit(true);
+	    regs.a[7] = regs.ssp;
 
-	  pfc_cache = memory::SUPER_PROGRAM;
-	  dfc_cache = memory::SUPER_DATA;
-	}
-    }
-  else
-    {
-      if (supervisor_state())
-	{
-	  regs.ssp = regs.a[7];
-	  regs.ccr.set_s_bit(false);
-	  regs.a[7] = regs.usp;
+	    pfc_cache = memory::SUPER_PROGRAM;
+	    dfc_cache = memory::SUPER_DATA;
+	  }
+      }
+    else
+      {
+	if (supervisor_state())
+	  {
+	    regs.ssp = regs.a[7];
+	    regs.ccr.set_s_bit(false);
+	    regs.a[7] = regs.usp;
 
-	  pfc_cache = memory::USER_PROGRAM;
-	  dfc_cache = memory::USER_DATA;
-	}
-    }
-}
+	    pfc_cache = memory::USER_PROGRAM;
+	    dfc_cache = memory::USER_DATA;
+	  }
+      }
+  }
 
-uint16_type
-context::sr() const
-{
-  return regs.ccr;
-}
+  uint16_type
+  context::sr() const
+  {
+    return regs.ccr;
+  }
 
-void
-context::set_sr(uint16_type value)
-{
-  set_supervisor_state(value & 0x2000);
-  regs.ccr = value;
-}
+  void
+  context::set_sr(uint16_type value)
+  {
+    set_supervisor_state(value & 0x2000);
+    regs.ccr = value;
+  }
 
-context::context(memory_map *m)
-  : mem(m),
-    pfc_cache(regs.ccr.supervisor_state() ? memory::SUPER_PROGRAM : memory::USER_PROGRAM),
-    dfc_cache(regs.ccr.supervisor_state() ? memory::SUPER_DATA : memory::USER_DATA),
-    a_interrupted(false),
-    interrupt_queues(7)
-{
+  context::context(memory_map *m)
+    : mem(m),
+      pfc_cache(regs.ccr.supervisor_state() ? memory::SUPER_PROGRAM : memory::USER_PROGRAM),
+      dfc_cache(regs.ccr.supervisor_state() ? memory::SUPER_DATA : memory::USER_DATA),
+      a_interrupted(false),
+      interrupt_queues(7)
+  {
+  }
 }
