@@ -55,7 +55,7 @@ namespace vm68k
     /* Handles a Bcc instruction.  */
     template <class Condition>
     uint32_type 
-    _b(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _b(uint32_type pc, context &c, uint16_type w, void *)
     {
       word::svalue_type disp = w & 0xff;
       size_t extsize;
@@ -84,7 +84,7 @@ namespace vm68k
 
     /* Handles a BRA instruction.  */
     uint32_type
-    _bra(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _bra(uint32_type pc, context &c, uint16_type w, void *)
     {
       word::svalue_type disp = w & 0xff;
       size_t len = 0;
@@ -105,7 +105,7 @@ namespace vm68k
 
     /* Handles a BSR instruction.  */
     uint32_type
-    _bsr(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _bsr(uint32_type pc, context &c, uint16_type w, void *)
     {
       word::svalue_type disp = w & 0xff;
       size_t len = 0;
@@ -134,7 +134,7 @@ namespace vm68k
   using namespace instr;
 
   void
-  install_instructions_6(processor &p, unsigned long d)
+  install_instructions_6(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{0x6000,  0xff, &_bra},
@@ -154,6 +154,6 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 }

@@ -1,5 +1,8 @@
 2002-05-09  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* vm68k/processor.h (class processor): Change the fourth argument
+	of instruction_handler to void *.  Also change all users.
+
 	* vm68k/size (struct byte): Renamed from byte_size.  Also change
 	all users.
 	(struct word): Renamed from word_size.  Also change all users.

@@ -53,7 +53,7 @@ namespace vm68k
     /* Handles a CLR instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _clr(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _clr(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
@@ -70,7 +70,7 @@ namespace vm68k
     /* Handles an EXT instruction.  */
     template <class Size1, class Size2>
     uint32_type
-    _ext(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _ext(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
 #ifdef L
@@ -87,7 +87,7 @@ namespace vm68k
     /* Handles a JMP instruction.  */
     template <class Destination>
     uint32_type
-    _jmp(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _jmp(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
@@ -103,7 +103,7 @@ namespace vm68k
     /* Handles a JSR instruction.  */
     template <class Destination>
     uint32_type
-    _jsr(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _jsr(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
@@ -124,7 +124,7 @@ namespace vm68k
     /* Handles a LEA instruction.  */
     template <class Destination>
     uint32_type
-    _lea(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _lea(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -142,7 +142,7 @@ namespace vm68k
 
     /* Handles a LINK instruction.  */
     uint32_type
-    _link(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _link(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       word::svalue_type disp = c.fetch_s(word(), pc + 2);
@@ -163,7 +163,7 @@ namespace vm68k
     /* Handles a MOVE-from-SR instruction.  */
     template <class Destination>
     uint32_type
-    _move_from_sr(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _move_from_sr(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
@@ -182,7 +182,7 @@ namespace vm68k
     /* Handles a MOVE-to-SR instruction.  */
     template <class Source>
     uint32_type
-    _move_to_sr(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _move_to_sr(uint32_type pc, context &c, uint16_type w, void *)
     {
       Source ea1(w & 7, pc + 2);
 #ifdef L
@@ -203,7 +203,7 @@ namespace vm68k
 
     /* Handles a MOVE-from-USP instruction.  */
     uint32_type
-    _move_from_usp(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _move_from_usp(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
 #ifdef L
@@ -222,7 +222,7 @@ namespace vm68k
 
     /* Handles a MOVE-to-USP instruction.  */
     uint32_type
-    _move_to_usp(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _move_to_usp(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
 #ifdef L
@@ -244,7 +244,7 @@ namespace vm68k
     /* Handles a MOVEM instruction (register to memory) */
     template <class Size, class Destination>
     uint32_type
-    _movem_r_m(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _movem_r_m(uint32_type pc, context &c, uint16_type w, void *)
     {
       word::uvalue_type mask = c.fetch_u(word(), pc + 2);
       Destination ea1(w & 7, pc + 2 + 2);
@@ -281,7 +281,7 @@ namespace vm68k
     /* Handles a MOVEM instruction (register to predec memory).  */
     template <class Size>
     uint32_type
-    _movem_r_predec(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _movem_r_predec(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       word::uvalue_type mask = c.fetch_u(word(), pc + 2);
@@ -320,7 +320,7 @@ namespace vm68k
     /* Handles a MOVEM instruction (memory to register).  */
     template <class Size, class Source>
     uint32_type
-    _movem_m_r(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _movem_m_r(uint32_type pc, context &c, uint16_type w, void *)
     {
       word::uvalue_type mask = c.fetch_u(word(), pc + 2);
       Source ea1(w & 7, pc + 2 + word::aligned_value_size());
@@ -358,7 +358,7 @@ namespace vm68k
     /* Handles a MOVEM instruction (postinc memory to register).  */
     template <class Size>
     uint32_type
-    _movem_postinc_r(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _movem_postinc_r(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       word::uvalue_type mask = c.fetch_u(word(), pc + 2);
@@ -397,7 +397,7 @@ namespace vm68k
     /* Handles a NEG instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _neg(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _neg(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
@@ -415,7 +415,7 @@ namespace vm68k
 
     /* Handles a NOP instruction.  */
     uint32_type
-    _nop(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _nop(uint32_type pc, context &c, uint16_type w, void *)
     {
 #ifdef L
       L("\tnop\n");
@@ -427,7 +427,7 @@ namespace vm68k
     /* Handles a NOT instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _not(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _not(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
@@ -446,7 +446,7 @@ namespace vm68k
     /* Handles a PEA instruction.  */
     template <class Destination>
     uint32_type
-    _pea(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _pea(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
@@ -465,7 +465,7 @@ namespace vm68k
 
     /* Handles a RTE instruction.  */
     uint32_type
-    _rte(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _rte(uint32_type pc, context &c, uint16_type w, void *)
     {
 #ifdef L
       L("\trte\n");
@@ -486,7 +486,7 @@ namespace vm68k
 
     /* Handles a RTS instruction.  */
     uint32_type
-    _rts(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _rts(uint32_type pc, context &c, uint16_type w, void *)
     {
 #ifdef L
       L("\trts\n");
@@ -502,7 +502,7 @@ namespace vm68k
 
     /* Handles a SWAP instruction.  */
     uint32_type
-    _swap(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _swap(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
 #ifdef L
@@ -523,7 +523,7 @@ namespace vm68k
     /* Handles a TST instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _tst(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _tst(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
@@ -539,7 +539,7 @@ namespace vm68k
 
     /* Handles a UNLK instruction.  */
     uint32_type
-    _unlk(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _unlk(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
 #ifdef L
@@ -560,7 +560,7 @@ namespace vm68k
   using namespace instr;
 
   void
-  install_instructions_4(processor &p, unsigned long d)
+  install_instructions_4(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{0x40c0,     7, &_move_from_sr<word_d_register>},
@@ -747,6 +747,6 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 }

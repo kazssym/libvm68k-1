@@ -53,7 +53,7 @@ namespace vm68k
     /* Handles an AND instruction (data register destination).  */
     template <class Size, class Source>
     uint32_type
-    _and_d(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _and_d(uint32_type pc, context &c, uint16_type w, void *)
     {
       Source ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -75,7 +75,7 @@ namespace vm68k
     /* Handles an AND instruction (memory destination).  */
     template <class Size, class Destination>
     uint32_type
-    _and_m(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _and_m(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -96,7 +96,7 @@ namespace vm68k
 
     /* Handles an EXG instruction (data registers).  */
     uint32_type
-    _exg_d_d(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _exg_d_d(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int reg2 = w >> 9 & 7;
@@ -115,7 +115,7 @@ namespace vm68k
 
     /* Handles an EXG instruction (address registers).  */
     uint32_type
-    _exg_a_a(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _exg_a_a(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int reg2 = w >> 9 & 7;
@@ -134,7 +134,7 @@ namespace vm68k
 
     /* Handles an EXG instruction (data register and address register).  */
     uint32_type
-    _exg_d_a(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _exg_d_a(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int reg2 = w >> 9 & 7;
@@ -154,7 +154,7 @@ namespace vm68k
     /* Handles a MULS instruction.  */
     template <class Source>
     uint32_type
-    _muls(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _muls(uint32_type pc, context &c, uint16_type w, void *)
     {
       Source ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -177,7 +177,7 @@ namespace vm68k
     /* Handles a MULU instruction.  */
     template <class Source>
     uint32_type
-    _mulu(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _mulu(uint32_type pc, context &c, uint16_type w, void *)
     {
       Source ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -202,7 +202,7 @@ namespace vm68k
   using namespace instr;
 
   void
-  install_instructions_12(processor &p, unsigned long d)
+  install_instructions_12(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{0xc000, 0xe07, &_and_d<byte, byte_d_register>},
@@ -287,6 +287,6 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 }

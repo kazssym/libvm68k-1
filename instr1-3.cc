@@ -53,7 +53,7 @@ namespace vm68k
     /* Handles a MOVE instruction.  */
     template <class Size, class Source, class Destination>
     uint32_type
-    _move(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _move(uint32_type pc, context &c, uint16_type w, void *)
     {
       Source ea1(w & 7, pc + 2);
       Destination ea2(w >> 9 & 7, pc + 2 + ea1.extension_size());
@@ -74,7 +74,7 @@ namespace vm68k
     /* Handles a MOVEA instruction.  */
     template <class Size, class Source>
     uint32_type
-    _movea(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _movea(uint32_type pc, context &c, uint16_type w, void *)
     {
       Source ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -94,7 +94,7 @@ namespace vm68k
   using namespace instr;
 
   void
-  install_instructions_1(processor &p, unsigned long d)
+  install_instructions_1(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{0x1000, 0xe07, &_move<byte, byte_d_register, byte_d_register>},
@@ -188,11 +188,11 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 
   void
-  install_instructions_2(processor &p, unsigned long d)
+  install_instructions_2(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{0x2000, 0xe07, &_move<long_word, long_word_d_register, long_word_d_register>},
@@ -306,11 +306,11 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 
   void
-  install_instructions_3(processor &p, unsigned long d)
+  install_instructions_3(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{0x3000, 0xe07, &_move<word, word_d_register, word_d_register>},
@@ -424,6 +424,6 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 }

@@ -53,7 +53,7 @@ namespace vm68k
     /* Handles a CMP instruction.  */
     template <class Size, class Source>
     uint32_type
-    _cmp(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _cmp(uint32_type pc, context &c, uint16_type w, void *)
     {
       Source ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -73,7 +73,7 @@ namespace vm68k
     /* Handles a CMPA instruction.  */
     template <class Size, class Source>
     uint32_type
-    _cmpa(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _cmpa(uint32_type pc, context &c, uint16_type w, void *)
     {
       Source ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -94,7 +94,7 @@ namespace vm68k
     /* Handles a CMPM instruction.  */
     template <class Size>
     uint32_type
-    _cmpm(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _cmpm(uint32_type pc, context &c, uint16_type w, void *)
     {
       basic_postinc_indirect<Size> ea1(w & 7, pc + 2);
       basic_postinc_indirect<Size> ea2(w >> 9 & 7,
@@ -117,7 +117,7 @@ namespace vm68k
     /* Handles an EOR instruction (memory destination).  */
     template <class Size, class Destination>
     uint32_type
-    _eor_m(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _eor_m(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -140,7 +140,7 @@ namespace vm68k
   using namespace instr;
 
   void
-  install_instructions_11(processor &p, unsigned long d)
+  install_instructions_11(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{0xb000, 0xe07, &_cmp<byte, byte_d_register>},
@@ -232,6 +232,6 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 }

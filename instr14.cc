@@ -53,7 +53,7 @@ namespace vm68k
     /* Handles an ASL instruction (data register).  */
     template <class Size>
     uint32_type
-    _asl_d(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _asl_d(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int reg2 = w >> 9 & 7;
@@ -75,7 +75,7 @@ namespace vm68k
     /* Handles an ASL instruction (immediate).  */
     template <class Size>
     uint32_type
-    _asl_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _asl_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int value2 = w >> 9 & 7;
@@ -96,7 +96,7 @@ namespace vm68k
     /* Handles an ASR instruction (data register).  */
     template <class Size>
     uint32_type
-    _asr_d(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _asr_d(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int reg2 = w >> 9 & 7;
@@ -116,7 +116,7 @@ namespace vm68k
     /* Handles an ASR instruction (immediate).  */
     template <class Size>
     uint32_type
-    _asr_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _asr_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int value2 = w >> 9 & 7;
@@ -139,7 +139,7 @@ namespace vm68k
     /* Handles a LSL instruction (data register).  */
     template <class Size>
     uint32_type
-    _lsl_d(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _lsl_d(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int reg2 = w >> 9 & 7;
@@ -160,7 +160,7 @@ namespace vm68k
     /* Handles a LSL instruction (immediate).  */
     template <class Size>
     uint32_type
-    _lsl_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _lsl_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int value2 = w >> 9 & 7;
@@ -182,7 +182,7 @@ namespace vm68k
     /* Handles a LSR instruction (data register).  */
     template <class Size>
     uint32_type
-    _lsr_d(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _lsr_d(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int reg2 = w >> 9 & 7;
@@ -203,7 +203,7 @@ namespace vm68k
     /* Handles a LSR instruction (immediate).  */
     template <class Size>
     uint32_type
-    _lsr_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _lsr_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int value2 = w >> 9 & 7;
@@ -225,7 +225,7 @@ namespace vm68k
     /* Handles a LSR instruction (memory).  */
     template <class Destination>
     uint32_type
-    _lsr_m(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _lsr_m(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
@@ -245,7 +245,7 @@ namespace vm68k
     /* Handles a ROL instruction (data register).  */
     template <class Size>
     uint32_type
-    _rol_d(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _rol_d(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int reg2 = w >> 9 & 7;
@@ -270,7 +270,7 @@ namespace vm68k
     /* Handles a ROL instruction (immediate).  */
     template <class Size>
     uint32_type
-    _rol_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _rol_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int value2 = w >> 9 & 7;
@@ -293,7 +293,7 @@ namespace vm68k
     /* Handles a ROR instruction (immediate).  */
     template <class Size>
     uint32_type
-    _ror_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _ror_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int count = w >> 9 & 7;
@@ -316,7 +316,7 @@ namespace vm68k
     /* Handles a ROXL instruction (immediate).  */
     template <class Size>
     uint32_type
-    _roxl_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _roxl_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int value2 = w >> 9 & 7;
@@ -340,7 +340,7 @@ namespace vm68k
     /* Handles a ROXR instruction (immediate).  */
     template <class Size>
     uint32_type
-    _roxr_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _roxr_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int value2 = w >> 9 & 7;
@@ -365,7 +365,7 @@ namespace vm68k
   using namespace instr;
 
   void
-  install_instructions_14(processor &p, unsigned long d)
+  install_instructions_14(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{0xe000, 0xe07, &_asr_i<byte>},
@@ -417,6 +417,6 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 }

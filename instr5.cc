@@ -55,7 +55,7 @@ namespace vm68k
     /* Handles an ADDQ instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _addq(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _addq(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
       int value2 = w >> 9 & 7;
@@ -77,7 +77,7 @@ namespace vm68k
     /* Handles an ADDQ instruction (address register).  */
     template <class Size>
     uint32_type
-    _addq_a(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _addq_a(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int value2 = w >> 9 & 7;
@@ -99,7 +99,7 @@ namespace vm68k
     /* Handles a DBcc instruction.  */
     template <class Condition>
     uint32_type
-    _db(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _db(uint32_type pc, context &c, uint16_type w, void *)
     {
       Condition cond;
       int reg1 = w & 7;
@@ -125,7 +125,7 @@ namespace vm68k
     /* Handles a Scc instruction.  */
     template <class Condition, class Destination>
     uint32_type
-    _s(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _s(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
@@ -144,7 +144,7 @@ namespace vm68k
     /* Handles a SUBQ instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _subq(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _subq(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
       int value2 = w >> 9 & 7;
@@ -166,7 +166,7 @@ namespace vm68k
     /* Handles a SUBQ instruction (address register).  */
     template <class Size>
     uint32_type
-    _subq_a(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _subq_a(uint32_type pc, context &c, uint16_type w, void *)
     {
       int reg1 = w & 7;
       int value2 = w >> 9 & 7;
@@ -189,7 +189,7 @@ namespace vm68k
   using namespace instr;
 
   void
-  install_instructions_5(processor &p, unsigned long d)
+  install_instructions_5(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{0x5000, 0xe07, &_addq<byte, byte_d_register>},
@@ -373,6 +373,6 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 }

@@ -53,7 +53,7 @@ namespace vm68k
     /* Handles an ADDI instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _addi(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _addi(uint32_type pc, context &c, uint16_type w, void *)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
       Destination ea1(w & 7, pc + 2 + Size::aligned_value_size());
@@ -74,7 +74,7 @@ namespace vm68k
     /* Handles an ANDI instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _andi(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _andi(uint32_type pc, context &c, uint16_type w, void *)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
       Destination ea1(w & 7, pc + 2 + Size::aligned_value_size());
@@ -95,7 +95,7 @@ namespace vm68k
 
     /* Handles an ANDI-to-CCR instruction.  */
     uint32_type
-    _andi_to_ccr(uint32_type pc, context &c, uint16_type, unsigned long)
+    _andi_to_ccr(uint32_type pc, context &c, uint16_type, void *)
     {
       byte::uvalue_type value2 = c.fetch_u(byte(), pc + 2);
 #ifdef L
@@ -111,7 +111,7 @@ namespace vm68k
 
     /* Handles an ANDI-to-SR instruction.  */
     uint32_type
-    _andi_to_sr(uint32_type pc, context &c, uint16_type, unsigned long)
+    _andi_to_sr(uint32_type pc, context &c, uint16_type, void *)
     {
       word::uvalue_type value2 = c.fetch_u(word(), pc + 2);
 #ifdef L
@@ -132,7 +132,7 @@ namespace vm68k
     /* Handles a BCLR instruction (data register).  */
     template <class Size, class Destination>
     uint32_type
-    _bclr_d(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _bclr_d(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -155,7 +155,7 @@ namespace vm68k
     /* Handles a BCLR instruction (immediate).  */
     template <class Size, class Destination>
     uint32_type
-    _bclr_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _bclr_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int value2 = c.fetch_u(word(), pc + 2) % Size::value_bit();
       Destination ea1(w & 7, pc + 2 + 2);
@@ -177,7 +177,7 @@ namespace vm68k
     /* Handles a BSET instruction (data register).  */
     template <class Size, class Destination>
     uint32_type
-    _bset_d(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _bset_d(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -199,7 +199,7 @@ namespace vm68k
     /* Handles a BSET instruction (immediate).  */
     template <class Size, class Destination>
     uint32_type
-    _bset_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _bset_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int value2 = c.fetch_u(word(), pc + 2) % Size::value_bit();
       Destination ea1(w & 7, pc + 2 + word::aligned_value_size());
@@ -222,7 +222,7 @@ namespace vm68k
     /* Handles a BTST instruction (data register).  */
     template <class Size, class Destination>
     uint32_type
-    _btst_d(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _btst_d(uint32_type pc, context &c, uint16_type w, void *)
     {
       Destination ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
@@ -244,7 +244,7 @@ namespace vm68k
     /* Handles a BTST instruction (immediate).  */
     template <class Size, class Destination>
     uint32_type
-    _btst_i(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _btst_i(uint32_type pc, context &c, uint16_type w, void *)
     {
       int value2 = c.fetch_u(word(), pc + 2) % Size::value_bit();
       Destination ea1(w & 7, pc + 2 + word::aligned_value_size());
@@ -266,7 +266,7 @@ namespace vm68k
     /* Handles a CMPI instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _cmpi(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _cmpi(uint32_type pc, context &c, uint16_type w, void *)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
       Destination ea1(w & 7, pc + 2 + Size::aligned_value_size());
@@ -287,7 +287,7 @@ namespace vm68k
     /* Handles an EORI instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _eori(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _eori(uint32_type pc, context &c, uint16_type w, void *)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
       Destination ea1(w & 7, pc + 2 + Size::aligned_value_size());
@@ -309,7 +309,7 @@ namespace vm68k
     /* Handles an ORI instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _ori(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _ori(uint32_type pc, context &c, uint16_type w, void *)
     {
       typename Size::svalue_type value2 = c.fetch_s(Size(), pc + 2);
       Destination ea1(w & 7, pc + 2 + Size::aligned_value_size());
@@ -331,7 +331,7 @@ namespace vm68k
 
     /* Handles an ORI-to-CCR instruction.  */
     uint32_type
-    _ori_to_ccr(uint32_type pc, context &c, uint16_type, unsigned long)
+    _ori_to_ccr(uint32_type pc, context &c, uint16_type, void *)
     {
       byte::uvalue_type value2 = c.fetch_u(byte(), pc + 2);
 #ifdef L
@@ -347,7 +347,7 @@ namespace vm68k
 
     /* Handles an ORI-to-SR instruction.  */
     uint32_type
-    _ori_to_sr(uint32_type pc, context &c, uint16_type, unsigned long)
+    _ori_to_sr(uint32_type pc, context &c, uint16_type, void *)
     {
       word::uvalue_type value2 = c.fetch_u(word(), pc + 2);
 #ifdef L
@@ -368,7 +368,7 @@ namespace vm68k
     /* Handles a SUBI instruction.  */
     template <class Size, class Destination>
     uint32_type
-    _subi(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _subi(uint32_type pc, context &c, uint16_type w, void *)
     {
       typename Size::svalue_type value2 = c.fetch_s(word(), pc + 2);
       Destination ea1(w & 7, pc + 2 + word::aligned_value_size());
@@ -391,7 +391,7 @@ namespace vm68k
   using namespace instr;
 
   void
-  install_instructions_0(processor &p, unsigned long d)
+  install_instructions_0(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{     0,     7, &_ori<byte, byte_d_register>},
@@ -593,6 +593,6 @@ namespace vm68k
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 }

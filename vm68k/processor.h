@@ -313,16 +313,16 @@ namespace vm68k
   {
   public:
     /* Type of an instruction handler.  */
-    typedef uint32_type (*instruction_handler)
-      (uint32_type pc, context &, uint16_type w, unsigned long d);
+    typedef uint32_type
+    (*instruction_handler)(uint32_type pc, context &, uint16_type w, void *);
 
     /* Type of an instruction.  */
-    typedef pair<instruction_handler, unsigned long> instruction_type;
+    typedef pair<instruction_handler, void *> instruction_type;
 
   public:
     /* Raises an illegal instruction exception.  */
-    static uint32_type illegal(uint32_type pc, context &,
-			       uint16_type w, unsigned long d);
+    static uint32_type
+    illegal(uint32_type pc, context &, uint16_type w, void *);
 
   private:
     vector<instruction_type> instructions;

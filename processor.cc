@@ -111,7 +111,7 @@ namespace vm68k
   
   /* Executes an illegal instruction.  */
   uint32_type
-  processor::illegal(uint32_type pc, context &, uint16_type, unsigned long)
+  processor::illegal(uint32_type pc, context &, uint16_type, void *)
   {
     throw illegal_instruction_exception(pc);
   }

@@ -52,7 +52,7 @@ namespace vm68k
 
     /* Handles a MOVEQ instruction.  */
     uint32_type
-    _moveq(uint32_type pc, context &c, uint16_type w, unsigned long)
+    _moveq(uint32_type pc, context &c, uint16_type w, void *)
     {
       long_word::svalue_type value = byte::svalue(w);
       int reg2 = w >> 9 & 7;
@@ -71,13 +71,13 @@ namespace vm68k
   using namespace instr;
 
   void
-  install_instructions_7(processor &p, unsigned long d)
+  install_instructions_7(processor &p, void *data)
   {
     static const instruction_map inst[]
       = {{0x7000, 0xeff, &_moveq}};
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)
-      p.set_instruction(i->base, i->mask, make_pair(i->handler, d));
+      p.set_instruction(i->base, i->mask, make_pair(i->handler, data));
   }
 }
