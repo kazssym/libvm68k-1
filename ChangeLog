@@ -1,6 +1,9 @@
 2001-06-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* NEWS: Updated.
+
 	* memory_map.cc: Use a namespace block.
+	(memory_map::fill): Use std:: prefix.
 
 	* configure.in: Add AC_PROG_CPP.  Uncomment AC_SEARCH_LIBS for
 	pthread.

@@ -157,7 +157,7 @@ namespace vm68k
     vector<memory *>::iterator i = this->find_memory(last + PAGE_SIZE - 1);
     if (i == page_table.begin())
       i = page_table.end();
-    ::fill(this->find_memory(first), i, p);
+    std::fill(this->find_memory(first), i, p);
   }
   
   namespace
