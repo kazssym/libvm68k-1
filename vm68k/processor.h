@@ -25,7 +25,6 @@
 #include <queue>
 #include <vector>
 #include <utility>
-#include <cassert>
 
 namespace vm68k
 {
