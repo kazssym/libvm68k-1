@@ -50,7 +50,7 @@ namespace vm68k
   {
     using namespace addressing;
 
-    /* Handles a SUB instruction.  */
+    /* Handles a SUB instruction (register destination).  */
     template <class Size, class Source>
     uint32_type
     _sub_r(uint32_type pc, context &c, uint16_type w, unsigned long)
