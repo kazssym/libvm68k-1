@@ -1,26 +1,26 @@
 /* -*- C++ -*- */
-/* Virtual X68000 - X68000 virtual machine
+/* Libvm68k - M68000 virtual machine library
    Copyright (C) 1998-2000 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
+   the Free Software Foundation; either version 2 of the License, or (at
+   your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+   USA.  */
 
-#ifndef _VM68K_PROCESSOR_H
-#define _VM68K_PROCESSOR_H 1
+#ifndef __VM68K_PROCESSOR_H
+#define __VM68K_PROCESSOR_H 1
 
 #include <vm68k/memory.h>
-#include <vm68k/except.h>
 
 #include <queue>
 #include <vector>
@@ -328,7 +328,27 @@ namespace vm68k
   {
     m.put_32(address, value, fc);
   }
-
+  
+  /* Base class of processor exceptions.  */
+  struct processor_exception: exception
+  {
+  };
+
+  /* Illegal instruction exception.  */
+  struct illegal_instruction_exception: processor_exception
+  {
+  };
+
+  /* Zero divide exception.  */
+  struct zero_divide_exception: processor_exception
+  {
+  };
+
+  /* Privilege violation exception.  */
+  struct privilege_violation_exception: processor_exception
+  {
+  };
+  
   /* Abstruct base class for condition testers.  */
   class condition_tester
   {
@@ -368,7 +388,7 @@ namespace vm68k
     bool mi(const sint32_type *) const;
     bool lt(const sint32_type *) const;
   };
-
+  
   /* Status register.  */
   class condition_code
   {
@@ -619,7 +639,6 @@ namespace vm68k
   {
     dispatch(c.ufetch(word_size(), 0), c);
   }
-} // vm68k
+}
 
-#endif /* not _VM68K_PROCESSOR_H */
-
+#endif /* not __VM68K_PROCESSOR_H */

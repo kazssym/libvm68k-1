@@ -1,5 +1,16 @@
 2001-06-26  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* vm68k/Makefile.am (vm68kinclude_HEADERS): Remove except.h.
+
+	* vm68k/except.h: Removed.
+
+	* vm68k/processor.h (struct processor_exception): Moved from
+	except.h.
+	(struct illegal_instruction_exception): Likewise.
+	(struct zero_divide_exception): Likewise.
+	(struct privilege_violation_exception): Likewise.
+	(__VM68K_PROCESSOR_H): Renamed from _VM68K_PROCESSOR_H.
+
 	* configure.in: Use new macros.
 
 	* acinclude.m4: Copied from the autoconf macro archive.
