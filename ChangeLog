@@ -1,5 +1,7 @@
 2001-06-29  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* TODO: Updated.
+
 	* NEWS: Updated.
 
 	* vm68k/processor.h (struct byte_size): Removed.
