@@ -1,3 +1,17 @@
+2001-06-27  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
+
+	* configure.in: Move the test for `--with-nana' later.  Add
+	AC_C_CONST.  Improve warning messages for missing C++ features.
+
+	* version.cc: Use "vm68k/misc.h" instead of <vm68k/misc.h>.
+	(_GNU_SOURCE): Defined.
+	(_POSIX_C_SOURCE): Defined.
+	(inline): Remove #undef.
+
+	* memory.cc (_GNU_SOURCE): Defined.
+	(_POSIX_C_SOURCE): Defined.
+	(inline): Remove #undef.
+
 2001-06-26  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
 	* Version 1.0.4.

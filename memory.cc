@@ -19,8 +19,10 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
-#undef const
-#undef inline
+#undef const			// C++ must have `const'.
+
+#define _GNU_SOURCE 1
+#define _POSIX_C_SOURCE 199506L	// We want POSIX.1c if not GNU.
 
 #ifdef HAVE_NANA_H
 # include <nana.h>
