@@ -83,7 +83,7 @@ LIBS =
 lib_LTLIBRARIES = libvm68k.la
 
 libvm68k_la_LDFLAGS = $(LTLIBRELEASE) -version-info 4:0:0
-libvm68k_la_SOURCES = processor.cc instr0.cc instr1-3.cc instr4.cc instr5.cc instr6.cc instr7.cc instr8.cc instr9.cc instr11.cc instr12.cc instr13.cc instr14.cc context.cc condition_code.cc memory_map.cc memory.cc version.cc
+libvm68k_la_SOURCES = version.cc bus_target.cc bus.cc processor.cc instr0.cc instr1-3.cc instr4.cc instr5.cc instr6.cc instr7.cc instr8.cc instr9.cc instr11.cc instr12.cc instr13.cc instr14.cc context.cc condition_code.cc
 
 
 noinst_HEADERS = instr.h
@@ -104,10 +104,10 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I.
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 libvm68k_la_LIBADD = 
-libvm68k_la_OBJECTS =  processor.lo instr0.lo instr1-3.lo instr4.lo \
-instr5.lo instr6.lo instr7.lo instr8.lo instr9.lo instr11.lo instr12.lo \
-instr13.lo instr14.lo context.lo condition_code.lo memory_map.lo \
-memory.lo version.lo
+libvm68k_la_OBJECTS =  version.lo bus_target.lo bus.lo processor.lo \
+instr0.lo instr1-3.lo instr4.lo instr5.lo instr6.lo instr7.lo instr8.lo \
+instr9.lo instr11.lo instr12.lo instr13.lo instr14.lo context.lo \
+condition_code.lo
 CXXFLAGS = @CXXFLAGS@
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -129,11 +129,11 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/condition_code.P .deps/context.P .deps/instr0.P \
-.deps/instr1-3.P .deps/instr11.P .deps/instr12.P .deps/instr13.P \
-.deps/instr14.P .deps/instr4.P .deps/instr5.P .deps/instr6.P \
-.deps/instr7.P .deps/instr8.P .deps/instr9.P .deps/memory.P \
-.deps/memory_map.P .deps/processor.P .deps/version.P
+DEP_FILES =  .deps/bus.P .deps/bus_target.P .deps/condition_code.P \
+.deps/context.P .deps/instr0.P .deps/instr1-3.P .deps/instr11.P \
+.deps/instr12.P .deps/instr13.P .deps/instr14.P .deps/instr4.P \
+.deps/instr5.P .deps/instr6.P .deps/instr7.P .deps/instr8.P \
+.deps/instr9.P .deps/processor.P .deps/version.P
 SOURCES = $(libvm68k_la_SOURCES)
 OBJECTS = $(libvm68k_la_OBJECTS)
 
