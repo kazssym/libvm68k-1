@@ -27,31 +27,25 @@
 
 #include <vm68k/bus>
 #include <algorithm>
+#include <cassert>
 
-#ifdef HAVE_NANA_H
-# include <nana.h>
-#else
-# include <cassert>
-# define I assert
-#endif
+using namespace std;
 
 namespace vm68k
 {
-  using namespace std;
-
   uint16_type
-  bus::get_16(uint32_type address, function_code fc) const
-    throw (bus_error, address_error)
+  memory::load_16(uint32_type address,
+		  function_code fc) const throw (bus_error, address_error)
   {
     if ((address & 1) != 0)
       throw address_error(address, READ | fc);
 
-    return get_16_aligned(address, fc);
+    return load_16_aligned(address, fc);
   }
 
   uint32_type
-  bus::get_32(uint32_type address, function_code fc) const
-    throw (bus_error, address_error)
+  memory::load_32(uint32_type address,
+		  function_code fc) const throw (bus_error, address_error)
   {
     if ((address & 1) != 0)
       throw address_error(address, READ | fc);
@@ -59,25 +53,26 @@ namespace vm68k
     uint32_type value;
     if ((address >> 1 & 1) != 0)
       {
-	value = uint32_type(get_16_aligned(address, fc)) << 16;
-	value |= get_16_aligned(address + 2, fc) & 0xffff;
+	value = uint32_type(load_16_aligned(address, fc)) << 16;
+	value |= load_16_aligned(address + 2, fc) & 0xffff;
       }
     else
       {
-	const bus_target *p = *find_memory(address);
-	value = p->get_32(address, fc);
+	const memory_device *d = *find_device(address);
+	value = d->load_32(address, fc);
       }
 
     return value;
   }
 
   string
-  bus::get_string(uint32_type address, function_code fc) const
+  memory::load_string(uint32_type address,
+		      function_code fc) const throw (bus_error)
   {
     string s;
     for (;;)
       {
-	int c = get_8(address++, fc);
+	int c = load_8(address++, fc);
 	if (c == 0)
 	  break;
 	s += c;
@@ -85,80 +80,76 @@ namespace vm68k
 
     return s;
   }
-
-  /* Read a block of data from memory.  */
+}
+
+namespace vm68k
+{
   void
-  bus::read(uint32_type address, void *data, size_t size,
-		   function_code fc) const
-  {
-    unsigned char *i = static_cast<unsigned char *>(data);
-    unsigned char *last = i + size;
-
-    while (i != last)
-      *i++ = get_8(address++, fc);
-  }
-
-  void
-  bus::put_16(uint32_type address, uint16_type value, function_code fc)
-    throw (bus_error, address_error)
+  memory::store_16(uint32_type address, uint16_type value,
+		   function_code fc) throw (bus_error, address_error)
   {
     if ((address & 1) != 0)
       throw address_error(address, WRITE | fc);
 
-    put_16_aligned(address, value, fc);
+    store_16_aligned(address, value, fc);
   }
 
   void
-  bus::put_32(uint32_type address, uint32_type value, function_code fc)
-    throw (bus_error, address_error)
+  memory::store_32(uint32_type address, uint32_type value,
+		   function_code fc) throw (bus_error, address_error)
   {
     if ((address & 1) != 0)
       throw address_error(address, WRITE | fc);
 
     if ((address >> 1 & 1) != 0)
       {
-	put_16_aligned(address,     value >> 16, fc);
-	put_16_aligned(address + 2, value,       fc);
+	store_16_aligned(address,     value >> 16, fc);
+	store_16_aligned(address + 2, value,       fc);
       }
     else
       {
-	bus_target *p = *find_memory(address);
-	p->put_32(address, value, fc);
+	memory_device *d = *find_device(address);
+	d->store_32(address, value, fc);
       }
   }
 
   void
-  bus::put_string(uint32_type address, const string &s,
-			 function_code fc)
+  memory::store_string(uint32_type address, const string &s,
+		       function_code fc) throw (bus_error)
   {
     for (string::const_iterator i = s.begin();
 	 i != s.end();
 	 ++i)
-      put_8(address++, *i, fc);
+      store_8(address++, *i, fc);
 
-    put_8(address++, 0, fc);
+    store_8(address++, 0, fc);
+  }
+}
+
+namespace vm68k
+{
+  /* Read a block of data from memory.  */
+  void
+  memory::copy_out(uint32_type address, void *data, size_t size,
+		   function_code fc) const throw (bus_error)
+  {
+    unsigned char *i = static_cast<unsigned char *>(data);
+    unsigned char *last = i + size;
+
+    while (i != last)
+      *i++ = load_8(address++, fc);
   }
 
   /* Write a block of data to memory.  */
   void
-  bus::write(uint32_type address, const void *data, size_t size,
-		    function_code fc)
+  memory::copy_in(uint32_type address, const void *data, size_t size,
+		  function_code fc) throw (bus_error)
   {
     const unsigned char *i = static_cast<const unsigned char *>(data);
     const unsigned char *last = i + size;
 
     while (i != last)
-      put_8(address++, *i++, fc);
-  }
-
-  void
-  bus::fill_memory(uint32_type first, uint32_type last, bus_target *t)
-  {
-    vector<bus_target *>::iterator i = find_memory(last + PAGE_SIZE - 1);
-    if (i == page_table.begin())
-      i = page_table.end();
-
-    std::fill(find_memory(first), i, t);
+      store_8(address++, *i++, fc);
   }
 }
 
@@ -167,64 +158,71 @@ namespace vm68k
   namespace
   {
     /* Default memory that always raises a bus error.  */
-    class no_target: public bus_target
+    class bus_error_device: public memory_device
     {
     public:
-      int get_8(uint32_type address, function_code) const
-	throw (bus_error);
-      uint16_type get_16(uint32_type address, function_code) const
-	throw (bus_error);
-
-      void put_8(uint32_type address, int, function_code)
-	throw (bus_error);
-      void put_16(uint32_type address, uint16_type, function_code)
-	throw (bus_error);
+      int load_8(uint32_type address,
+		 function_code) const throw (bus_error);
+      uint16_type load_16(uint32_type address,
+			  function_code) const throw (bus_error);
+      void store_8(uint32_type address, int,
+		   function_code) throw (bus_error);
+      void store_16(uint32_type address, uint16_type,
+		    function_code) throw (bus_error);
     };
 
     int
-    no_target::get_8(uint32_type address, function_code fc) const
-      throw (bus_error)
+    bus_error_device::load_8(uint32_type address,
+			     function_code fc) const throw (bus_error)
     {
       throw bus_error(address, READ | fc);
     }
 
     uint16_type
-    no_target::get_16(uint32_type address, function_code fc) const
-      throw (bus_error)
+    bus_error_device::load_16(uint32_type address,
+			      function_code fc) const throw (bus_error)
     {
-      I((address & 1) == 0);
+      assert((address & 1) == 0);
       throw bus_error(address, READ | fc);
     }
 
     void
-    no_target::put_8(uint32_type address, int value, function_code fc)
-      throw (bus_error)
+    bus_error_device::store_8(uint32_type address, int value,
+			      function_code fc) throw (bus_error)
     {
       throw bus_error(address, WRITE | fc);
     }
 
     void
-    no_target::put_16(uint32_type address, uint16_type value, function_code fc)
-      throw (bus_error)
+    bus_error_device::store_16(uint32_type address, uint16_type value,
+			       function_code fc) throw (bus_error)
     {
-      I((address & 1) == 0);
+      assert((address & 1) == 0);
       throw bus_error(address, WRITE | fc);
     }
+
+    static bus_error_device no_device;
   }
 
-  bus_target *
-  bus::no_target() throw ()
-  {
-    static class no_target t;
-    return &t;
-  }
-
-  bus::~bus()
+  memory::memory()
+    : page_table(address_mask() / page_size() + 1, &no_device)
   {
   }
 
-  bus::bus()
-    : page_table(NPAGES, no_target())
+  void
+  memory::add(uint32_type first, uint32_type last, memory_device *d)
+  {
+    if (d == 0)
+      d = &no_device;
+
+    vector<memory_device *>::iterator j = find_device(last + page_size() - 1);
+    if (j == page_table.begin())
+      j = page_table.end();
+
+    fill(find_device(first), j, d);
+  }
+
+  memory::~memory()
   {
   }
 }

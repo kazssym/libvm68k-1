@@ -184,7 +184,6 @@ namespace vm68k
     // External mc68000 address is 24-bit size.
     static uint32_type address_mask() throw () {return 0xffffff;}
     static uint32_type page_size() throw () {return 0x1000;}
-    static memory_device *no_device() throw ();
 
   public:
     /* Fills an address range with memory.  */

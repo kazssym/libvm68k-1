@@ -1,6 +1,14 @@
 2002-10-01  Kaz Sasayama  <kaz2002@hypercore.co.jp>
 
-	* bus_target.cc: Remove nana support.  Change all renamed types
+	* bus.cc: Remove Nana support.  Change all renamed types and
+	functions.
+	(class bus_error_device): Renamed from no_device.
+	(memory): Use static object for the initial value.
+	(add): Set to the initial value if null.
+
+	* vm68k/bus (class memory): Remove no_device.
+
+	* bus_target.cc: Remove Nana support.  Change all renamed types
 	and functions.
 
 	* vm68k/bus (PAGE_SHIFT, PAGE_SIZE, ADDRESS_BIT, NPAGES): Removed.
