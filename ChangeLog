@@ -1,5 +1,8 @@
 2001-12-04  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* vm68k/addressing.h: Change the addressing mode to take an
+	address instead of an offset from the PC.
+
 	* instr6.cc: Change the instruction handlers.
 	* instr7.cc: Change the instruction handlers.
 	* instr8.cc: Change the instruction handlers.
