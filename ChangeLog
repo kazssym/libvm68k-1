@@ -1,5 +1,9 @@
 2003-04-10  Kaz Sasayama  <kaz2003@hypercore.co.jp>
 
+	* Makefile.am (libvm68k_la_SOURCES): Modify file names.
+
+	* Changed C++ file suffix from .cc to .cpp.
+
 	* configure.ac: Updated.
 
 	* Upgrade to Automake 1.6.  All Makefile.in's regenerated.
