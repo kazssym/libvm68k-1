@@ -1,5 +1,9 @@
 2001-06-19  Kaz Sasayama  <Kaz.Sasayama@HyperLinuxJP.com>
 
+	* Makefile.am (libvm68k_la_LDFLAGS): Update the version info.
+
+	* configure.in: Set VERSION to 1.0.3.
+
 	* NEWS: Updated.
 
 	* memory_map.cc: Use a namespace block.
@@ -15,10 +19,6 @@
 	Also change all users.
 	(struct processor_exception): Change the base class from
 	runtime_error to exception.
-
-	* Makefile.am (libvm68k_la_LDFLAGS): Update the version info.
-
-	* configure.in: Set VERSION to 1.0.3.
 
 	* Makefile.am (libvm68k_la_SOURCES): Add version.cc.
 
