@@ -87,8 +87,8 @@ namespace vm68k
       typename Size::svalue_type value = Size::svalue(value1 - value2);
       ea1.put(c, value);
       c.regs.ccr.set_cc_sub(value, value1, value2);
-      ea1.finish(c);
 
+      ea1.finish(c);
       return pc + 2 + ea1.extension_size();
     }
 

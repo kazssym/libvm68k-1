@@ -174,8 +174,8 @@ namespace vm68k
       // This instruction does not affect the condition codes.
       word_size::uvalue_type value = c.sr();
       ea1.put(c, value);
-      ea1.finish(c);
 
+      ea1.finish(c);
       return pc + 2 + ea1.extension_size();
     }
 
@@ -196,8 +196,8 @@ namespace vm68k
       // This instruction sets the condition codes.
       word_size::uvalue_type value = ea1.get(c);
       c.set_sr(value);
-      ea1.finish(c);
 
+      ea1.finish(c);
       return pc + 2 + ea1.extension_size();
     }
 
