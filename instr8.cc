@@ -36,6 +36,8 @@
 # define I assert
 #endif
 
+using namespace std;
+
 #ifdef HAVE_NANA_H
 extern bool nana_instruction_trace;
 # undef L_DEFAULT_GUARD
