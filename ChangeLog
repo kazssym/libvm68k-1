@@ -1,5 +1,11 @@
 2002-05-09  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
+	* vm68k/size (struct byte): Renamed from byte_size.  Also change
+	all users.
+	(struct word): Renamed from word_size.  Also change all users.
+	(struct long_word_size): Renamed from long_word_size.  Also change
+	all users.
+
 	* vm68k/Makefile.am (vm68kinclude_HEADERS): Replace size.h with
 	size.
 

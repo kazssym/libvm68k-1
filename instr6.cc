@@ -57,21 +57,21 @@ namespace vm68k
     uint32_type 
     _b(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      word_size::svalue_type disp = w & 0xff;
+      word::svalue_type disp = w & 0xff;
       size_t extsize;
       if (disp == 0)
 	{
-	  disp = c.fetch_s(word_size(), pc + 2);
+	  disp = c.fetch_s(word(), pc + 2);
 	  extsize = 2;
 	}
       else
 	{
-	  disp = byte_size::svalue(disp);
+	  disp = byte::svalue(disp);
 	  extsize = 0;
 	}
 #ifdef L
       L("\tb%s %#lx\n", Condition::text(),
-	long_word_size::uvalue(pc + 2 + disp) + 0UL);
+	long_word::uvalue(pc + 2 + disp) + 0UL);
 #endif
 
       // This instruction does not affect the condition codes.
@@ -86,17 +86,17 @@ namespace vm68k
     uint32_type
     _bra(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      word_size::svalue_type disp = w & 0xff;
+      word::svalue_type disp = w & 0xff;
       size_t len = 0;
       if (disp == 0)
 	{
-	  disp = c.fetch_s(word_size(), pc + 2);
-	  len = word_size::aligned_value_size();
+	  disp = c.fetch_s(word(), pc + 2);
+	  len = word::aligned_value_size();
 	}
       else
-	disp = byte_size::svalue(disp);
+	disp = byte::svalue(disp);
 #ifdef L
-      L("\tbra %#lx\n", long_word_size::uvalue(pc + 2 + disp) + 0UL);
+      L("\tbra %#lx\n", long_word::uvalue(pc + 2 + disp) + 0UL);
 #endif
 
       // XXX: The condition codes are not affected.
@@ -107,25 +107,25 @@ namespace vm68k
     uint32_type
     _bsr(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      word_size::svalue_type disp = w & 0xff;
+      word::svalue_type disp = w & 0xff;
       size_t len = 0;
       if (disp == 0)
 	{
-	  disp = c.fetch_s(word_size(), pc + 2);
-	  len = word_size::aligned_value_size();
+	  disp = c.fetch_s(word(), pc + 2);
+	  len = word::aligned_value_size();
 	}
       else
-	disp = byte_size::svalue(disp);
+	disp = byte::svalue(disp);
 #ifdef L
-      L("\tbsr %#lx\n", long_word_size::uvalue(pc + 2 + disp) + 0UL);
+      L("\tbsr %#lx\n", long_word::uvalue(pc + 2 + disp) + 0UL);
 #endif
 
       // XXX: The condition codes are not affected.
       function_code fc = c.data_fc();
-      long_word_size::put(*c.mem, fc,
-			  c.regs.a[7] - long_word_size::aligned_value_size(),
+      long_word::put(*c.mem, fc,
+			  c.regs.a[7] - long_word::aligned_value_size(),
 			  pc + 2 + len);
-      c.regs.a[7] -= long_word_size::aligned_value_size();
+      c.regs.a[7] -= long_word::aligned_value_size();
 
       return pc + 2 + disp;
     }

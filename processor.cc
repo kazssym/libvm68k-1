@@ -64,7 +64,7 @@ namespace vm68k
 	  }
 # endif
 	LG(nana_instruction_trace, "| 0x%08lx (0x%04x)\n",
-	   long_word_size::uvalue(pc) + 0UL, c.fetch_u(word_size(), pc));
+	   long_word::uvalue(pc) + 0UL, c.fetch_u(word(), pc));
 #endif
 	pc = step(pc, c);
       }

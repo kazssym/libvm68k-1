@@ -58,18 +58,18 @@ namespace vm68k
       Source ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
 #ifdef L
-      L("\tdivu%s %s,%%d%u\n", word_size::suffix(), ea1.text(c).c_str(), reg2);
+      L("\tdivu%s %s,%%d%u\n", word::suffix(), ea1.text(c).c_str(), reg2);
 #endif
 
-      word_size::svalue_type value1 = ea1.get(c);
-      long_word_size::svalue_type value2 = long_word_size::get(c.regs.d[reg2]);
-      long_word_size::svalue_type value
-	= long_word_size::uvalue(value2) / word_size::uvalue(value1);
-      long_word_size::svalue_type rem
-	= long_word_size::uvalue(value2) % word_size::uvalue(value1);
-      long_word_size::put(c.regs.d[reg2],
-			  long_word_size::uvalue(rem) << 16
-			  | long_word_size::uvalue(value) & 0xffff);
+      word::svalue_type value1 = ea1.get(c);
+      long_word::svalue_type value2 = long_word::get(c.regs.d[reg2]);
+      long_word::svalue_type value
+	= long_word::uvalue(value2) / word::uvalue(value1);
+      long_word::svalue_type rem
+	= long_word::uvalue(value2) % word::uvalue(value1);
+      long_word::put(c.regs.d[reg2],
+			  long_word::uvalue(rem) << 16
+			  | long_word::uvalue(value) & 0xffff);
       c.regs.ccr.set_cc(value);	// FIXME.
 
       ea1.finish(c);
@@ -127,39 +127,39 @@ namespace vm68k
   install_instructions_8(processor &p, unsigned long d)
   {
     static const instruction_map inst[]
-      = {{0x8000, 0xe07, &_or_d<byte_size, byte_d_register>},
-	 {0x8010, 0xe07, &_or_d<byte_size, byte_indirect>},
-	 {0x8018, 0xe07, &_or_d<byte_size, byte_postinc_indirect>},
-	 {0x8020, 0xe07, &_or_d<byte_size, byte_predec_indirect>},
-	 {0x8028, 0xe07, &_or_d<byte_size, byte_disp_indirect>},
-	 {0x8030, 0xe07, &_or_d<byte_size, byte_index_indirect>},
-	 {0x8038, 0xe00, &_or_d<byte_size, byte_abs_short>},
-	 {0x8039, 0xe00, &_or_d<byte_size, byte_abs_long>},
-	 {0x803a, 0xe00, &_or_d<byte_size, byte_disp_pc_indirect>},
-	 {0x803b, 0xe00, &_or_d<byte_size, byte_index_pc_indirect>},
-	 {0x803c, 0xe00, &_or_d<byte_size, byte_immediate>},
-	 {0x8040, 0xe07, &_or_d<word_size, word_d_register>},
-	 {0x8050, 0xe07, &_or_d<word_size, word_indirect>},
-	 {0x8058, 0xe07, &_or_d<word_size, word_postinc_indirect>},
-	 {0x8060, 0xe07, &_or_d<word_size, word_predec_indirect>},
-	 {0x8068, 0xe07, &_or_d<word_size, word_disp_indirect>},
-	 {0x8070, 0xe07, &_or_d<word_size, word_index_indirect>},
-	 {0x8078, 0xe00, &_or_d<word_size, word_abs_short>},
-	 {0x8079, 0xe00, &_or_d<word_size, word_abs_long>},
-	 {0x807a, 0xe00, &_or_d<word_size, word_disp_pc_indirect>},
-	 {0x807b, 0xe00, &_or_d<word_size, word_index_pc_indirect>},
-	 {0x807c, 0xe00, &_or_d<word_size, word_immediate>},
-	 {0x8080, 0xe07, &_or_d<long_word_size, long_word_d_register>},
-	 {0x8090, 0xe07, &_or_d<long_word_size, long_word_indirect>},
-	 {0x8098, 0xe07, &_or_d<long_word_size, long_word_postinc_indirect>},
-	 {0x80a0, 0xe07, &_or_d<long_word_size, long_word_predec_indirect>},
-	 {0x80a8, 0xe07, &_or_d<long_word_size, long_word_disp_indirect>},
-	 {0x80b0, 0xe07, &_or_d<long_word_size, long_word_index_indirect>},
-	 {0x80b8, 0xe00, &_or_d<long_word_size, long_word_abs_short>},
-	 {0x80b9, 0xe00, &_or_d<long_word_size, long_word_abs_long>},
-	 {0x80ba, 0xe00, &_or_d<long_word_size, long_word_disp_pc_indirect>},
-	 {0x80bb, 0xe00, &_or_d<long_word_size, long_word_index_pc_indirect>},
-	 {0x80bc, 0xe00, &_or_d<long_word_size, long_word_immediate>},
+      = {{0x8000, 0xe07, &_or_d<byte, byte_d_register>},
+	 {0x8010, 0xe07, &_or_d<byte, byte_indirect>},
+	 {0x8018, 0xe07, &_or_d<byte, byte_postinc_indirect>},
+	 {0x8020, 0xe07, &_or_d<byte, byte_predec_indirect>},
+	 {0x8028, 0xe07, &_or_d<byte, byte_disp_indirect>},
+	 {0x8030, 0xe07, &_or_d<byte, byte_index_indirect>},
+	 {0x8038, 0xe00, &_or_d<byte, byte_abs_short>},
+	 {0x8039, 0xe00, &_or_d<byte, byte_abs_long>},
+	 {0x803a, 0xe00, &_or_d<byte, byte_disp_pc_indirect>},
+	 {0x803b, 0xe00, &_or_d<byte, byte_index_pc_indirect>},
+	 {0x803c, 0xe00, &_or_d<byte, byte_immediate>},
+	 {0x8040, 0xe07, &_or_d<word, word_d_register>},
+	 {0x8050, 0xe07, &_or_d<word, word_indirect>},
+	 {0x8058, 0xe07, &_or_d<word, word_postinc_indirect>},
+	 {0x8060, 0xe07, &_or_d<word, word_predec_indirect>},
+	 {0x8068, 0xe07, &_or_d<word, word_disp_indirect>},
+	 {0x8070, 0xe07, &_or_d<word, word_index_indirect>},
+	 {0x8078, 0xe00, &_or_d<word, word_abs_short>},
+	 {0x8079, 0xe00, &_or_d<word, word_abs_long>},
+	 {0x807a, 0xe00, &_or_d<word, word_disp_pc_indirect>},
+	 {0x807b, 0xe00, &_or_d<word, word_index_pc_indirect>},
+	 {0x807c, 0xe00, &_or_d<word, word_immediate>},
+	 {0x8080, 0xe07, &_or_d<long_word, long_word_d_register>},
+	 {0x8090, 0xe07, &_or_d<long_word, long_word_indirect>},
+	 {0x8098, 0xe07, &_or_d<long_word, long_word_postinc_indirect>},
+	 {0x80a0, 0xe07, &_or_d<long_word, long_word_predec_indirect>},
+	 {0x80a8, 0xe07, &_or_d<long_word, long_word_disp_indirect>},
+	 {0x80b0, 0xe07, &_or_d<long_word, long_word_index_indirect>},
+	 {0x80b8, 0xe00, &_or_d<long_word, long_word_abs_short>},
+	 {0x80b9, 0xe00, &_or_d<long_word, long_word_abs_long>},
+	 {0x80ba, 0xe00, &_or_d<long_word, long_word_disp_pc_indirect>},
+	 {0x80bb, 0xe00, &_or_d<long_word, long_word_index_pc_indirect>},
+	 {0x80bc, 0xe00, &_or_d<long_word, long_word_immediate>},
 	 {0x80c0, 0xe07, &_divu<word_d_register>},
 	 {0x80d0, 0xe07, &_divu<word_indirect>},
 	 {0x80d8, 0xe07, &_divu<word_postinc_indirect>},
@@ -171,27 +171,27 @@ namespace vm68k
 	 {0x80fa, 0xe00, &_divu<word_disp_pc_indirect>},
 	 {0x80fb, 0xe00, &_divu<word_index_pc_indirect>},
 	 {0x80fc, 0xe00, &_divu<word_immediate>},
-	 {0x8110, 0xe07, &_or_m<byte_size, byte_indirect>},
-	 {0x8118, 0xe07, &_or_m<byte_size, byte_postinc_indirect>},
-	 {0x8120, 0xe07, &_or_m<byte_size, byte_predec_indirect>},
-	 {0x8128, 0xe07, &_or_m<byte_size, byte_disp_indirect>},
-	 {0x8130, 0xe07, &_or_m<byte_size, byte_index_indirect>},
-	 {0x8138, 0xe00, &_or_m<byte_size, byte_abs_short>},
-	 {0x8139, 0xe00, &_or_m<byte_size, byte_abs_long>},
-	 {0x8150, 0xe07, &_or_m<word_size, word_indirect>},
-	 {0x8158, 0xe07, &_or_m<word_size, word_postinc_indirect>},
-	 {0x8160, 0xe07, &_or_m<word_size, word_predec_indirect>},
-	 {0x8168, 0xe07, &_or_m<word_size, word_disp_indirect>},
-	 {0x8170, 0xe07, &_or_m<word_size, word_index_indirect>},
-	 {0x8178, 0xe00, &_or_m<word_size, word_abs_short>},
-	 {0x8179, 0xe00, &_or_m<word_size, word_abs_long>},
-	 {0x8190, 0xe07, &_or_m<long_word_size, long_word_indirect>},
-	 {0x8198, 0xe07, &_or_m<long_word_size, long_word_postinc_indirect>},
-	 {0x81a0, 0xe07, &_or_m<long_word_size, long_word_predec_indirect>},
-	 {0x81a8, 0xe07, &_or_m<long_word_size, long_word_disp_indirect>},
-	 {0x81b0, 0xe07, &_or_m<long_word_size, long_word_index_indirect>},
-	 {0x81b8, 0xe00, &_or_m<long_word_size, long_word_abs_short>},
-	 {0x81b9, 0xe00, &_or_m<long_word_size, long_word_abs_long>}};
+	 {0x8110, 0xe07, &_or_m<byte, byte_indirect>},
+	 {0x8118, 0xe07, &_or_m<byte, byte_postinc_indirect>},
+	 {0x8120, 0xe07, &_or_m<byte, byte_predec_indirect>},
+	 {0x8128, 0xe07, &_or_m<byte, byte_disp_indirect>},
+	 {0x8130, 0xe07, &_or_m<byte, byte_index_indirect>},
+	 {0x8138, 0xe00, &_or_m<byte, byte_abs_short>},
+	 {0x8139, 0xe00, &_or_m<byte, byte_abs_long>},
+	 {0x8150, 0xe07, &_or_m<word, word_indirect>},
+	 {0x8158, 0xe07, &_or_m<word, word_postinc_indirect>},
+	 {0x8160, 0xe07, &_or_m<word, word_predec_indirect>},
+	 {0x8168, 0xe07, &_or_m<word, word_disp_indirect>},
+	 {0x8170, 0xe07, &_or_m<word, word_index_indirect>},
+	 {0x8178, 0xe00, &_or_m<word, word_abs_short>},
+	 {0x8179, 0xe00, &_or_m<word, word_abs_long>},
+	 {0x8190, 0xe07, &_or_m<long_word, long_word_indirect>},
+	 {0x8198, 0xe07, &_or_m<long_word, long_word_postinc_indirect>},
+	 {0x81a0, 0xe07, &_or_m<long_word, long_word_predec_indirect>},
+	 {0x81a8, 0xe07, &_or_m<long_word, long_word_disp_indirect>},
+	 {0x81b0, 0xe07, &_or_m<long_word, long_word_index_indirect>},
+	 {0x81b8, 0xe00, &_or_m<long_word, long_word_abs_short>},
+	 {0x81b9, 0xe00, &_or_m<long_word, long_word_abs_long>}};
 
     for (const instruction_map *i = inst + 0;
 	 i != inst + sizeof inst / sizeof inst[0]; ++i)

@@ -113,10 +113,10 @@ namespace vm68k
       // XXX: The condition codes are not affected.
       uint32_type address = ea1.address(c);
       function_code fc = c.data_fc();
-      uint32_type sp = c.regs.a[7] - long_word_size::aligned_value_size();
-      long_word_size::put(*c.mem, fc, sp,
+      uint32_type sp = c.regs.a[7] - long_word::aligned_value_size();
+      long_word::put(*c.mem, fc, sp,
 			  pc + 2 + Destination::extension_size());
-      long_word_size::put(c.regs.a[7], sp);
+      long_word::put(c.regs.a[7], sp);
 
       return address;
     }
@@ -129,13 +129,13 @@ namespace vm68k
       Destination ea1(w & 7, pc + 2);
       int reg2 = w >> 9 & 7;
 #ifdef L
-      L("\tlea%s %s,%%a%u\n", long_word_size::suffix(), ea1.text(c).c_str(),
+      L("\tlea%s %s,%%a%u\n", long_word::suffix(), ea1.text(c).c_str(),
 	reg2);
 #endif
 
       // XXX: The condition codes are not affected.
       uint32_type address = ea1.address(c);
-      long_word_size::put(c.regs.a[reg2], address);
+      long_word::put(c.regs.a[reg2], address);
 
       return pc + 2 + Destination::extension_size();
     }
@@ -145,19 +145,19 @@ namespace vm68k
     _link(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       int reg1 = w & 7;
-      word_size::svalue_type disp = c.fetch_s(word_size(), pc + 2);
+      word::svalue_type disp = c.fetch_s(word(), pc + 2);
 #ifdef L
-      L("\tlink %%a%u,#%#x\n", reg1, word_size::uvalue(disp));
+      L("\tlink %%a%u,#%#x\n", reg1, word::uvalue(disp));
 #endif
 
       // XXX: The condition codes are not affected.
       function_code fc = c.data_fc();
-      uint32_type fp = c.regs.a[7] - long_word_size::aligned_value_size();
-      long_word_size::put(*c.mem, fc, fp, c.regs.a[reg1]);
-      long_word_size::put(c.regs.a[7], fp + disp);
-      long_word_size::put(c.regs.a[reg1], fp);
+      uint32_type fp = c.regs.a[7] - long_word::aligned_value_size();
+      long_word::put(*c.mem, fc, fp, c.regs.a[reg1]);
+      long_word::put(c.regs.a[7], fp + disp);
+      long_word::put(c.regs.a[reg1], fp);
 
-      return pc + 2 + word_size::aligned_value_size();
+      return pc + 2 + word::aligned_value_size();
     }
 
     /* Handles a MOVE-from-SR instruction.  */
@@ -167,12 +167,12 @@ namespace vm68k
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
-      L("\tmove%s %%sr,%s\n", word_size::suffix(), ea1.text(c).c_str());
+      L("\tmove%s %%sr,%s\n", word::suffix(), ea1.text(c).c_str());
 #endif
 
       // This instruction is not privileged on MC68000.
       // This instruction does not affect the condition codes.
-      word_size::uvalue_type value = c.sr();
+      word::uvalue_type value = c.sr();
       ea1.put(c, value);
 
       ea1.finish(c);
@@ -186,7 +186,7 @@ namespace vm68k
     {
       Source ea1(w & 7, pc + 2);
 #ifdef L
-      L("\tmove%s %s,%%sr\n", word_size::suffix(), ea1.text(c).c_str());
+      L("\tmove%s %s,%%sr\n", word::suffix(), ea1.text(c).c_str());
 #endif
 
       // This instruction is privileged.
@@ -194,7 +194,7 @@ namespace vm68k
 	throw privilege_violation_exception(pc);
 
       // This instruction sets the condition codes.
-      word_size::uvalue_type value = ea1.get(c);
+      word::uvalue_type value = ea1.get(c);
       c.set_sr(value);
 
       ea1.finish(c);
@@ -207,7 +207,7 @@ namespace vm68k
     {
       int reg1 = w & 7;
 #ifdef L
-      L("\tmove%s %%usp,%%a%u\n", long_word_size::suffix(), reg1);
+      L("\tmove%s %%usp,%%a%u\n", long_word::suffix(), reg1);
 #endif
 
       // This instruction is privileged.
@@ -226,7 +226,7 @@ namespace vm68k
     {
       int reg1 = w & 7;
 #ifdef L
-      L("\tmove%s ", long_word_size::suffix());
+      L("\tmove%s ", long_word::suffix());
       L("%%a%u,", reg1);
       L("%%usp\n");
 #endif
@@ -236,7 +236,7 @@ namespace vm68k
 	throw privilege_violation_exception(pc);
 
       // This instruction does not affect the condition codes.
-      long_word_size::put(c.regs.usp, long_word_size::get(c.regs.a[reg1]));
+      long_word::put(c.regs.usp, long_word::get(c.regs.a[reg1]));
 
       return pc + 2;
     }
@@ -246,7 +246,7 @@ namespace vm68k
     uint32_type
     _movem_r_m(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      word_size::uvalue_type mask = c.fetch_u(word_size(), pc + 2);
+      word::uvalue_type mask = c.fetch_u(word(), pc + 2);
       Destination ea1(w & 7, pc + 2 + 2);
 #ifdef L
       L("\tmovem%s #%#x,%s\n", Size::suffix(), mask, ea1.text(c).c_str());
@@ -284,7 +284,7 @@ namespace vm68k
     _movem_r_predec(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       int reg1 = w & 7;
-      word_size::uvalue_type mask = c.fetch_u(word_size(), pc + 2);
+      word::uvalue_type mask = c.fetch_u(word(), pc + 2);
 #ifdef L
       L("\tmovem%s #%#x,%%a%u@-\n", Size::suffix(), mask, reg1);
 #endif
@@ -292,14 +292,14 @@ namespace vm68k
       // This instruction does not affect the condition codes.
       uint16_type m = 1;
       function_code fc = c.data_fc();
-      sint32_type address = long_word_size::get(c.regs.a[reg1]);
+      sint32_type address = long_word::get(c.regs.a[reg1]);
       // This instruction iterates registers in reverse.
       for (uint32_type *i = c.regs.a + 8; i != c.regs.a + 0; --i)
 	{
 	  if (mask & m)
 	    {
 	      address -= Size::value_size();
-	      Size::put(*c.mem, fc, address, long_word_size::get(*(i - 1)));
+	      Size::put(*c.mem, fc, address, long_word::get(*(i - 1)));
 	    }
 	  m <<= 1;
 	}
@@ -308,12 +308,12 @@ namespace vm68k
 	  if (mask & m)
 	    {
 	      address -= Size::value_size();
-	      Size::put(*c.mem, fc, address, long_word_size::get(*(i - 1)));
+	      Size::put(*c.mem, fc, address, long_word::get(*(i - 1)));
 	    }
 	  m <<= 1;
 	}
 
-      long_word_size::put(c.regs.a[reg1], address);
+      long_word::put(c.regs.a[reg1], address);
       return pc + 2 + 2;
     }
 
@@ -322,8 +322,8 @@ namespace vm68k
     uint32_type
     _movem_m_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      word_size::uvalue_type mask = c.fetch_u(word_size(), pc + 2);
-      Source ea1(w & 7, pc + 2 + word_size::aligned_value_size());
+      word::uvalue_type mask = c.fetch_u(word(), pc + 2);
+      Source ea1(w & 7, pc + 2 + word::aligned_value_size());
 #ifdef L
       L("\tmovem%s %s,#%#x\n", Size::suffix(), ea1.text(c).c_str(), mask);
 #endif
@@ -336,7 +336,7 @@ namespace vm68k
 	{
 	  if (mask & m)
 	    {
-	      long_word_size::put(*i, Size::get(*c.mem, fc, address));
+	      long_word::put(*i, Size::get(*c.mem, fc, address));
 	      address += Size::value_size();
 	    }
 	  m <<= 1;
@@ -345,13 +345,13 @@ namespace vm68k
 	{
 	  if (mask & m)
 	    {
-	      long_word_size::put(*i, Size::get(*c.mem, fc, address));
+	      long_word::put(*i, Size::get(*c.mem, fc, address));
 	      address += Size::value_size();
 	    }
 	  m <<= 1;
 	}
 
-      return pc + 2 + word_size::aligned_value_size()
+      return pc + 2 + word::aligned_value_size()
 	+ Source::extension_size();
     }
 
@@ -361,7 +361,7 @@ namespace vm68k
     _movem_postinc_r(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
       int reg1 = w & 7;
-      word_size::uvalue_type mask = c.fetch_u(word_size(), pc + 2);
+      word::uvalue_type mask = c.fetch_u(word(), pc + 2);
 #ifdef L
       L("\tmovem%s %%a%u@+,#%#x\n", Size::suffix(), reg1, mask);
 #endif
@@ -369,13 +369,13 @@ namespace vm68k
       // This instruction does not affect the condition codes.
       uint16_type m = 1;
       function_code fc = c.data_fc();
-      sint32_type address = long_word_size::get(c.regs.a[reg1]);
+      sint32_type address = long_word::get(c.regs.a[reg1]);
       // This instruction sign-extends words to long words.
       for (uint32_type *i = c.regs.d + 0; i != c.regs.d + 8; ++i)
 	{
 	  if (mask & m)
 	    {
-	      long_word_size::put(*i, Size::get(*c.mem, fc, address));
+	      long_word::put(*i, Size::get(*c.mem, fc, address));
 	      address += Size::value_size();
 	    }
 	  m <<= 1;
@@ -384,13 +384,13 @@ namespace vm68k
 	{
 	  if (mask & m)
 	    {
-	      long_word_size::put(*i, Size::get(*c.mem, fc, address));
+	      long_word::put(*i, Size::get(*c.mem, fc, address));
 	      address += Size::value_size();
 	    }
 	  m <<= 1;
 	}
 
-      long_word_size::put(c.regs.a[reg1], address);
+      long_word::put(c.regs.a[reg1], address);
       return pc + 2 + 2;
     }
 
@@ -450,15 +450,15 @@ namespace vm68k
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
-      L("\tpea%s %s\n", long_word_size::suffix(), ea1.text(c).c_str());
+      L("\tpea%s %s\n", long_word::suffix(), ea1.text(c).c_str());
 #endif
 
       // XXX: The condition codes are not affected.
       uint32_type address = ea1.address(c);
       function_code fc = c.data_fc();
-      uint32_type sp = c.regs.a[7] - long_word_size::aligned_value_size();
-      long_word_size::put(*c.mem, fc, sp, address);
-      long_word_size::put(c.regs.a[7], sp);
+      uint32_type sp = c.regs.a[7] - long_word::aligned_value_size();
+      long_word::put(*c.mem, fc, sp, address);
+      long_word::put(c.regs.a[7], sp);
 
       return pc + 2 + Destination::extension_size();
     }
@@ -476,8 +476,8 @@ namespace vm68k
 	throw privilege_violation_exception(pc);
 
       function_code fc = c.data_fc();
-      uint16_type status = word_size::uget(*c.mem, fc, c.regs.a[7] + 0);
-      uint32_type address = long_word_size::uget(*c.mem, fc, c.regs.a[7] + 2);
+      uint16_type status = word::uget(*c.mem, fc, c.regs.a[7] + 0);
+      uint32_type address = long_word::uget(*c.mem, fc, c.regs.a[7] + 2);
       c.regs.a[7] += 6;
       c.set_sr(status);
 
@@ -494,8 +494,8 @@ namespace vm68k
 
       // XXX: The condition codes are not affected.
       function_code fc = c.data_fc();
-      sint32_type address = long_word_size::get(*c.mem, fc, c.regs.a[7]);
-      long_word_size::put(c.regs.a[7], c.regs.a[7] + 4);
+      sint32_type address = long_word::get(*c.mem, fc, c.regs.a[7]);
+      long_word::put(c.regs.a[7], c.regs.a[7] + 4);
 
       return address;
     }
@@ -506,15 +506,15 @@ namespace vm68k
     {
       int reg1 = w & 7;
 #ifdef L
-      L("\tswap%s %%d%u\n", word_size::suffix(), reg1);
+      L("\tswap%s %%d%u\n", word::suffix(), reg1);
 #endif
 
-      long_word_size::svalue_type value1 = long_word_size::get(c.regs.d[reg1]);
-      long_word_size::svalue_type value
-	= long_word_size::svalue(long_word_size::uvalue(value1) << 16
-				 | (long_word_size::uvalue(value1) >> 16
+      long_word::svalue_type value1 = long_word::get(c.regs.d[reg1]);
+      long_word::svalue_type value
+	= long_word::svalue(long_word::uvalue(value1) << 16
+				 | (long_word::uvalue(value1) >> 16
 				    & 0xffff));
-      long_word_size::put(c.regs.d[reg1], value);
+      long_word::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc(value);
 
       return pc + 2;
@@ -549,9 +549,9 @@ namespace vm68k
       // XXX: The condition codes are not affected.
       function_code fc = c.data_fc();
       uint32_type fp = c.regs.a[reg1];
-      long_word_size::put(c.regs.a[reg1], long_word_size::get(*c.mem, fc, fp));
-      long_word_size::put(c.regs.a[7],
-			  fp + long_word_size::aligned_value_size());
+      long_word::put(c.regs.a[reg1], long_word::get(*c.mem, fc, fp));
+      long_word::put(c.regs.a[7],
+			  fp + long_word::aligned_value_size());
 
       return pc + 2;
     }
@@ -578,78 +578,78 @@ namespace vm68k
 	 {0x41f9, 0xe00, &_lea<word_abs_long>},
 	 {0x41fa, 0xe00, &_lea<word_disp_pc_indirect>},
 	 {0x41fb, 0xe00, &_lea<word_index_pc_indirect>},
-	 {0x4200,     7, &_clr<byte_size, byte_d_register>},
-	 {0x4210,     7, &_clr<byte_size, byte_indirect>},
-	 {0x4218,     7, &_clr<byte_size, byte_postinc_indirect>},
-	 {0x4220,     7, &_clr<byte_size, byte_predec_indirect>},
-	 {0x4228,     7, &_clr<byte_size, byte_disp_indirect>},
-	 {0x4230,     7, &_clr<byte_size, byte_index_indirect>},
-	 {0x4238,     0, &_clr<byte_size, byte_abs_short>},
-	 {0x4239,     0, &_clr<byte_size, byte_abs_long>},
-	 {0x4240,     7, &_clr<word_size, word_d_register>},
-	 {0x4250,     7, &_clr<word_size, word_indirect>},
-	 {0x4258,     7, &_clr<word_size, word_postinc_indirect>},
-	 {0x4260,     7, &_clr<word_size, word_predec_indirect>},
-	 {0x4268,     7, &_clr<word_size, word_disp_indirect>},
-	 {0x4270,     7, &_clr<word_size, word_index_indirect>},
-	 {0x4278,     0, &_clr<word_size, word_abs_short>},
-	 {0x4279,     0, &_clr<word_size, word_abs_long>},
-	 {0x4280,     7, &_clr<long_word_size, long_word_d_register>},
-	 {0x4290,     7, &_clr<long_word_size, long_word_indirect>},
-	 {0x4298,     7, &_clr<long_word_size, long_word_postinc_indirect>},
-	 {0x42a0,     7, &_clr<long_word_size, long_word_predec_indirect>},
-	 {0x42a8,     7, &_clr<long_word_size, long_word_disp_indirect>},
-	 {0x42b0,     7, &_clr<long_word_size, long_word_index_indirect>},
-	 {0x42b8,     0, &_clr<long_word_size, long_word_abs_short>},
-	 {0x42b9,     0, &_clr<long_word_size, long_word_abs_long>},
-	 {0x4400,     7, &_neg<byte_size, byte_d_register>},
-	 {0x4410,     7, &_neg<byte_size, byte_indirect>},
-	 {0x4418,     7, &_neg<byte_size, byte_postinc_indirect>},
-	 {0x4420,     7, &_neg<byte_size, byte_predec_indirect>},
-	 {0x4428,     7, &_neg<byte_size, byte_disp_indirect>},
-	 {0x4430,     7, &_neg<byte_size, byte_index_indirect>},
-	 {0x4438,     0, &_neg<byte_size, byte_abs_short>},
-	 {0x4439,     0, &_neg<byte_size, byte_abs_long>},
-	 {0x4440,     7, &_neg<word_size, word_d_register>},
-	 {0x4450,     7, &_neg<word_size, word_indirect>},
-	 {0x4458,     7, &_neg<word_size, word_postinc_indirect>},
-	 {0x4460,     7, &_neg<word_size, word_predec_indirect>},
-	 {0x4468,     7, &_neg<word_size, word_disp_indirect>},
-	 {0x4470,     7, &_neg<word_size, word_index_indirect>},
-	 {0x4478,     0, &_neg<word_size, word_abs_short>},
-	 {0x4479,     0, &_neg<word_size, word_abs_long>},
-	 {0x4480,     7, &_neg<long_word_size, long_word_d_register>},
-	 {0x4490,     7, &_neg<long_word_size, long_word_indirect>},
-	 {0x4498,     7, &_neg<long_word_size, long_word_postinc_indirect>},
-	 {0x44a0,     7, &_neg<long_word_size, long_word_predec_indirect>},
-	 {0x44a8,     7, &_neg<long_word_size, long_word_disp_indirect>},
-	 {0x44b0,     7, &_neg<long_word_size, long_word_index_indirect>},
-	 {0x44b8,     0, &_neg<long_word_size, long_word_abs_short>},
-	 {0x44b9,     0, &_neg<long_word_size, long_word_abs_long>},
-	 {0x4600,     7, &_not<byte_size, byte_d_register>},
-	 {0x4610,     7, &_not<byte_size, byte_indirect>},
-	 {0x4618,     7, &_not<byte_size, byte_postinc_indirect>},
-	 {0x4620,     7, &_not<byte_size, byte_predec_indirect>},
-	 {0x4628,     7, &_not<byte_size, byte_disp_indirect>},
-	 {0x4630,     7, &_not<byte_size, byte_index_indirect>},
-	 {0x4638,     0, &_not<byte_size, byte_abs_short>},
-	 {0x4639,     0, &_not<byte_size, byte_abs_long>},
-	 {0x4640,     7, &_not<word_size, word_d_register>},
-	 {0x4650,     7, &_not<word_size, word_indirect>},
-	 {0x4658,     7, &_not<word_size, word_postinc_indirect>},
-	 {0x4660,     7, &_not<word_size, word_predec_indirect>},
-	 {0x4668,     7, &_not<word_size, word_disp_indirect>},
-	 {0x4670,     7, &_not<word_size, word_index_indirect>},
-	 {0x4678,     0, &_not<word_size, word_abs_short>},
-	 {0x4679,     0, &_not<word_size, word_abs_long>},
-	 {0x4680,     7, &_not<long_word_size, long_word_d_register>},
-	 {0x4690,     7, &_not<long_word_size, long_word_indirect>},
-	 {0x4698,     7, &_not<long_word_size, long_word_postinc_indirect>},
-	 {0x46a0,     7, &_not<long_word_size, long_word_predec_indirect>},
-	 {0x46a8,     7, &_not<long_word_size, long_word_disp_indirect>},
-	 {0x46b0,     7, &_not<long_word_size, long_word_index_indirect>},
-	 {0x46b8,     0, &_not<long_word_size, long_word_abs_short>},
-	 {0x46b9,     0, &_not<long_word_size, long_word_abs_long>},
+	 {0x4200,     7, &_clr<byte, byte_d_register>},
+	 {0x4210,     7, &_clr<byte, byte_indirect>},
+	 {0x4218,     7, &_clr<byte, byte_postinc_indirect>},
+	 {0x4220,     7, &_clr<byte, byte_predec_indirect>},
+	 {0x4228,     7, &_clr<byte, byte_disp_indirect>},
+	 {0x4230,     7, &_clr<byte, byte_index_indirect>},
+	 {0x4238,     0, &_clr<byte, byte_abs_short>},
+	 {0x4239,     0, &_clr<byte, byte_abs_long>},
+	 {0x4240,     7, &_clr<word, word_d_register>},
+	 {0x4250,     7, &_clr<word, word_indirect>},
+	 {0x4258,     7, &_clr<word, word_postinc_indirect>},
+	 {0x4260,     7, &_clr<word, word_predec_indirect>},
+	 {0x4268,     7, &_clr<word, word_disp_indirect>},
+	 {0x4270,     7, &_clr<word, word_index_indirect>},
+	 {0x4278,     0, &_clr<word, word_abs_short>},
+	 {0x4279,     0, &_clr<word, word_abs_long>},
+	 {0x4280,     7, &_clr<long_word, long_word_d_register>},
+	 {0x4290,     7, &_clr<long_word, long_word_indirect>},
+	 {0x4298,     7, &_clr<long_word, long_word_postinc_indirect>},
+	 {0x42a0,     7, &_clr<long_word, long_word_predec_indirect>},
+	 {0x42a8,     7, &_clr<long_word, long_word_disp_indirect>},
+	 {0x42b0,     7, &_clr<long_word, long_word_index_indirect>},
+	 {0x42b8,     0, &_clr<long_word, long_word_abs_short>},
+	 {0x42b9,     0, &_clr<long_word, long_word_abs_long>},
+	 {0x4400,     7, &_neg<byte, byte_d_register>},
+	 {0x4410,     7, &_neg<byte, byte_indirect>},
+	 {0x4418,     7, &_neg<byte, byte_postinc_indirect>},
+	 {0x4420,     7, &_neg<byte, byte_predec_indirect>},
+	 {0x4428,     7, &_neg<byte, byte_disp_indirect>},
+	 {0x4430,     7, &_neg<byte, byte_index_indirect>},
+	 {0x4438,     0, &_neg<byte, byte_abs_short>},
+	 {0x4439,     0, &_neg<byte, byte_abs_long>},
+	 {0x4440,     7, &_neg<word, word_d_register>},
+	 {0x4450,     7, &_neg<word, word_indirect>},
+	 {0x4458,     7, &_neg<word, word_postinc_indirect>},
+	 {0x4460,     7, &_neg<word, word_predec_indirect>},
+	 {0x4468,     7, &_neg<word, word_disp_indirect>},
+	 {0x4470,     7, &_neg<word, word_index_indirect>},
+	 {0x4478,     0, &_neg<word, word_abs_short>},
+	 {0x4479,     0, &_neg<word, word_abs_long>},
+	 {0x4480,     7, &_neg<long_word, long_word_d_register>},
+	 {0x4490,     7, &_neg<long_word, long_word_indirect>},
+	 {0x4498,     7, &_neg<long_word, long_word_postinc_indirect>},
+	 {0x44a0,     7, &_neg<long_word, long_word_predec_indirect>},
+	 {0x44a8,     7, &_neg<long_word, long_word_disp_indirect>},
+	 {0x44b0,     7, &_neg<long_word, long_word_index_indirect>},
+	 {0x44b8,     0, &_neg<long_word, long_word_abs_short>},
+	 {0x44b9,     0, &_neg<long_word, long_word_abs_long>},
+	 {0x4600,     7, &_not<byte, byte_d_register>},
+	 {0x4610,     7, &_not<byte, byte_indirect>},
+	 {0x4618,     7, &_not<byte, byte_postinc_indirect>},
+	 {0x4620,     7, &_not<byte, byte_predec_indirect>},
+	 {0x4628,     7, &_not<byte, byte_disp_indirect>},
+	 {0x4630,     7, &_not<byte, byte_index_indirect>},
+	 {0x4638,     0, &_not<byte, byte_abs_short>},
+	 {0x4639,     0, &_not<byte, byte_abs_long>},
+	 {0x4640,     7, &_not<word, word_d_register>},
+	 {0x4650,     7, &_not<word, word_indirect>},
+	 {0x4658,     7, &_not<word, word_postinc_indirect>},
+	 {0x4660,     7, &_not<word, word_predec_indirect>},
+	 {0x4668,     7, &_not<word, word_disp_indirect>},
+	 {0x4670,     7, &_not<word, word_index_indirect>},
+	 {0x4678,     0, &_not<word, word_abs_short>},
+	 {0x4679,     0, &_not<word, word_abs_long>},
+	 {0x4680,     7, &_not<long_word, long_word_d_register>},
+	 {0x4690,     7, &_not<long_word, long_word_indirect>},
+	 {0x4698,     7, &_not<long_word, long_word_postinc_indirect>},
+	 {0x46a0,     7, &_not<long_word, long_word_predec_indirect>},
+	 {0x46a8,     7, &_not<long_word, long_word_disp_indirect>},
+	 {0x46b0,     7, &_not<long_word, long_word_index_indirect>},
+	 {0x46b8,     0, &_not<long_word, long_word_abs_short>},
+	 {0x46b9,     0, &_not<long_word, long_word_abs_long>},
 	 {0x46c0,     7, &_move_to_sr<word_d_register>},
 	 {0x46d0,     7, &_move_to_sr<word_indirect>},
 	 {0x46d8,     7, &_move_to_sr<word_postinc_indirect>},
@@ -669,60 +669,60 @@ namespace vm68k
 	 {0x4879,     0, &_pea<word_abs_long>},
 	 {0x487a,     0, &_pea<word_disp_pc_indirect>},
 	 {0x487b,     0, &_pea<word_index_pc_indirect>},
-	 {0x4880,     7, &_ext<byte_size, word_size>},
-	 {0x4890,     7, &_movem_r_m<word_size, word_indirect>},
-	 {0x48a0,     7, &_movem_r_predec<word_size>},
-	 {0x48a8,     7, &_movem_r_m<word_size, word_disp_indirect>},
-	 {0x48b0,     7, &_movem_r_m<word_size, word_index_indirect>},
-	 {0x48b8,     0, &_movem_r_m<word_size, word_abs_short>},
-	 {0x48b9,     0, &_movem_r_m<word_size, word_abs_long>},
-	 {0x48c0,     7, &_ext<word_size, long_word_size>},
-	 {0x48d0,     7, &_movem_r_m<long_word_size, long_word_indirect>},
-	 {0x48e0,     7, &_movem_r_predec<long_word_size>},
-	 {0x48e8,     7, &_movem_r_m<long_word_size, long_word_disp_indirect>},
-	 {0x48f0,     7, &_movem_r_m<long_word_size, long_word_index_indirect>},
-	 {0x48f8,     0, &_movem_r_m<long_word_size, long_word_abs_short>},
-	 {0x48f9,     0, &_movem_r_m<long_word_size, long_word_abs_long>},
-	 {0x4a00,     7, &_tst<byte_size, byte_d_register>},
-	 {0x4a10,     7, &_tst<byte_size, byte_indirect>},
-	 {0x4a18,     7, &_tst<byte_size, byte_postinc_indirect>},
-	 {0x4a20,     7, &_tst<byte_size, byte_predec_indirect>},
-	 {0x4a28,     7, &_tst<byte_size, byte_disp_indirect>},
-	 {0x4a30,     7, &_tst<byte_size, byte_index_indirect>},
-	 {0x4a38,     0, &_tst<byte_size, byte_abs_short>},
-	 {0x4a39,     0, &_tst<byte_size, byte_abs_long>},
-	 {0x4a40,     7, &_tst<word_size, word_d_register>},
-	 {0x4a50,     7, &_tst<word_size, word_indirect>},
-	 {0x4a58,     7, &_tst<word_size, word_postinc_indirect>},
-	 {0x4a60,     7, &_tst<word_size, word_predec_indirect>},
-	 {0x4a68,     7, &_tst<word_size, word_disp_indirect>},
-	 {0x4a70,     7, &_tst<word_size, word_index_indirect>},
-	 {0x4a78,     0, &_tst<word_size, word_abs_short>},
-	 {0x4a79,     0, &_tst<word_size, word_abs_long>},
-	 {0x4a80,     7, &_tst<long_word_size, long_word_d_register>},
-	 {0x4a90,     7, &_tst<long_word_size, long_word_indirect>},
-	 {0x4a98,     7, &_tst<long_word_size, long_word_postinc_indirect>},
-	 {0x4aa0,     7, &_tst<long_word_size, long_word_predec_indirect>},
-	 {0x4aa8,     7, &_tst<long_word_size, long_word_disp_indirect>},
-	 {0x4ab0,     7, &_tst<long_word_size, long_word_index_indirect>},
-	 {0x4ab8,     0, &_tst<long_word_size, long_word_abs_short>},
-	 {0x4ab9,     0, &_tst<long_word_size, long_word_abs_long>},
-	 {0x4c90,     7, &_movem_m_r<word_size, word_indirect>},
-	 {0x4c98,     7, &_movem_postinc_r<word_size>},
-	 {0x4ca8,     7, &_movem_m_r<word_size, word_disp_indirect>},
-	 {0x4cb0,     7, &_movem_m_r<word_size, word_index_indirect>},
-	 {0x4cb8,     0, &_movem_m_r<word_size, word_abs_short>},
-	 {0x4cb9,     0, &_movem_m_r<word_size, word_abs_long>},
-	 {0x4cba,     0, &_movem_m_r<word_size, word_disp_pc_indirect>},
-	 {0x4cbb,     0, &_movem_m_r<word_size, word_index_pc_indirect>},
-	 {0x4cd0,     7, &_movem_m_r<long_word_size, long_word_indirect>},
-	 {0x4cd8,     7, &_movem_postinc_r<long_word_size>},
-	 {0x4ce8,     7, &_movem_m_r<long_word_size, long_word_disp_indirect>},
-	 {0x4cf0,     7, &_movem_m_r<long_word_size, long_word_index_indirect>},
-	 {0x4cf8,     0, &_movem_m_r<long_word_size, long_word_abs_short>},
-	 {0x4cf9,     0, &_movem_m_r<long_word_size, long_word_abs_long>},
-	 {0x4cfa,     0, &_movem_m_r<long_word_size, long_word_disp_pc_indirect>},
-	 {0x4cfb,     0, &_movem_m_r<long_word_size, long_word_index_pc_indirect>},
+	 {0x4880,     7, &_ext<byte, word>},
+	 {0x4890,     7, &_movem_r_m<word, word_indirect>},
+	 {0x48a0,     7, &_movem_r_predec<word>},
+	 {0x48a8,     7, &_movem_r_m<word, word_disp_indirect>},
+	 {0x48b0,     7, &_movem_r_m<word, word_index_indirect>},
+	 {0x48b8,     0, &_movem_r_m<word, word_abs_short>},
+	 {0x48b9,     0, &_movem_r_m<word, word_abs_long>},
+	 {0x48c0,     7, &_ext<word, long_word>},
+	 {0x48d0,     7, &_movem_r_m<long_word, long_word_indirect>},
+	 {0x48e0,     7, &_movem_r_predec<long_word>},
+	 {0x48e8,     7, &_movem_r_m<long_word, long_word_disp_indirect>},
+	 {0x48f0,     7, &_movem_r_m<long_word, long_word_index_indirect>},
+	 {0x48f8,     0, &_movem_r_m<long_word, long_word_abs_short>},
+	 {0x48f9,     0, &_movem_r_m<long_word, long_word_abs_long>},
+	 {0x4a00,     7, &_tst<byte, byte_d_register>},
+	 {0x4a10,     7, &_tst<byte, byte_indirect>},
+	 {0x4a18,     7, &_tst<byte, byte_postinc_indirect>},
+	 {0x4a20,     7, &_tst<byte, byte_predec_indirect>},
+	 {0x4a28,     7, &_tst<byte, byte_disp_indirect>},
+	 {0x4a30,     7, &_tst<byte, byte_index_indirect>},
+	 {0x4a38,     0, &_tst<byte, byte_abs_short>},
+	 {0x4a39,     0, &_tst<byte, byte_abs_long>},
+	 {0x4a40,     7, &_tst<word, word_d_register>},
+	 {0x4a50,     7, &_tst<word, word_indirect>},
+	 {0x4a58,     7, &_tst<word, word_postinc_indirect>},
+	 {0x4a60,     7, &_tst<word, word_predec_indirect>},
+	 {0x4a68,     7, &_tst<word, word_disp_indirect>},
+	 {0x4a70,     7, &_tst<word, word_index_indirect>},
+	 {0x4a78,     0, &_tst<word, word_abs_short>},
+	 {0x4a79,     0, &_tst<word, word_abs_long>},
+	 {0x4a80,     7, &_tst<long_word, long_word_d_register>},
+	 {0x4a90,     7, &_tst<long_word, long_word_indirect>},
+	 {0x4a98,     7, &_tst<long_word, long_word_postinc_indirect>},
+	 {0x4aa0,     7, &_tst<long_word, long_word_predec_indirect>},
+	 {0x4aa8,     7, &_tst<long_word, long_word_disp_indirect>},
+	 {0x4ab0,     7, &_tst<long_word, long_word_index_indirect>},
+	 {0x4ab8,     0, &_tst<long_word, long_word_abs_short>},
+	 {0x4ab9,     0, &_tst<long_word, long_word_abs_long>},
+	 {0x4c90,     7, &_movem_m_r<word, word_indirect>},
+	 {0x4c98,     7, &_movem_postinc_r<word>},
+	 {0x4ca8,     7, &_movem_m_r<word, word_disp_indirect>},
+	 {0x4cb0,     7, &_movem_m_r<word, word_index_indirect>},
+	 {0x4cb8,     0, &_movem_m_r<word, word_abs_short>},
+	 {0x4cb9,     0, &_movem_m_r<word, word_abs_long>},
+	 {0x4cba,     0, &_movem_m_r<word, word_disp_pc_indirect>},
+	 {0x4cbb,     0, &_movem_m_r<word, word_index_pc_indirect>},
+	 {0x4cd0,     7, &_movem_m_r<long_word, long_word_indirect>},
+	 {0x4cd8,     7, &_movem_postinc_r<long_word>},
+	 {0x4ce8,     7, &_movem_m_r<long_word, long_word_disp_indirect>},
+	 {0x4cf0,     7, &_movem_m_r<long_word, long_word_index_indirect>},
+	 {0x4cf8,     0, &_movem_m_r<long_word, long_word_abs_short>},
+	 {0x4cf9,     0, &_movem_m_r<long_word, long_word_abs_long>},
+	 {0x4cfa,     0, &_movem_m_r<long_word, long_word_disp_pc_indirect>},
+	 {0x4cfb,     0, &_movem_m_r<long_word, long_word_index_pc_indirect>},
 	 {0x4e50,     7, &_link},
 	 {0x4e58,     7, &_unlk},
 	 {0x4e60,     7, &_move_to_usp},

@@ -54,14 +54,14 @@ namespace vm68k
     uint32_type
     _moveq(uint32_type pc, context &c, uint16_type w, unsigned long)
     {
-      long_word_size::svalue_type value = byte_size::svalue(w);
+      long_word::svalue_type value = byte::svalue(w);
       int reg2 = w >> 9 & 7;
 #ifdef L
-      L("\tmoveq%s #%#x,%%d%u\n", long_word_size::suffix(),
-	byte_size::uvalue(value), reg2);
+      L("\tmoveq%s #%#x,%%d%u\n", long_word::suffix(),
+	byte::uvalue(value), reg2);
 #endif
 
-      long_word_size::put(c.regs.d[reg2], value);
+      long_word::put(c.regs.d[reg2], value);
       c.regs.ccr.set_cc(value);
 
       return pc + 2;

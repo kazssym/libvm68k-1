@@ -288,10 +288,10 @@ namespace vm68k
     return Size::uget_aligned(*mem, program_fc(), address);
   }
 
-  template <> inline byte_size::uvalue_type
-  context::fetch_u(byte_size, uint32_type address) const
+  template <> inline byte::uvalue_type
+  context::fetch_u(byte, uint32_type address) const
   {
-    return byte_size::uvalue(word_size::uget_aligned(*mem, program_fc(),
+    return byte::uvalue(word::uget_aligned(*mem, program_fc(),
 						       address));
   }
 
@@ -301,10 +301,10 @@ namespace vm68k
     return Size::get_aligned(*mem, program_fc(), address);
   }
 
-  template <> inline byte_size::svalue_type
-  context::fetch_s(byte_size, uint32_type address) const
+  template <> inline byte::svalue_type
+  context::fetch_s(byte, uint32_type address) const
   {
-    return byte_size::svalue(word_size::uget_aligned(*mem, program_fc(),
+    return byte::svalue(word::uget_aligned(*mem, program_fc(),
 						       address));
   }
 
@@ -369,7 +369,7 @@ namespace vm68k
   inline uint32_type
   processor::step(uint32_type pc, context &c) const
   {
-    return dispatch(pc, c, c.fetch_u(word_size(), pc));
+    return dispatch(pc, c, c.fetch_u(word(), pc));
   }
 }
 

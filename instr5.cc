@@ -88,10 +88,10 @@ namespace vm68k
 #endif
 
       // The condition codes are not affected by this instruction.
-      long_word_size::svalue_type value1 = long_word_size::get(c.regs.a[reg1]);
-      long_word_size::svalue_type value
-	= long_word_size::svalue(value1 + value2);
-      long_word_size::put(c.regs.a[reg1], value);
+      long_word::svalue_type value1 = long_word::get(c.regs.a[reg1]);
+      long_word::svalue_type value
+	= long_word::svalue(value1 + value2);
+      long_word::put(c.regs.a[reg1], value);
 
       return pc + 2;
     }
@@ -103,18 +103,18 @@ namespace vm68k
     {
       Condition cond;
       int reg1 = w & 7;
-      word_size::svalue_type disp = c.fetch_s(word_size(), pc + 2);
+      word::svalue_type disp = c.fetch_s(word(), pc + 2);
 #ifdef L
       L("\tdb%s %%d%u,%#lx\n", Condition::text(), reg1,
-	long_word_size::uvalue(pc + 2 + disp) + 0UL);
+	long_word::uvalue(pc + 2 + disp) + 0UL);
 #endif
 
       // This instruction does not affect the condition codes.
       if (!cond(c))
 	{
-	  sint16_type value = word_size::get(c.regs.d[reg1]);
-	  value = word_size::svalue(value - 1);
-	  word_size::put(c.regs.d[reg1], value);
+	  sint16_type value = word::get(c.regs.d[reg1]);
+	  value = word::svalue(value - 1);
+	  word::put(c.regs.d[reg1], value);
 	  if (value != -1)
 	    return pc + 2 + disp;
 	}
@@ -129,7 +129,7 @@ namespace vm68k
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
-      L("\ts%s%s %s\n", Condition::text(), byte_size::suffix(),
+      L("\ts%s%s %s\n", Condition::text(), byte::suffix(),
 	ea1.text(c).c_str());
 #endif
 
@@ -177,10 +177,10 @@ namespace vm68k
 #endif
 
       // This instruction does not affect the condition codes.
-      long_word_size::svalue_type value1 = long_word_size::get(c.regs.a[reg1]);
-      long_word_size::svalue_type value
-	= long_word_size::svalue(value1 - value2);
-      long_word_size::put(c.regs.a[reg1], value);
+      long_word::svalue_type value1 = long_word::get(c.regs.a[reg1]);
+      long_word::svalue_type value
+	= long_word::svalue(value1 - value2);
+      long_word::put(c.regs.a[reg1], value);
 
       return pc + 2;
     }
@@ -192,32 +192,32 @@ namespace vm68k
   install_instructions_5(processor &p, unsigned long d)
   {
     static const instruction_map inst[]
-      = {{0x5000, 0xe07, &_addq<byte_size, byte_d_register>},
-	 {0x5010, 0xe07, &_addq<byte_size, byte_indirect>},
-	 {0x5018, 0xe07, &_addq<byte_size, byte_postinc_indirect>},
-	 {0x5020, 0xe07, &_addq<byte_size, byte_predec_indirect>},
-	 {0x5028, 0xe07, &_addq<byte_size, byte_disp_indirect>},
-	 {0x5030, 0xe07, &_addq<byte_size, byte_index_indirect>},
-	 {0x5038, 0xe00, &_addq<byte_size, byte_abs_short>},
-	 {0x5039, 0xe00, &_addq<byte_size, byte_abs_long>},
-	 {0x5040, 0xe07, &_addq<word_size, word_d_register>},
-	 {0x5048, 0xe07, &_addq_a<word_size>},
-	 {0x5050, 0xe07, &_addq<word_size, word_indirect>},
-	 {0x5058, 0xe07, &_addq<word_size, word_postinc_indirect>},
-	 {0x5060, 0xe07, &_addq<word_size, word_predec_indirect>},
-	 {0x5068, 0xe07, &_addq<word_size, word_disp_indirect>},
-	 {0x5070, 0xe07, &_addq<word_size, word_index_indirect>},
-	 {0x5078, 0xe00, &_addq<word_size, word_abs_short>},
-	 {0x5079, 0xe00, &_addq<word_size, word_abs_long>},
-	 {0x5080, 0xe07, &_addq<long_word_size, long_word_d_register>},
-	 {0x5088, 0xe07, &_addq_a<long_word_size>},
-	 {0x5090, 0xe07, &_addq<long_word_size, long_word_indirect>},
-	 {0x5098, 0xe07, &_addq<long_word_size, long_word_postinc_indirect>},
-	 {0x50a0, 0xe07, &_addq<long_word_size, long_word_predec_indirect>},
-	 {0x50a8, 0xe07, &_addq<long_word_size, long_word_disp_indirect>},
-	 {0x50b0, 0xe07, &_addq<long_word_size, long_word_index_indirect>},
-	 {0x50b8, 0xe00, &_addq<long_word_size, long_word_abs_short>},
-	 {0x50b9, 0xe00, &_addq<long_word_size, long_word_abs_long>},
+      = {{0x5000, 0xe07, &_addq<byte, byte_d_register>},
+	 {0x5010, 0xe07, &_addq<byte, byte_indirect>},
+	 {0x5018, 0xe07, &_addq<byte, byte_postinc_indirect>},
+	 {0x5020, 0xe07, &_addq<byte, byte_predec_indirect>},
+	 {0x5028, 0xe07, &_addq<byte, byte_disp_indirect>},
+	 {0x5030, 0xe07, &_addq<byte, byte_index_indirect>},
+	 {0x5038, 0xe00, &_addq<byte, byte_abs_short>},
+	 {0x5039, 0xe00, &_addq<byte, byte_abs_long>},
+	 {0x5040, 0xe07, &_addq<word, word_d_register>},
+	 {0x5048, 0xe07, &_addq_a<word>},
+	 {0x5050, 0xe07, &_addq<word, word_indirect>},
+	 {0x5058, 0xe07, &_addq<word, word_postinc_indirect>},
+	 {0x5060, 0xe07, &_addq<word, word_predec_indirect>},
+	 {0x5068, 0xe07, &_addq<word, word_disp_indirect>},
+	 {0x5070, 0xe07, &_addq<word, word_index_indirect>},
+	 {0x5078, 0xe00, &_addq<word, word_abs_short>},
+	 {0x5079, 0xe00, &_addq<word, word_abs_long>},
+	 {0x5080, 0xe07, &_addq<long_word, long_word_d_register>},
+	 {0x5088, 0xe07, &_addq_a<long_word>},
+	 {0x5090, 0xe07, &_addq<long_word, long_word_indirect>},
+	 {0x5098, 0xe07, &_addq<long_word, long_word_postinc_indirect>},
+	 {0x50a0, 0xe07, &_addq<long_word, long_word_predec_indirect>},
+	 {0x50a8, 0xe07, &_addq<long_word, long_word_disp_indirect>},
+	 {0x50b0, 0xe07, &_addq<long_word, long_word_index_indirect>},
+	 {0x50b8, 0xe00, &_addq<long_word, long_word_abs_short>},
+	 {0x50b9, 0xe00, &_addq<long_word, long_word_abs_long>},
 	 {0x50c0,     7, &_s<t, byte_d_register>},
 	 {0x50c8,     7, &_db<t>},
 	 {0x50d0,     7, &_s<t, byte_indirect>},
@@ -227,32 +227,32 @@ namespace vm68k
 	 {0x50f0,     7, &_s<t, byte_index_indirect>},
 	 {0x50f8,     0, &_s<t, byte_abs_short>},
 	 {0x50f9,     0, &_s<t, byte_abs_long>},
-	 {0x5100, 0xe07, &_subq<byte_size, byte_d_register>},
-	 {0x5110, 0xe07, &_subq<byte_size, byte_indirect>},
-	 {0x5118, 0xe07, &_subq<byte_size, byte_postinc_indirect>},
-	 {0x5120, 0xe07, &_subq<byte_size, byte_predec_indirect>},
-	 {0x5128, 0xe07, &_subq<byte_size, byte_disp_indirect>},
-	 {0x5130, 0xe07, &_subq<byte_size, byte_index_indirect>},
-	 {0x5138, 0xe00, &_subq<byte_size, byte_abs_short>},
-	 {0x5139, 0xe00, &_subq<byte_size, byte_abs_long>},
-	 {0x5140, 0xe07, &_subq<word_size, word_d_register>},
-	 {0x5148, 0xe07, &_subq_a<word_size>},
-	 {0x5150, 0xe07, &_subq<word_size, word_indirect>},
-	 {0x5158, 0xe07, &_subq<word_size, word_postinc_indirect>},
-	 {0x5160, 0xe07, &_subq<word_size, word_predec_indirect>},
-	 {0x5168, 0xe07, &_subq<word_size, word_disp_indirect>},
-	 {0x5170, 0xe07, &_subq<word_size, word_index_indirect>},
-	 {0x5178, 0xe00, &_subq<word_size, word_abs_short>},
-	 {0x5179, 0xe00, &_subq<word_size, word_abs_long>},
-	 {0x5180, 0xe07, &_subq<long_word_size, long_word_d_register>},
-	 {0x5188, 0xe07, &_subq_a<long_word_size>},
-	 {0x5190, 0xe07, &_subq<long_word_size, long_word_indirect>},
-	 {0x5198, 0xe07, &_subq<long_word_size, long_word_postinc_indirect>},
-	 {0x51a0, 0xe07, &_subq<long_word_size, long_word_predec_indirect>},
-	 {0x51a8, 0xe07, &_subq<long_word_size, long_word_disp_indirect>},
-	 {0x51b0, 0xe07, &_subq<long_word_size, long_word_index_indirect>},
-	 {0x51b8, 0xe00, &_subq<long_word_size, long_word_abs_short>},
-	 {0x51b9, 0xe00, &_subq<long_word_size, long_word_abs_long>},
+	 {0x5100, 0xe07, &_subq<byte, byte_d_register>},
+	 {0x5110, 0xe07, &_subq<byte, byte_indirect>},
+	 {0x5118, 0xe07, &_subq<byte, byte_postinc_indirect>},
+	 {0x5120, 0xe07, &_subq<byte, byte_predec_indirect>},
+	 {0x5128, 0xe07, &_subq<byte, byte_disp_indirect>},
+	 {0x5130, 0xe07, &_subq<byte, byte_index_indirect>},
+	 {0x5138, 0xe00, &_subq<byte, byte_abs_short>},
+	 {0x5139, 0xe00, &_subq<byte, byte_abs_long>},
+	 {0x5140, 0xe07, &_subq<word, word_d_register>},
+	 {0x5148, 0xe07, &_subq_a<word>},
+	 {0x5150, 0xe07, &_subq<word, word_indirect>},
+	 {0x5158, 0xe07, &_subq<word, word_postinc_indirect>},
+	 {0x5160, 0xe07, &_subq<word, word_predec_indirect>},
+	 {0x5168, 0xe07, &_subq<word, word_disp_indirect>},
+	 {0x5170, 0xe07, &_subq<word, word_index_indirect>},
+	 {0x5178, 0xe00, &_subq<word, word_abs_short>},
+	 {0x5179, 0xe00, &_subq<word, word_abs_long>},
+	 {0x5180, 0xe07, &_subq<long_word, long_word_d_register>},
+	 {0x5188, 0xe07, &_subq_a<long_word>},
+	 {0x5190, 0xe07, &_subq<long_word, long_word_indirect>},
+	 {0x5198, 0xe07, &_subq<long_word, long_word_postinc_indirect>},
+	 {0x51a0, 0xe07, &_subq<long_word, long_word_predec_indirect>},
+	 {0x51a8, 0xe07, &_subq<long_word, long_word_disp_indirect>},
+	 {0x51b0, 0xe07, &_subq<long_word, long_word_index_indirect>},
+	 {0x51b8, 0xe00, &_subq<long_word, long_word_abs_short>},
+	 {0x51b9, 0xe00, &_subq<long_word, long_word_abs_long>},
 	 {0x51c0,     7, &_s<f, byte_d_register>},
 	 {0x51c8,     7, &_db<f>},
 	 {0x51d0,     7, &_s<f, byte_indirect>},

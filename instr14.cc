@@ -229,12 +229,12 @@ namespace vm68k
     {
       Destination ea1(w & 7, pc + 2);
 #ifdef L
-      L("\tlsr%s %s\n", word_size::suffix(), ea1.text(c).c_str());
+      L("\tlsr%s %s\n", word::suffix(), ea1.text(c).c_str());
 #endif
 
-      word_size::svalue_type value1 = ea1.get(c);
-      word_size::svalue_type value
-	= word_size::svalue(word_size::uvalue(value1) >> 1);
+      word::svalue_type value1 = ea1.get(c);
+      word::svalue_type value
+	= word::svalue(word::uvalue(value1) >> 1);
       ea1.put(c, value);
       c.regs.ccr.set_cc_lsr(value, value1, 1);
 
@@ -368,45 +368,45 @@ namespace vm68k
   install_instructions_14(processor &p, unsigned long d)
   {
     static const instruction_map inst[]
-      = {{0xe000, 0xe07, &_asr_i<byte_size>},
-	 {0xe008, 0xe07, &_lsr_i<byte_size>},
-	 {0xe010, 0xe07, &_roxr_i<byte_size>},
-	 {0xe018, 0xe07, &_ror_i<byte_size>},
-	 {0xe020, 0xe07, &_asr_d<byte_size>},
-	 {0xe028, 0xe07, &_lsr_d<byte_size>},
-	 {0xe040, 0xe07, &_asr_i<word_size>},
-	 {0xe048, 0xe07, &_lsr_i<word_size>},
-	 {0xe050, 0xe07, &_roxr_i<word_size>},
-	 {0xe058, 0xe07, &_ror_i<word_size>},
-	 {0xe060, 0xe07, &_asr_d<word_size>},
-	 {0xe068, 0xe07, &_lsr_d<word_size>},
-	 {0xe080, 0xe07, &_asr_i<long_word_size>},
-	 {0xe088, 0xe07, &_lsr_i<long_word_size>},
-	 {0xe090, 0xe07, &_roxr_i<long_word_size>},
-	 {0xe098, 0xe07, &_ror_i<long_word_size>},
-	 {0xe0a0, 0xe07, &_asr_d<long_word_size>},
-	 {0xe0a8, 0xe07, &_lsr_d<long_word_size>},
-	 {0xe100, 0xe07, &_asl_i<byte_size>},
-	 {0xe108, 0xe07, &_lsl_i<byte_size>},
-	 {0xe110, 0xe07, &_roxl_i<byte_size>},
-	 {0xe118, 0xe07, &_rol_i<byte_size>},
-	 {0xe120, 0xe07, &_asl_d<byte_size>},
-	 {0xe128, 0xe07, &_lsl_d<byte_size>},
-	 {0xe138, 0xe07, &_rol_d<byte_size>},
-	 {0xe140, 0xe07, &_asl_i<word_size>},
-	 {0xe148, 0xe07, &_lsl_i<word_size>},
-	 {0xe150, 0xe07, &_roxl_i<word_size>},
-	 {0xe158, 0xe07, &_rol_i<word_size>},
-	 {0xe160, 0xe07, &_asl_d<word_size>},
-	 {0xe168, 0xe07, &_lsl_d<word_size>},
-	 {0xe178, 0xe07, &_rol_d<word_size>},
-	 {0xe180, 0xe07, &_asl_i<long_word_size>},
-	 {0xe188, 0xe07, &_lsl_i<long_word_size>},
-	 {0xe190, 0xe07, &_roxl_i<long_word_size>},
-	 {0xe198, 0xe07, &_rol_i<long_word_size>},
-	 {0xe1a0, 0xe07, &_asl_d<long_word_size>},
-	 {0xe1a8, 0xe07, &_lsl_d<long_word_size>},
-	 {0xe1b8, 0xe07, &_rol_d<long_word_size>},
+      = {{0xe000, 0xe07, &_asr_i<byte>},
+	 {0xe008, 0xe07, &_lsr_i<byte>},
+	 {0xe010, 0xe07, &_roxr_i<byte>},
+	 {0xe018, 0xe07, &_ror_i<byte>},
+	 {0xe020, 0xe07, &_asr_d<byte>},
+	 {0xe028, 0xe07, &_lsr_d<byte>},
+	 {0xe040, 0xe07, &_asr_i<word>},
+	 {0xe048, 0xe07, &_lsr_i<word>},
+	 {0xe050, 0xe07, &_roxr_i<word>},
+	 {0xe058, 0xe07, &_ror_i<word>},
+	 {0xe060, 0xe07, &_asr_d<word>},
+	 {0xe068, 0xe07, &_lsr_d<word>},
+	 {0xe080, 0xe07, &_asr_i<long_word>},
+	 {0xe088, 0xe07, &_lsr_i<long_word>},
+	 {0xe090, 0xe07, &_roxr_i<long_word>},
+	 {0xe098, 0xe07, &_ror_i<long_word>},
+	 {0xe0a0, 0xe07, &_asr_d<long_word>},
+	 {0xe0a8, 0xe07, &_lsr_d<long_word>},
+	 {0xe100, 0xe07, &_asl_i<byte>},
+	 {0xe108, 0xe07, &_lsl_i<byte>},
+	 {0xe110, 0xe07, &_roxl_i<byte>},
+	 {0xe118, 0xe07, &_rol_i<byte>},
+	 {0xe120, 0xe07, &_asl_d<byte>},
+	 {0xe128, 0xe07, &_lsl_d<byte>},
+	 {0xe138, 0xe07, &_rol_d<byte>},
+	 {0xe140, 0xe07, &_asl_i<word>},
+	 {0xe148, 0xe07, &_lsl_i<word>},
+	 {0xe150, 0xe07, &_roxl_i<word>},
+	 {0xe158, 0xe07, &_rol_i<word>},
+	 {0xe160, 0xe07, &_asl_d<word>},
+	 {0xe168, 0xe07, &_lsl_d<word>},
+	 {0xe178, 0xe07, &_rol_d<word>},
+	 {0xe180, 0xe07, &_asl_i<long_word>},
+	 {0xe188, 0xe07, &_lsl_i<long_word>},
+	 {0xe190, 0xe07, &_roxl_i<long_word>},
+	 {0xe198, 0xe07, &_rol_i<long_word>},
+	 {0xe1a0, 0xe07, &_asl_d<long_word>},
+	 {0xe1a8, 0xe07, &_lsl_d<long_word>},
+	 {0xe1b8, 0xe07, &_rol_d<long_word>},
 	 {0xe2d0,     7, &_lsr_m<word_indirect>},
 	 {0xe2d8,     7, &_lsr_m<word_postinc_indirect>},
 	 {0xe2e0,     7, &_lsr_m<word_predec_indirect>},
