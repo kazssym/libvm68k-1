@@ -60,8 +60,8 @@ namespace vm68k
 #endif
 
       typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value2 = Size::get(c.regs.d[reg2]);
-      typename Size::svalue_type value = Size::svalue(value2 - value1);
+      typename Size::svalue_type value2 = Size::get_s(c.regs.d[reg2]);
+      typename Size::svalue_type value = Size::normal_s(value2 - value1);
       c.regs.ccr.set_cc_cmp(value, value2, value1);
 
       ea1.finish(c);
@@ -80,9 +80,9 @@ namespace vm68k
 #endif
 
       long_word::svalue_type value1 = ea1.get(c);
-      long_word::svalue_type value2 = long_word::get(c.regs.a[reg2]);
+      long_word::svalue_type value2 = long_word::get_s(c.regs.a[reg2]);
       long_word::svalue_type value
-	= long_word::svalue(value2 - value1);
+	= long_word::normal_s(value2 - value1);
       c.regs.ccr.set_cc_cmp(value, value2, value1);
 
       ea1.finish(c);
@@ -104,7 +104,7 @@ namespace vm68k
 
       typename Size::svalue_type value1 = ea1.get(c);
       typename Size::svalue_type value2 = ea2.get(c);
-      typename Size::svalue_type value = Size::svalue(value2 - value1);
+      typename Size::svalue_type value = Size::normal_s(value2 - value1);
       c.regs.ccr.set_cc_cmp(value, value2, value1);
 
       ea1.finish(c);
@@ -124,9 +124,9 @@ namespace vm68k
 #endif
 
       typename Size::svalue_type value1 = ea1.get(c);
-      typename Size::svalue_type value2 = Size::get(c.regs.d[reg2]);
+      typename Size::svalue_type value2 = Size::get_s(c.regs.d[reg2]);
       typename Size::svalue_type value
-	= Size::svalue(Size::uvalue(value1) ^ Size::uvalue(value2));
+	= Size::normal_s(Size::normal_u(value1) ^ Size::normal_u(value2));
       ea1.put(c, value);
       c.regs.ccr.set_cc(value);
 

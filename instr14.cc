@@ -61,11 +61,11 @@ namespace vm68k
       L("%%d%u\n", reg1);
 #endif
 
-      int value2 = c.regs.d[reg2] % Size::value_bit();
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
-      typename Size::svalue_type value = Size::svalue(value1 << value2);
+      int value2 = c.regs.d[reg2] % (Size::size() * 8);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
+      typename Size::svalue_type value = Size::normal_s(value1 << value2);
       Size::put(c.regs.d[reg1], value);
-      c.regs.ccr.set_cc_lsl(value, value1, value2 + (32 - Size::value_bit())); // FIXME?
+      c.regs.ccr.set_cc_lsl(value, value1, value2 + (32 - Size::size() * 8)); // FIXME?
 
       return pc + 2;
     }
@@ -83,10 +83,10 @@ namespace vm68k
       L("\tasl%s #%u,%%d%u\n", Size::suffix(), value2, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
-      typename Size::svalue_type value = Size::svalue(value1 << value2);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
+      typename Size::svalue_type value = Size::normal_s(value1 << value2);
       Size::put(c.regs.d[reg1], value);
-      c.regs.ccr.set_cc_lsl(value, value1, value2 + (32 - Size::value_bit())); // FIXME?
+      c.regs.ccr.set_cc_lsl(value, value1, value2 + (32 - Size::size() * 8)); // FIXME?
 
       return pc + 2;
     }
@@ -102,9 +102,9 @@ namespace vm68k
       L("\tasr%s %%d%u,%%d%u\n", Size::suffix(), reg2, reg1);
 #endif
 
-      int value2 = c.regs.d[reg2] % Size::value_bit();
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
-      typename Size::svalue_type value = Size::svalue(value1 >> value2);
+      int value2 = c.regs.d[reg2] % (Size::size() * 8);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
+      typename Size::svalue_type value = Size::normal_s(value1 >> value2);
       Size::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc_asr(value, value1, value2);
 
@@ -126,8 +126,8 @@ namespace vm68k
       L("%%d%u\n", reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
-      typename Size::svalue_type value = Size::svalue(value1 >> value2);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
+      typename Size::svalue_type value = Size::normal_s(value1 >> value2);
       Size::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc_asr(value, value1, value2);
 
@@ -145,12 +145,12 @@ namespace vm68k
       L("\tlsl%s %%d%u,%%d%u\n", Size::suffix(), reg2, reg1);
 #endif
 
-      int value2 = c.regs.d[reg2] % Size::value_bit();
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
+      int value2 = c.regs.d[reg2] % (Size::size() * 8);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
       typename Size::svalue_type value
-	= Size::svalue(Size::uvalue(value1) << value2);
+	= Size::normal_s(Size::normal_u(value1) << value2);
       Size::put(c.regs.d[reg1], value);
-      c.regs.ccr.set_cc_lsl(value, value1, value2 + (32 - Size::value_bit())); // FIXME?
+      c.regs.ccr.set_cc_lsl(value, value1, value2 + (32 - Size::size() * 8)); // FIXME?
 
       return pc + 2;
     }
@@ -168,11 +168,11 @@ namespace vm68k
       L("\tlsl%s #%u,%%d%u\n", Size::suffix(), value2, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
       typename Size::svalue_type value
-	= Size::svalue(Size::uvalue(value1) << value2);
+	= Size::normal_s(Size::normal_u(value1) << value2);
       Size::put(c.regs.d[reg1], value);
-      c.regs.ccr.set_cc_lsl(value, value1, value2 + (32 - Size::value_bit())); // FIXME?
+      c.regs.ccr.set_cc_lsl(value, value1, value2 + (32 - Size::size() * 8)); // FIXME?
 
       return pc + 2;
     }
@@ -188,10 +188,10 @@ namespace vm68k
       L("\tlsr%s %%d%u,%%d%u\n", Size::suffix(), reg2, reg1);
 #endif
 
-      int value2 = c.regs.d[reg2] % Size::value_bit();
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
+      int value2 = c.regs.d[reg2] % (Size::size() * 8);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
       typename Size::svalue_type value =
-	Size::svalue(Size::uvalue(value1) >> value2);
+	Size::normal_s(Size::normal_u(value1) >> value2);
       Size::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc_lsr(value, value1, value2);
 
@@ -211,9 +211,9 @@ namespace vm68k
       L("\tlsr%s #%u,%%d%u\n", Size::suffix(), value2, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
       typename Size::svalue_type value
-	= Size::svalue(Size::uvalue(value1) >> value2);
+	= Size::normal_s(Size::normal_u(value1) >> value2);
       Size::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc_lsr(value, value1, value2);
 
@@ -232,7 +232,7 @@ namespace vm68k
 
       word::svalue_type value1 = ea1.get(c);
       word::svalue_type value
-	= word::svalue(word::uvalue(value1) >> 1);
+	= word::normal_s(word::normal_u(value1) >> 1);
       ea1.put(c, value);
       c.regs.ccr.set_cc_lsr(value, value1, 1);
 
@@ -253,12 +253,12 @@ namespace vm68k
       L("%%d%u\n", reg1);
 #endif
 
-      int count = c.regs.d[reg2] % Size::value_bit();
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
+      int count = c.regs.d[reg2] % (Size::size() * 8);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
       typename Size::svalue_type value
-	= Size::svalue(Size::uvalue(value1) << count
-		       | ((Size::uvalue(value1) & Size::value_mask())
-			  >> Size::value_bit() - count));
+	= Size::normal_s(Size::normal_u(value1) << count
+			 | (Size::normal_u(value1)
+			    >> Size::size() * 8 - count));
       Size::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc(value);	// FIXME.
 
@@ -278,10 +278,11 @@ namespace vm68k
       L("\trol%s #%u,%%d%u\n", Size::suffix(), value2, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
       typename Size::svalue_type value
-	= Size::svalue(Size::uvalue(value1) << value2
-		       | Size::uvalue(value1) >> Size::value_bit() - value2);
+	= Size::normal_s(Size::normal_u(value1) << value2
+			 | (Size::normal_u(value1)
+			    >> Size::size() * 8 - value2));
       Size::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc(value);	// FIXME.
 
@@ -301,10 +302,11 @@ namespace vm68k
       L("\tror%s #%u,%%d%u\n", Size::suffix(), count, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
       typename Size::svalue_type value
-	= Size::svalue(((Size::uvalue(value1) & Size::value_mask()) >> count)
-		       | (Size::uvalue(value1) << Size::value_bit() - count));
+	= Size::normal_s(Size::normal_u(value1) >> count
+			 | (Size::normal_u(value1)
+			    << Size::size() * 8 - count));
       Size::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc(value);	// FIXME.
 
@@ -324,11 +326,12 @@ namespace vm68k
       L("\troxl%s #%u,%%d%u", Size::suffix(), value2, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
       typename Size::svalue_type value
-	= Size::svalue(Size::uvalue(value1) << value2
-		       | c.regs.ccr.x() << value2 - 1
-		       | Size::uvalue(value1) >> Size::value_bit() + 1 - value2);
+	= Size::normal_s(Size::normal_u(value1) << value2
+			 | c.regs.ccr.x() << value2 - 1
+			 | (Size::normal_u(value1)
+			    >> Size::size() * 8 + 1 - value2));
       Size::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc(value);	// FIXME.
 
@@ -348,11 +351,12 @@ namespace vm68k
       L("\troxr%s #%u,%%d%u", Size::suffix(), value2, reg1);
 #endif
 
-      typename Size::svalue_type value1 = Size::get(c.regs.d[reg1]);
+      typename Size::svalue_type value1 = Size::get_s(c.regs.d[reg1]);
       typename Size::svalue_type value
-	= Size::svalue(Size::uvalue(value1) >> value2
-		       | c.regs.ccr.x() << Size::value_bit() - value2
-		       | Size::uvalue(value1) << Size::value_bit() + 1 - value2);
+	= Size::normal_s(Size::normal_u(value1) >> value2
+			 | c.regs.ccr.x() << Size::size() * 8 - value2
+			 | (Size::normal_u(value1)
+			    << Size::size() * 8 + 1 - value2));
       Size::put(c.regs.d[reg1], value);
       c.regs.ccr.set_cc(value);	// FIXME.
 
