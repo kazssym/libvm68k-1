@@ -1,3 +1,11 @@
+2002-10-01  Kaz Sasayama  <kaz2002@hypercore.co.jp>
+
+	* vm68k/processor (struct registers): Removed.
+	(class context): Replace member regs with registers including pc.
+	(class context): Rename member mem to _bus and make it private.
+	(class processor): Change signature of instruction_handler.
+	(class processor): Likewise for dispatch.
+
 2002-05-25  Kaz Sasayama  <Kaz.Sasayama@Hypercore.co.jp>
 
 	* vm68k/addressing (class data_register_direct, class

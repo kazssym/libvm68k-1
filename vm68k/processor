@@ -153,31 +153,22 @@ namespace vm68k
 
   typedef condition_code status_register;
 
-  /* CPU registers (mc68000).  */
-  struct registers
-  {
-    uint32_type d[8];		/* %d0-%d7 */
-    uint32_type a[8];		/* %a0-%a6/%sp */
-    condition_code ccr;
-    uint32_type usp;
-    uint32_type ssp;
-
-    template <class Size>
-    typename Size::svalue_type data_register(unsigned int regno, Size)
-    {return Size::get(d[regno]);}
-    template <class Size>
-    void set_data_register(unsigned int regno, Size,
-			   typename Size::uvalue_type value)
-    {Size::put(d[regno], value);}
-  };
-
   /* Context of execution.  A context represents all the state of
      execution.  See also `class processor'.  */
   class context
   {
   public:
-    registers regs;
-    bus *mem;
+    uint32_type d0, d1, d2, d3, d4, d5, d6, d7;	/* %d0-%d7 */
+    uint32_type a0, a1, a2, a3, a4, a5, a6, sp;	/* %a0-%a6/%sp */
+    uint32_type pc;
+    condition_code ccr;
+    uint32_type usp, saved_ssp;
+
+  private:
+    class bus *_bus;
+
+  public:
+    inline class bus *bus() const;
 
   private:
     /* Cache values for program and data FC's.  */
@@ -190,12 +181,12 @@ namespace vm68k
     std::vector<std::queue<unsigned int> > interrupt_queues;
 
   public:
-    explicit context(bus *);
+    explicit context(class bus *);
 
   public:
     /* Returns true if supervisor state.  */
     bool supervisor_state() const
-    {return regs.ccr.supervisor_state();}
+    {return ccr.supervisor_state();}
 
     /* Sets the supervisor state to STATE.  */
     void set_supervisor_state(bool state);
@@ -235,13 +226,13 @@ namespace vm68k
   template <class Size> inline typename Size::uvalue_type
   context::fetch_u(Size, uint32_type address) const
   {
-    return Size::get_instruction_u(*mem, address, program_fc());
+    return Size::get_instruction_u(*_bus, address, program_fc());
   }
 
   template <class Size> inline typename Size::svalue_type
   context::fetch_s(Size, uint32_type address) const
   {
-    return Size::get_instruction_s(*mem, address, program_fc());
+    return Size::get_instruction_s(*_bus, address, program_fc());
   }
 }
 
@@ -359,7 +350,7 @@ namespace vm68k
   public:
     /* Type of an instruction handler.  */
     typedef uint32_type
-    (*instruction_handler)(uint32_type pc, context &, uint16_type w, void *);
+    (*instruction_handler)(uint16_type w, context &, void *);
 
     /* Type of an instruction.  */
     typedef std::pair<instruction_handler, void *> instruction_type;
@@ -367,7 +358,7 @@ namespace vm68k
   public:
     /* Raises an illegal instruction exception.  */
     static uint32_type
-    illegal(uint32_type pc, context &, uint16_type w, void *);
+    illegal(uint16_type w, context &, void *);
 
   private:
     std::vector<instruction_type> instructions;
@@ -391,7 +382,7 @@ namespace vm68k
 
   protected:
     /* Dispatches for instruction handlers.  */
-    uint32_type dispatch(uint32_type pc, context &c, uint16_type w) const;
+    uint32_type dispatch(uint16_type w, context &c) const;
 
   public:
     /* Starts the program.  */
@@ -400,10 +391,10 @@ namespace vm68k
   };
 
   inline uint32_type
-  processor::dispatch(uint32_type pc, context &c, uint16_type w) const
+  processor::dispatch(uint16_type w, context &c) const
   {
     w &= 0xffff;
-    return instructions[w].first(pc, c, w, instructions[w].second);
+    return instructions[w].first(w, c, instructions[w].second);
   }
 }
 
