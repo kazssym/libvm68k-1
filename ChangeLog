@@ -1,3 +1,8 @@
+2008-01-08  Kaz Sasayama  <kazssym@vx68k.org>
+
+	* vm68k/data: Renamed from vm68k/type.  Change all type
+	definitions.  Also update all users.
+
 2003-04-10  Kaz Sasayama  <kaz2003@hypercore.co.jp>
 
 	* Makefile.am (LIBS): Removed.
