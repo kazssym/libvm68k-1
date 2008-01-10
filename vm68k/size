@@ -1,6 +1,6 @@
-/* -*-C++-*- */
-/* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
+/* -*- C++ -*- */
+/* Virtual M68000 Toolkit
+   Copyright (C) 1998-2008 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,308 +17,243 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
    USA.  */
 
-#ifndef __VM68K_SIZE
-#define __VM68K_SIZE 1
+#ifndef _VM68K_SIZE
+#define _VM68K_SIZE 1
 
 #include <vm68k/bus>
 
-namespace vm68k
+namespace vx68k_m68k
 {
   /* Access methods for byte data.  */
-  struct byte
+  struct byte_size
   {
-    typedef int uvalue_type;
-    typedef int svalue_type;
+    typedef data_fast8_t  data_type;
+    typedef udata_fast8_t udata_type;
 
-    static uint32_type size() {return 1;}
-    static uint32_type aligned_size() {return 2;}
+    static udata_fast16_t size ()
+    {
+      return 1;
+    }
 
-    static int uvalue_max() {return 0xff;}
-    static int svalue_max() {return 0x7f;}
+    static udata_fast16_t aligned_size ()
+    {
+      return 2;
+    }
 
-    static int normal_u(int value);
-    static int normal_s(int value);
+    static data_fast8_t as_signed (udata_fast8_t value)
+    {
+      if (value > 0x7fU)
+        return -((data_fast8_t) (0xffU - value)) - 1;
+      else
+        return (data_fast8_t) value;
+    }
 
-    static int get_u(const uint32_type &reg);
-    static int get_s(const uint32_type &reg);
-    static void put(uint32_type &reg, int value);
+    static udata_fast8_t get_unsigned (const udata32_t &reg)
+    {
+      return reg & 0xffU;
+    }
 
-    static int get_u(const bus &, uint32_type address, function_code);
-    static int get_s(const bus &, uint32_type address, function_code);
-    static void put(bus &, uint32_type address, function_code, int value);
+    static data_fast8_t get (const udata32_t &reg)
+    {
+      return as_signed (reg & 0xffU);
+    }
 
-    static int get_instruction_u(const bus &, uint32_type address,
-				 function_code);
-    static int get_instruction_s(const bus &, uint32_type address,
-				 function_code);
+    static void put (udata32_t &reg, udata_fast8_t value)
+    {
+      reg = reg & ~0xffU | value & 0xffU;
+    }
 
-    static const char *suffix() {return "b";}
+    static udata_fast8_t get_unsigned (const system_bus *b,
+                                       function_code fc, address_t address)
+    {
+      return b->get8 (fc, address);
+    }
+
+    static data_fast8_t get (const system_bus *b,
+                             function_code fc, address_t address)
+    {
+      return as_signed (b->get8 (fc, address));
+    }
+
+    static void put (system_bus *b, function_code fc, address_t address,
+                     udata_fast8_t value)
+    {
+      b->put8 (fc, address, value);
+    }
+
+    static udata_fast8_t geti_unsigned (const system_bus *b,
+                                        function_code fc, address_t address)
+    {
+      return b->get8 (fc, address | 1U);
+    }
+
+    static data_fast8_t geti (const system_bus *b,
+                              function_code fc, address_t address)
+    {
+      return as_signed (b->get8 (fc, address | 1U));
+    }
+
+    static const char *suffix ()
+    {
+      return "b";
+    }
   };
 
-  inline int
-  byte::normal_u(int value)
-  {
-    return value & uvalue_max();
-  }
-
-  inline int
-  byte::normal_s(int value)
-  {
-    value = normal_u(value);
-    if (value > svalue_max())
-      return -int(uvalue_max() - value) - 1;
-    else
-      return value;
-  }
-
-  inline int
-  byte::get_u(const uint32_type &reg)
-  {
-    return reg & uvalue_max();
-  }
-
-  inline int
-  byte::get_s(const uint32_type &reg)
-  {
-    return normal_s(get_u(reg));
-  }
-
-  inline void
-  byte::put(uint32_type &reg, int value)
-  {
-    reg = reg & ~uint32_type(uvalue_max()) | normal_u(value);
-  }
-
-  inline int
-  byte::get_u(const bus &m, uint32_type address, function_code fc)
-  {
-    return m.get_8(address, fc);
-  }
-
-  inline int
-  byte::get_s(const bus &m, uint32_type address, function_code fc)
-  {
-    return normal_s(get_u(m, address, fc));
-  }
-
-  inline void
-  byte::put(bus &m, uint32_type address, function_code fc, int value)
-  {
-    m.put_8(address, value, fc);
-  }
-
-  inline int
-  byte::get_instruction_u(const bus &m, uint32_type address, function_code fc)
-  {
-    return m.get_8(address | 1, fc);
-  }
-
-  inline int
-  byte::get_instruction_s(const bus &m, uint32_type address, function_code fc)
-  {
-    return normal_s(get_instruction_u(m, address, fc));
-  }
-}
+  extern const byte_size byte;
 
-namespace vm68k
-{
   /* Access methods for word data.  */
-  struct word
+  struct word_size
   {
-    typedef uint16_type uvalue_type;
-    typedef sint16_type svalue_type;
+    typedef data_fast16_t  data_type;
+    typedef udata_fast16_t udata_type;
 
-    static uint32_type size() {return 2;}
-    static uint32_type aligned_size() {return size();}
+    static udata_fast16_t size ()
+    {
+      return 2;
+    }
 
-    static uint16_type uvalue_max() {return 0xffff;}
-    static sint16_type svalue_max() {return 0x7fff;}
+    static udata_fast16_t aligned_size ()
+    {
+      return 2;
+    }
 
-    static uint16_type normal_u(uint16_type value);
-    static sint16_type normal_s(uint16_type value);
+    static data_fast16_t as_signed (udata_fast16_t value)
+    {
+      if (value > 0x7fffU)
+        return -((data_fast16_t) (0xffffU - value)) - 1;
+      else
+        return (data_fast16_t) value;
+    }
 
-    static uint16_type get_u(const uint32_type &reg);
-    static sint16_type get_s(const uint32_type &reg);
-    static void put(uint32_type &reg, uint16_type value);
+    static udata_fast16_t get_unsigned (const udata32_t &reg)
+    {
+      return reg & 0xffffU;
+    }
 
-    static uint16_type get_u(const bus &, uint32_type address, function_code);
-    static sint16_type get_s(const bus &, uint32_type address, function_code);
-    static void put(bus &, uint32_type address, function_code,
-		    uint16_type value);
+    static data_fast16_t get (const udata32_t &reg)
+    {
+      return as_signed (reg & 0xffffU);
+    }
 
-    static uint16_type get_instruction_u(const bus &, uint32_type address,
-					 function_code);
-    static sint16_type get_instruction_s(const bus &, uint32_type address,
-					 function_code);
+    static void put (udata32_t &reg, udata_fast16_t value)
+    {
+      reg = reg & ~0xffffU | value & 0xffffU;
+    }
 
-    static const char *suffix() {return "w";}
+    static udata_fast16_t get_unsigned (const system_bus *b,
+                                        function_code fc, address_t address)
+    {
+      return b->get16 (fc, address);
+    }
+
+    static data_fast16_t get (const system_bus *b,
+                              function_code fc, address_t address)
+    {
+      return as_signed (b->get16 (fc, address));
+    }
+
+    static void put (system_bus *b, function_code fc, address_t address,
+                     udata_fast16_t value)
+    {
+      b->put16 (fc, address, value);
+    }
+
+    static udata_fast16_t geti_unsigned (const system_bus *b,
+                                         function_code fc, address_t address)
+    {
+      return b->get16 (fc, address);
+    }
+
+    static data_fast16_t geti (const system_bus *b,
+                               function_code fc, address_t address)
+    {
+      return as_signed (b->get16 (fc, address));
+    }
+
+    static const char *suffix ()
+    {
+      return "w";
+    }
   };
 
-  inline uint16_type
-  word::normal_u(uint16_type value)
-  {
-    return value & uvalue_max();
-  }
-
-  inline sint16_type
-  word::normal_s(uint16_type value)
-  {
-    value = normal_u(value);
-    if (value > uint16_type(svalue_max()))
-      return -sint16_type(uvalue_max() - value) - 1;
-    else
-      return value;
-  }
-
-  inline uint16_type
-  word::get_u(const uint32_type &reg)
-  {
-    return reg & uvalue_max();
-  }
-
-  inline sint16_type
-  word::get_s(const uint32_type &reg)
-  {
-    return normal_s(get_u(reg));
-  }
-
-  inline void
-  word::put(uint32_type &reg, uint16_type value)
-  {
-    reg = reg & ~uint32_type(uvalue_max()) | normal_u(value);
-  }
-
-  inline uint16_type
-  word::get_u(const bus &m, uint32_type address, function_code fc)
-  {
-    return m.get_16(address, fc);
-  }
-
-  inline sint16_type
-  word::get_s(const bus &m, uint32_type address, function_code fc)
-  {
-    return normal_s(get_u(m, address, fc));
-  }
-
-  inline void
-  word::put(bus &m, uint32_type address, function_code fc, uint16_type value)
-  {
-    m.put_16(address, value, fc);
-  }
-
-  inline uint16_type
-  word::get_instruction_u(const bus &m, uint32_type address, function_code fc)
-  {
-    return m.get_16_aligned(address, fc);
-  }
-
-  inline sint16_type
-  word::get_instruction_s(const bus &m, uint32_type address, function_code fc)
-  {
-    return normal_s(get_instruction_u(m, address, fc));
-  }
-}
+  extern const word_size word;
 
-namespace vm68k
-{
   /* Access methods for long word data.  */
-  struct long_word
+  struct long_word_size
   {
-    typedef uint32_type uvalue_type;
-    typedef sint32_type svalue_type;
+    typedef data_fast32_t data_type;
+    typedef udata_fast32_t udata_type;
 
-    static uint32_type size() {return 4;}
-    static uint32_type aligned_size() {return size();}
+    static udata_fast16_t size ()
+    {
+      return 4;
+    }
 
-    static uint32_type uvalue_max() {return 0xffffffff;}
-    static sint32_type svalue_max() {return 0x7fffffff;}
+    static udata_fast32_t aligned_size ()
+    {
+      return 4;
+    }
 
-    static uint32_type normal_u(uint32_type value);
-    static sint32_type normal_s(uint32_type value);
+    static data_fast32_t as_signed (udata_fast32_t value)
+    {
+      if (value > 0x7fffffffUL)
+        return -((data_fast32_t) (0xffffffffUL - value)) - 1;
+      else
+        return (data_fast32_t) value;
+    }
 
-    static uint32_type get_u(const uint32_type &reg);
-    static sint32_type get_s(const uint32_type &reg);
-    static void put(uint32_type &reg, uint32_type value);
+    static udata_fast32_t get_unsigned (const udata32_t &reg)
+    {
+      return reg;
+    }
 
-    static uint32_type get_u(const bus &, uint32_type address, function_code);
-    static sint32_type get_s(const bus &, uint32_type address, function_code);
-    static void put(bus &, uint32_type address, function_code,
-		    uint32_type value);
+    static data_fast32_t get (const udata32_t &reg)
+    {
+      return as_signed (reg);
+    }
 
-    static uint32_type get_instruction_u(const bus &, uint32_type address,
-					 function_code);
-    static sint32_type get_instruction_s(const bus &, uint32_type address,
-					 function_code);
+    static void put (udata32_t &reg, udata_fast32_t value)
+    {
+      reg = value & 0xffffffffU;
+    }
 
-    static const char *suffix() {return "l";}
+    static udata_fast32_t get_unsigned (const system_bus *b,
+                                        function_code fc, address_t address)
+    {
+      return b->get32 (fc, address);
+    }
+
+    static data_fast32_t get (const system_bus *b,
+                              function_code fc, address_t address);
+    {
+      return as_signed (b->get32 (fc, address));
+    }
+
+    static void put (system_bus *b, function_code fc, address_t address,
+                     udata_fast32_t value);
+    {
+      b->put32 (fc, address, value);
+    }
+
+    static udata_fast32_t geti_unsigned (const system_bus *b,
+                                         function_code fc, address_t address)
+    {
+      return b->get32 (fc, address);
+    }
+
+    static data_fast32_t geti (const system_bus *b,
+                               function_code fc, address_t address)
+    {
+      return as_signed (b->get32 (fc, address));
+    }
+
+    static const char *suffix ()
+    {
+      return "l";
+    }
   };
 
-  inline uint32_type
-  long_word::normal_u(uint32_type value)
-  {
-    return value & uvalue_max();
-  }
-
-  inline sint32_type
-  long_word::normal_s(uint32_type value)
-  {
-    value &= uvalue_max();
-    if (value > uint32_type(svalue_max()))
-      return -sint32_type(uvalue_max() - value) - 1;
-    else
-      return value;
-  }
-
-  inline uint32_type
-  long_word::get_u(const uint32_type &reg)
-  {
-    return reg;
-  }
-
-  inline sint32_type
-  long_word::get_s(const uint32_type &reg)
-  {
-    return normal_s(get_u(reg));
-  }
-
-  inline void
-  long_word::put(uint32_type &reg, uint32_type value)
-  {
-    reg = normal_u(value);
-  }
-
-  inline uint32_type
-  long_word::get_u(const bus &m, uint32_type address, function_code fc)
-  {
-    return m.get_32(address, fc);
-  }
-
-  inline sint32_type
-  long_word::get_s(const bus &m, uint32_type address, function_code fc)
-  {
-    return normal_s(get_u(m, address, fc));
-  }
-
-  inline void
-  long_word::put(bus &m, uint32_type address, function_code fc,
-		 uint32_type value)
-  {
-    m.put_32(address, value, fc);
-  }
-
-  inline uint32_type
-  long_word::get_instruction_u(const bus &m, uint32_type address,
-			       function_code fc)
-  {
-    return m.get_32(address, fc);
-  }
-
-  inline sint32_type
-  long_word::get_instruction_s(const bus &m, uint32_type address,
-			       function_code fc)
-  {
-    return normal_s(get_instruction_u(m, address, fc));
-  }
+  extern const long_word_size long_word;
 }
 
-#endif /* not __VM68K_SIZE */
+#endif
