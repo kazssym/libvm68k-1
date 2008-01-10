@@ -224,13 +224,13 @@ namespace vx68k_m68k
     }
 
     static data_fast32_t get (const system_bus *b,
-                              function_code fc, address_t address);
+                              function_code fc, address_t address)
     {
       return as_signed (b->get32 (fc, address));
     }
 
     static void put (system_bus *b, function_code fc, address_t address,
-                     udata_fast32_t value);
+                     udata_fast32_t value)
     {
       b->put32 (fc, address, value);
     }
