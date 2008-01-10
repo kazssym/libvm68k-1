@@ -1,5 +1,5 @@
-/* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
+/* Virtual M68000 Toolkit
+   Copyright (C) 1998-2008 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,214 +17,245 @@
    USA.  */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+#include <config.h>
 #endif
-#undef const
-#undef inline
-
-#define _GNU_SOURCE 1
-#define _POSIX_C_SOURCE 199506L	// POSIX.1c
 
 #include <vm68k/bus>
+
 #include <algorithm>
+#include <cassert>
 
-#ifdef HAVE_NANA_H
-# include <nana.h>
-#else
-# include <cassert>
-# define I assert
-#endif
+using std::string;
+using std::fill;
 
-namespace vm68k
+namespace vx68k_m68k
 {
-  using namespace std;
-
-  uint16_type
-  bus::get_16(uint32_type address, function_code fc) const
-    throw (bus_error, address_error)
+  bus_error::bus_error (udata_fast16_t status, address_t address)
+    throw ()
   {
-    if ((address & 1) != 0)
-      throw address_error(address, READ | fc);
-
-    return get_16_aligned(address, fc);
+    assert ((status & ~0xffffU) == 0);
+    _ssw = status;
+    _address = address;
   }
 
-  uint32_type
-  bus::get_32(uint32_type address, function_code fc) const
+  const char *bus_error::what () const
+    throw ()
+  {
+    return "vx68k_m68k::bus_error";
+  }
+
+  address_error::address_error (udata_fast16_t status, address_t address)
+    throw ()
+  {
+    assert ((status & ~0xffffU) == 0);
+    _ssw = status;
+    _address = status;
+  }
+
+  const char *address_error::what () const
+    throw ()
+  {
+    return "vx68k_m68k::address_error";
+  }
+
+  /* Class accessible etc. implementation.  */
+
+  udata_fast8_t accessible::get8 (function_code fc, address_t address) const
+    throw (bus_error)
+  {
+    throw bus_error (READ | fc, address);
+  }
+
+  udata_fast16_t accessible::get16 (function_code fc, address_t address) const
+    throw (bus_error)
+  {
+    assert ((address & 1U) == 0);
+    throw bus_error (READ | fc, address);
+  }
+
+  udata_fast32_t accessible::get32 (function_code fc, address_t address) const
+    throw (bus_error)
+  {
+    assert ((address & 3U) == 0);
+    udata_fast32_t value = ((udata_fast32_t) this->get16 (fc, address)) << 16;
+    value |= get16 (fc, address + 2) & 0xffffU;
+    return value;
+  }
+
+  void accessible::put8 (function_code fc, address_t address,
+                         udata_fast8_t value)
+    throw (bus_error)
+  {
+    throw bus_error (WRITE | fc, address);
+  }
+
+  void accessible::put16 (function_code fc, address_t address,
+                          udata_fast16_t value)
+    throw (bus_error)
+  {
+    assert ((address & 1U) == 0);
+    throw bus_error (WRITE | fc, address);
+  }
+
+  void accessible::put32 (function_code fc, address_t address,
+                          udata_fast32_t value)
+    throw (bus_error)
+  {
+    assert ((address & 3U) == 0);
+    this->put16 (fc, address,     value >> 16);
+    this->put16 (fc, address + 2, value);
+  }
+
+  /* Class bus implementation.  */
+
+  static accessible null_accessible;
+
+  system_bus::system_bus ()
+  {
+    page_table[USER_DATA]    .assign (NPAGES, &null_accessible);
+    page_table[USER_PROGRAM] .assign (NPAGES, &null_accessible);
+    page_table[SUPER_DATA]   .assign (NPAGES, &null_accessible);
+    page_table[SUPER_PROGRAM].assign (NPAGES, &null_accessible);
+  }
+
+  system_bus::~system_bus ()
+  {
+  }
+
+  void system_bus::map_page (int bits,
+                             address_t address, udata_fast32_t size,
+                             accessible *p)
+  {
+    for (int fc = 0; fc != 7; bits >>= 1, ++fc)
+      {
+        if ((bits & 1U) != 0 && !(page_table[fc].empty ()))
+          {
+            page_table_type::iterator i =
+              this->find_page ((function_code) fc,
+                               address + size + PAGE_SIZE - 1);
+            if (i == page_table[fc].begin ())
+              {
+                i = page_table[fc].end ();
+              }
+
+            fill (this->find_page ((function_code) fc, address), i, p);
+          }
+      }
+  }
+
+  void system_bus::unmap_page (int bits,
+                               address_t address, udata_fast32_t size)
+  {
+    this->map_page (bits, address, size, &null_accessible);
+  }
+
+  udata_fast16_t system_bus::get16 (function_code fc, address_t address) const
     throw (bus_error, address_error)
   {
-    if ((address & 1) != 0)
-      throw address_error(address, READ | fc);
+    if ((address & 1U) != 0)
+      throw address_error (READ | fc, address);
 
-    uint32_type value;
-    if ((address >> 1 & 1) != 0)
+    return this->get16_unchecked (fc, address);
+  }
+
+  udata_fast32_t system_bus::get32 (function_code fc, address_t address) const
+    throw (bus_error, address_error)
+  {
+    if ((address & 1U) != 0)
+      throw address_error (READ | fc, address);
+
+    udata_fast32_t value;
+    if ((address & 2U) != 0)
       {
-	value = uint32_type(get_16_aligned(address, fc)) << 16;
-	value |= get_16_aligned(address + 2, fc) & 0xffff;
+	value = (udata_fast32_t) this->get16_unchecked (fc, address) << 16;
+	value |= this->get16_unchecked (fc, address + 2) & 0xffff;
       }
     else
       {
-	const bus_target *p = *find_memory(address);
-	value = p->get_32(address, fc);
+	const accessible *p = *(this->find_page (fc, address));
+	value = p->get32 (fc, address);
       }
 
     return value;
   }
 
-  string
-  bus::get_string(uint32_type address, function_code fc) const
+  string system_bus::get_string (function_code fc, address_t address) const
   {
     string s;
     for (;;)
       {
-	int c = get_8(address++, fc);
+	udata_fast8_t c = this->get8 (fc, address++);
 	if (c == 0)
 	  break;
-	s += c;
+	s += (char) c;
       }
 
     return s;
   }
 
   /* Read a block of data from memory.  */
-  void
-  bus::read(uint32_type address, void *data, size_t size,
-		   function_code fc) const
+  void system_bus::read (function_code fc, address_t address,
+                         void *data, size_t size) const
   {
-    unsigned char *i = static_cast<unsigned char *>(data);
+    unsigned char *i = static_cast<unsigned char *> (data);
     unsigned char *last = i + size;
 
     while (i != last)
-      *i++ = get_8(address++, fc);
-  }
-
-  void
-  bus::put_16(uint32_type address, uint16_type value, function_code fc)
-    throw (bus_error, address_error)
-  {
-    if ((address & 1) != 0)
-      throw address_error(address, WRITE | fc);
-
-    put_16_aligned(address, value, fc);
-  }
-
-  void
-  bus::put_32(uint32_type address, uint32_type value, function_code fc)
-    throw (bus_error, address_error)
-  {
-    if ((address & 1) != 0)
-      throw address_error(address, WRITE | fc);
-
-    if ((address >> 1 & 1) != 0)
       {
-	put_16_aligned(address,     value >> 16, fc);
-	put_16_aligned(address + 2, value,       fc);
+        *i++ = this->get8 (fc, address++);
+      }
+  }
+
+  void system_bus::put16 (function_code fc, address_t address,
+                          udata_fast16_t value)
+    throw (bus_error, address_error)
+  {
+    if ((address & 1U) != 0)
+      throw address_error (WRITE | fc, address);
+
+    this->put16_unchecked (fc, address, value);
+  }
+
+  void system_bus::put32 (function_code fc, address_t address,
+                          udata_fast32_t value)
+    throw (bus_error, address_error)
+  {
+    if ((address & 1U) != 0)
+      throw address_error (WRITE | fc, address);
+
+    if ((address & 2U) != 0)
+      {
+	this->put16_unchecked (fc, address,     value >> 16);
+	this->put16_unchecked (fc, address + 2, value);
       }
     else
       {
-	bus_target *p = *find_memory(address);
-	p->put_32(address, value, fc);
+	accessible *p = *(this->find_page (fc, address));
+	p->put32 (fc, address, value);
       }
   }
 
-  void
-  bus::put_string(uint32_type address, const string &s,
-			 function_code fc)
+  void system_bus::put_string (function_code fc, address_t address,
+                               const string &s)
   {
-    for (string::const_iterator i = s.begin();
-	 i != s.end();
-	 ++i)
-      put_8(address++, *i, fc);
+    for (string::const_iterator i = s.begin(); i != s.end(); ++i)
+      {
+        this->put8 (fc, address++, *i);
+      }
 
-    put_8(address++, 0, fc);
+    this->put8 (fc, address++, 0);
   }
 
   /* Write a block of data to memory.  */
-  void
-  bus::write(uint32_type address, const void *data, size_t size,
-		    function_code fc)
+  void system_bus::write (function_code fc, address_t address,
+                          const void *data, size_t size)
   {
-    const unsigned char *i = static_cast<const unsigned char *>(data);
+    const unsigned char *i = static_cast<const unsigned char *> (data);
     const unsigned char *last = i + size;
 
     while (i != last)
-      put_8(address++, *i++, fc);
-  }
-
-  void
-  bus::fill_memory(uint32_type first, uint32_type last, bus_target *t)
-  {
-    vector<bus_target *>::iterator i = find_memory(last + PAGE_SIZE - 1);
-    if (i == page_table.begin())
-      i = page_table.end();
-
-    std::fill(find_memory(first), i, t);
-  }
-}
-
-namespace vm68k
-{
-  namespace
-  {
-    /* Default memory that always raises a bus error.  */
-    class no_target: public bus_target
-    {
-    public:
-      int get_8(uint32_type address, function_code) const
-	throw (bus_error);
-      uint16_type get_16(uint32_type address, function_code) const
-	throw (bus_error);
-
-      void put_8(uint32_type address, int, function_code)
-	throw (bus_error);
-      void put_16(uint32_type address, uint16_type, function_code)
-	throw (bus_error);
-    };
-
-    int
-    no_target::get_8(uint32_type address, function_code fc) const
-      throw (bus_error)
-    {
-      throw bus_error(address, READ | fc);
-    }
-
-    uint16_type
-    no_target::get_16(uint32_type address, function_code fc) const
-      throw (bus_error)
-    {
-      I((address & 1) == 0);
-      throw bus_error(address, READ | fc);
-    }
-
-    void
-    no_target::put_8(uint32_type address, int value, function_code fc)
-      throw (bus_error)
-    {
-      throw bus_error(address, WRITE | fc);
-    }
-
-    void
-    no_target::put_16(uint32_type address, uint16_type value, function_code fc)
-      throw (bus_error)
-    {
-      I((address & 1) == 0);
-      throw bus_error(address, WRITE | fc);
-    }
-  }
-
-  bus_target *
-  bus::no_target() throw ()
-  {
-    static class no_target t;
-    return &t;
-  }
-
-  bus::~bus()
-  {
-  }
-
-  bus::bus()
-    : page_table(NPAGES, no_target())
-  {
+      {
+        this->put8 (fc, address++, *i++);
+      }
   }
 }
