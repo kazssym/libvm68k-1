@@ -1,5 +1,17 @@
 2008-01-10  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* size.cpp: New file.
+
+	* doc/libvm68k.texi: Moved from the top directory.
+
+	* Makefile.am (dist-hook): New target.
+	(libvm68k_la_LDFLAGS): Change the version information.
+	(libvm68k_la_SOURCES): Remove bus_target.cpp and add size.cpp.
+	Change the link order.
+	(nobase_include_HEADERS): New macro.
+	(info_TEXINFOS): Removed.
+	(SUBDIRS): Remove vm68k and add doc.
+
 	* bus.cpp: Change namespace from vm68k to vx68k_m68k.  Update
 	implementations.
 
