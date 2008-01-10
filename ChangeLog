@@ -1,5 +1,9 @@
 2008-01-10  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* configure.ac: Change package information.  Use
+	AC_CONFIG_AUX_DIR.  Move config.h into include.  Remove Nana
+	support.
+
 	* size.cpp: New file.
 
 	* doc/libvm68k.texi: Moved from the top directory.

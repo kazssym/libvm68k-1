@@ -1,19 +1,14 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([Libvm68k], [1.0.6], [vx68k@lists.hypercore.co.jp], [libvm68k])
+AC_INIT([Virtual M68000 Toolkit], [1.1.0], [vx68k@googlegroups.com], [libvm68k])
 AC_CONFIG_SRCDIR([processor.cpp])
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
-LDRELEASE="-release 1.0"
-AC_SUBST([LDRELEASE])dnl
+
+dnl Checks for programs.
 AC_PROG_CC
+AC_PROG_CC_STDC
 AC_PROG_CXX
-AC_PROG_CPP
-AC_ARG_WITH([nana],
-[  --with-nana             use GNU Nana for testing [no]],, [with_nana=no])
-if test "$with_nana" != no; then
-  AC_CHECK_LIB([nana], [_I_default_handler])
-  AC_CHECK_HEADERS([nana.h])
-fi
+AC_USE_SYSTEM_EXTENSIONS
 
 AC_C_CONST
 AC_TYPE_SIZE_T
@@ -36,5 +31,6 @@ if test "$ac_cv_cxx_namespaces" != yes; then
   AC_MSG_WARN([this program cannot be built without namespaces])
 fi
 
-AC_CONFIG_FILES([Makefile vm68k/Makefile])
+AC_CONFIG_FILES([Makefile doc/Makefile])
+AC_CONFIG_HEADERS([include/config.h])
 AC_OUTPUT
