@@ -22,6 +22,10 @@
 
 #include <climits>
 
+#ifndef _VM68K_PUBLIC
+#define _VM68K_PUBLIC
+#endif
+
 namespace vx68k_m68k
 {
   typedef signed char data8_t;

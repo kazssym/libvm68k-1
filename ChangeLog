@@ -1,3 +1,7 @@
+2008-01-15  Kaz Sasayama  <kazssym@vx68k.org>
+
+	* vm68k/base (_VM68K_PUBLIC): New macro.
+
 2008-01-10  Kaz Sasayama  <kazssym@vx68k.org>
 
 	* size.cpp (byte, word, long_word): New const object.
