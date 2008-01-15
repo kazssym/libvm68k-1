@@ -10,11 +10,16 @@ AC_PROG_CC_STDC
 AC_PROG_CXX
 AC_USE_SYSTEM_EXTENSIONS
 
-AC_C_CONST
+dnl Checks for libraries.
+
+dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
 AC_CXX_EXCEPTIONS
 AC_CXX_TEMPLATES
 AC_CXX_NAMESPACES
+
+AC_LIBLTDL_INSTALLABLE
+AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 if test "$ac_cv_cxx_exceptions" != yes; then
   AC_MSG_WARN([the C++ compiler does not support exceptions])
@@ -33,4 +38,5 @@ fi
 
 AC_CONFIG_FILES([Makefile doc/Makefile])
 AC_CONFIG_HEADERS([include/config.h])
+AC_CONFIG_SUBDIRS([libltdl])
 AC_OUTPUT
