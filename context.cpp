@@ -1,5 +1,5 @@
-/* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2001 Hypercore Software Design, Ltd.
+/* Virtual M68000 Toolkit
+   Copyright (C) 1998-2008 Hypercore Software Design, Ltd.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -17,44 +17,94 @@
    02111-1307, USA.  */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-#undef const
-#undef inline
-
-#include <vm68k/processor>
-
-#ifdef HAVE_NANA_H
-# include <nana.h>
-# include <cstdio>
-#else
-# include <cassert>
-# define I assert
+#include <config.h>
 #endif
 
-using namespace std;
+#if __GNUC__
+#define _VM68K_PUBLIC __attribute__ ((__visibility__ ("default")))
+#endif
 
-namespace vm68k
+#include <vm68k/context>
+#include <cassert>
+#include <pthread.h>
+
+namespace vx68k_m68k
 {
-  void
-  context::interrupt(int prio, unsigned int vecno)
+  context *context::current_context ()
   {
-    if (prio < 1 || prio > 7)
+    return NULL;
+  }
+
+  context::context (system_bus *bus)
+  {
+    _bus = bus;
+    if (this->super ())
+      {
+        dfc_cache = SUPER_DATA;
+        pfc_cache = SUPER_PROGRAM;
+      }
+    else
+      {
+        dfc_cache = USER_DATA;
+        pfc_cache = USER_PROGRAM;
+      }
+
+    a_interrupted = false;
+  }
+
+  void context::set_super (bool state)
+  {
+    if (state != super ())
+      {
+        if (state)
+          {
+	    _named_reg.usp = _named_reg.sp;
+	    _status.set_s_bit (true);
+	    _named_reg.sp = _named_reg.ssp;
+
+	    dfc_cache = SUPER_DATA;
+	    pfc_cache = SUPER_PROGRAM;
+	  }
+        else
+          {
+	    _named_reg.ssp = _named_reg.sp;
+	    _status.set_s_bit (false);
+	    _named_reg.sp = _named_reg.usp;
+
+	    dfc_cache = USER_DATA;
+	    pfc_cache = USER_PROGRAM;
+	  }
+      }
+  }
+
+  void context::set_status (udata_fast16_t value)
+  {
+    set_super ((value & 0x2000) != 0);
+    _status = value;
+  }
+
+  void context::interrupt (int priority, udata_fast8_t vecno)
+  {
+    if (priority < 1 || priority > 7)
       return;
 
-    vecno &= 0xffu;
-    interrupt_queues[7 - prio].push(vecno);
+    vecno &= 0xffU;
+    interrupt_queue[7 - priority].push (vecno);
     a_interrupted = true;
   }
 
-  uint32_type
-  context::handle_interrupts(uint32_type pc)
+#if 0
+  address_t
+  context::handle_interrupts (address_t pc)
   {
+    using std::vector;
+    using std::queue;
+
     vector<queue<unsigned int> >::iterator i = interrupt_queues.begin();
     while (i->empty())
       {
 	++i;
-	I(i != interrupt_queues.end());
+	assert (i != interrupt_queues.end());
       }
 
     int prio = interrupt_queues.end() - i;
@@ -64,15 +114,15 @@ namespace vm68k
 	unsigned int vecno = i->front();
 	i->pop();
 
-	uint16_type old_sr = sr();
-	set_sr(old_sr & ~0x700 | prio << 8);
-	set_supervisor_state(true);
-	regs.a[7] -= 6;
-	mem->put_32(regs.a[7] + 2, pc, SUPER_DATA);
-	mem->put_16(regs.a[7] + 0, old_sr, SUPER_DATA);
+	udata_fast16_t old_sr = status ();
+	set_status (old_sr & ~0x700 | prio << 8);
+	set_super (true);
+	_named_reg.sp -= 6;
+	_bus->put32 (SUPER_DATA, _named_reg.sp + 2, pc);
+	_bus->put16 (SUPER_DATA, _named_reg.sp + 0, old_sr);
 
-	uint32_type address = vecno * 4u;
-	pc = mem->get_32(address, SUPER_DATA);
+	address_t address = vecno * 4u;
+	pc = _bus->get32 (SUPER_DATA, address);
 
 	a_interrupted = false;
 	vector<queue<unsigned int> >::iterator j = i;
@@ -86,55 +136,5 @@ namespace vm68k
 
     return pc;
   }
-  
-  void
-  context::set_supervisor_state(bool state)
-  {
-    if (state)
-      {
-	if (!supervisor_state())
-	  {
-	    regs.usp = regs.a[7];
-	    regs.ccr.set_s_bit(true);
-	    regs.a[7] = regs.ssp;
-
-	    pfc_cache = SUPER_PROGRAM;
-	    dfc_cache = SUPER_DATA;
-	  }
-      }
-    else
-      {
-	if (supervisor_state())
-	  {
-	    regs.ssp = regs.a[7];
-	    regs.ccr.set_s_bit(false);
-	    regs.a[7] = regs.usp;
-
-	    pfc_cache = USER_PROGRAM;
-	    dfc_cache = USER_DATA;
-	  }
-      }
-  }
-
-  uint16_type
-  context::sr() const
-  {
-    return regs.ccr;
-  }
-
-  void
-  context::set_sr(uint16_type value)
-  {
-    set_supervisor_state(value & 0x2000);
-    regs.ccr = value;
-  }
-  
-  context::context(bus *m)
-    : mem(m),
-      pfc_cache(regs.ccr.supervisor_state() ? SUPER_PROGRAM : USER_PROGRAM),
-      dfc_cache(regs.ccr.supervisor_state() ? SUPER_DATA : USER_DATA),
-      a_interrupted(false),
-      interrupt_queues(7)
-  {
-  }
+#endif
 }

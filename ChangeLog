@@ -1,5 +1,11 @@
 2008-01-15  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* context.cpp: Rewrite functions.
+	(_VM68K_PUBLIC): Define to a visibility attribute.
+
+	* vm68k/context (class context, class status_register): Add
+	_VM68K_PUBLIC.
+
 	* Makefile.am (libvm68k_la_LIBADD): New macro.
 	(dist-hook): Sort the file list.
 
@@ -10,7 +16,7 @@
 	* vm68k/bus: Use read and write instead of get and put
 	respectively.
 	(class bus_error, class address_error, class accessible, class
-	system_bus): Add _VM68K_PUBLIC prefixes.
+	system_bus): Add _VM68K_PUBLIC.
 
 	* vm68k/base (_VM68K_PUBLIC): New macro.
 
