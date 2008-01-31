@@ -1,5 +1,7 @@
 2008-01-31  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* vm68k/size: Change method names.  Add _VM68K_PUBLIC.
+
 	* vm68k/context (class context): Change read_reg_unsigned and
 	read_reg to const.
 
