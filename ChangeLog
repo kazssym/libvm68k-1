@@ -1,5 +1,8 @@
 2008-01-31  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* vm68k/context (class context): Change read_reg_unsigned and
+	read_reg to const.
+
 	* vm68k/base: Add compile-time test for data8_t and data16_t.
 
 2008-01-15  Kaz Sasayama  <kazssym@vx68k.org>

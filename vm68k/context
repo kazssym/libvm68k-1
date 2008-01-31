@@ -173,13 +173,13 @@ namespace vx68k_m68k
 
   public:
     template <class Size>
-    typename Size::udata_type read_reg_unsigned (const Size &, int regno)
+    typename Size::udata_type read_reg_unsigned (const Size &, int regno) const
     {
       return Size::read_unsigned (_reg[regno]);
     }
 
     template <class Size>
-    typename Size::data_type read_reg (const Size &, int regno)
+    typename Size::data_type read_reg (const Size &, int regno) const
     {
       return Size::read (_reg[regno]);
     }
