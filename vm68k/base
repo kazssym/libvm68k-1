@@ -28,11 +28,21 @@
 
 namespace vx68k_m68k
 {
+#if SCHAR_MIN < -0x7f
   typedef signed char data8_t;
+#else
+  typedef short       data8_t;
+#endif
+#if SHRT_MIN < -0x7fff
   typedef short       data16_t;
-#if INT_MAX >= 0x7fffffffL && INT_MIN < -0x7fffffffL
+#elif INT_MIN < -0x7fff
+  typedef int         data16_t;
+#else
+  typedef long        data16_t;
+#endif
+#if INT_MIN < -0x7fffffffL && INT_MAX >= 0x7fffffffL
   typedef int         data32_t;
-#elif LONG_MAX >= 0x7fffffffL && LONG_MIN < -0x7fffffffL
+#elif LONG_MIN < -0x7fffffffL
   typedef long        data32_t;
 #else
 #error No suitable type for data32_t
