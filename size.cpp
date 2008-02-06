@@ -20,11 +20,15 @@
 #include <config.h>
 #endif
 
+#if __GNUC__
+#define VM68K_PUBLIC __attribute__ ((__visibility__ ("default")))
+#endif
+
 #include <vm68k/size>
 
 namespace vx68k_m68k
 {
-  const byte_size      byte = {};
-  const word_size      word = {};
+  const byte_size      byte =      {};
+  const word_size      word =      {};
   const long_word_size long_word = {};
 }

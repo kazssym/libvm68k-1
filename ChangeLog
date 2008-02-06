@@ -1,5 +1,7 @@
 2008-02-06  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* size.cpp (VM68K_PUBLIC): Define VM68K_PUBLIC.
+
 	* inst_xfer.h: New file.
 
 	* vm68k/base (VM68K_PUBLIC): Removed an underscore.  Also change
