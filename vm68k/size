@@ -24,8 +24,13 @@
 
 namespace vx68k_m68k
 {
+  /* Forward declarations.  */
+  struct byte_size;
+  struct word_size;
+  struct long_word_size;
+
   /* Access methods for byte data.  */
-  struct _VM68K_PUBLIC byte_size
+  struct VM68K_PUBLIC byte_size
   {
     typedef data_fast8_t  data_type;
     typedef udata_fast8_t udata_type;
@@ -101,7 +106,7 @@ namespace vx68k_m68k
   };
 
   /* Access methods for word data.  */
-  struct _VM68K_PUBLIC word_size
+  struct VM68K_PUBLIC word_size
   {
     typedef data_fast16_t  data_type;
     typedef udata_fast16_t udata_type;
@@ -177,7 +182,7 @@ namespace vx68k_m68k
   };
 
   /* Access methods for long word data.  */
-  struct _VM68K_PUBLIC long_word_size
+  struct VM68K_PUBLIC long_word_size
   {
     typedef data_fast32_t  data_type;
     typedef udata_fast32_t udata_type;
@@ -252,9 +257,9 @@ namespace vx68k_m68k
     }
   };
 
-  extern _VM68K_PUBLIC const byte_size      byte;
-  extern _VM68K_PUBLIC const word_size      word;
-  extern _VM68K_PUBLIC const long_word_size long_word;
+  extern VM68K_PUBLIC const byte_size      byte;
+  extern VM68K_PUBLIC const word_size      word;
+  extern VM68K_PUBLIC const long_word_size long_word;
 }
 
 #endif
