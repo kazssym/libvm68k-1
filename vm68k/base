@@ -22,8 +22,8 @@
 
 #include <climits>
 
-#ifndef _VM68K_PUBLIC
-#define _VM68K_PUBLIC
+#ifndef VM68K_PUBLIC
+#define VM68K_PUBLIC
 #endif
 
 namespace vx68k_m68k

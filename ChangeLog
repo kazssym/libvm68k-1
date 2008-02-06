@@ -1,5 +1,8 @@
 2008-02-06  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* vm68k/base (VM68K_PUBLIC): Removed an underscore.  Also change
+	all references.
+
 	* inst_arith.h, inst_logical.h, inst_bit.h: New files.
 
 2008-01-31  Kaz Sasayama  <kazssym@vx68k.org>
