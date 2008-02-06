@@ -29,19 +29,17 @@ namespace vx68k_m68k
   namespace inst
   {
     /* Handles a BCLR instruction (data register).  */
-    template<class D>
-    address_t inst_bclr_d (address_t pc, udata_fast16_t w,
-                           execution_context *c)
+    template<class Size, template<class Size> class D>
+    address_t do_BCLR_d (address_t pc, udata_fast16_t w, execution_context *c)
     {
-      typedef typename D::size_type size_type;
-      typedef typename D::data_type data_type;
+      typedef typename Size::data_type data_type;
       assert (c != NULL);
 
-      D ea1 (w & 7, pc);
+      D<Size> ea1 (w & 7, pc);
       int r2 = w >> 9 & 7;
 
       int v2 =
-        c->read_reg_unsigned (word, D0 + r2) & size_type::data_size () * 8 - 1;
+        c->read_reg_unsigned (word, D0 + r2) & Size::data_size () * 8 - 1;
       data_type mask = (data_type) 1 << v2;
       data_type v1 = ea1.get (c);
       bool test = (v1 & mask) != 0;
@@ -50,20 +48,18 @@ namespace vx68k_m68k
       c->_status.set_cc (test);  // FIXME.
 
       ea1.finish (c);
-      return pc + D::extension_size ();
+      return pc + D<Size>::extension_size ();
     }
 
     /* Handles a BCLR instruction (immediate).  */
-    template<class D>
-    address_t inst_bclr_i (address_t pc, udata_fast16_t w,
-                           execution_context *c)
+    template<class Size, template<class Size> class D>
+    address_t do_BCLR_i (address_t pc, udata_fast16_t w, execution_context *c)
     {
-      typedef typename D::size_type size_type;
-      typedef typename D::data_type data_type;
+      typedef typename Size::data_type data_type;
       assert (c != NULL);
 
-      int v2 = c->fetch_unsigned (word, pc) & size_type::data_size () * 8 - 1;
-      D ea1 (w & 7, pc + word_size::aligned_data_size ());
+      int v2 = c->fetch_unsigned (word, pc) & Size::data_size () * 8 - 1;
+      D<Size> ea1 (w & 7, pc + word_size::aligned_data_size ());
 
       // This instruction affects only the Z bit of the condition codes.
       data_type mask = (data_type) 1 << v2;
@@ -74,23 +70,21 @@ namespace vx68k_m68k
       c->_status.set_cc (test);    // FIXME.
 
       ea1.finish (c);
-      return pc + word_size::aligned_data_size () + D::extension_size();
+      return pc + word_size::aligned_data_size () + D<Size>::extension_size();
     }
 
     /* Handles a BSET instruction (data register).  */
-    template<class D>
-    address_t inst_bset_d (address_t pc, udata_fast16_t w,
-                           execution_context *c)
+    template<class Size, template<class Size> class D>
+    address_t do_BSET_d (address_t pc, udata_fast16_t w, execution_context *c)
     {
-      typedef typename D::size_type size_type;
-      typedef typename D::data_type data_type;
+      typedef typename Size::data_type data_type;
       assert (c != NULL);
 
-      D ea1 (w & 7, pc);
+      D<Size> ea1 (w & 7, pc);
       int r2 = w >> 9 & 7;
 
       int v2 =
-        c->read_reg_unsigned (word, D0 + r2) & size_type::data_size () * 8 - 1;
+        c->read_reg_unsigned (word, D0 + r2) & Size::data_size () * 8 - 1;
       data_type mask = (data_type) 1 << v2;
       data_type v1 = ea1.get (c);
       bool test = (v1 & mask) != 0;
@@ -99,20 +93,18 @@ namespace vx68k_m68k
       c->_status.set_cc (test);  // FIXME.
 
       ea1.finish (c);
-      return pc + D::extension_size ();
+      return pc + D<Size>::extension_size ();
     }
 
     /* Handles a BSET instruction (immediate).  */
-    template<class D>
-    address_t inst_bset_i (address_t pc, udata_fast16_t w,
-                           execution_context *c)
+    template<class Size, template<class Size> class D>
+    address_t do_BSET_i (address_t pc, udata_fast16_t w, execution_context *c)
     {
-      typedef typename D::size_type size_type;
-      typedef typename D::data_type data_type;
+      typedef typename Size::data_type data_type;
       assert (c != NULL);
 
-      int v2 = c->fetch_unsigned (word, pc) & size_type::data_size () * 8 - 1;
-      D ea1 (w & 7, pc + word_size::aligned_data_size ());
+      int v2 = c->fetch_unsigned (word, pc) & Size::data_size () * 8 - 1;
+      D<Size> ea1 (w & 7, pc + word_size::aligned_data_size ());
 
       data_type mask = (data_type) 1 << v2;
       data_type v1 = ea1.get (c);
@@ -122,23 +114,21 @@ namespace vx68k_m68k
       c->_status.set_cc (test);    // FIXME.
 
       ea1.finish (c);
-      return pc + word_size::aligned_data_size () + D::extension_size ();
+      return pc + word_size::aligned_data_size () + D<Size>::extension_size ();
     }
 
     /* Handles a BTST instruction (data register).  */
-    template<class D>
-    address_t inst_btst_d (address_t pc, udata_fast16_t w,
-                           execution_context *c)
+    template<class Size, template<class Size> class D>
+    address_t do_BTST_d (address_t pc, udata_fast16_t w, execution_context *c)
     {
-      typedef typename D::size_type size_type;
-      typedef typename D::data_type data_type;
+      typedef typename Size::data_type data_type;
       assert (c != NULL);
 
-      D ea1 (w & 7, pc);
+      D<Size> ea1 (w & 7, pc);
       int r2 = w >> 9 & 7;
 
       int v2 =
-        c->read_reg_unsigned (word, D0 + r2) & size_type::data_size () * 8 - 1;
+        c->read_reg_unsigned (word, D0 + r2) & Size::data_size () * 8 - 1;
       data_type mask = (data_type) 1 << v2;
       data_type v1 = ea1.get (c);
       bool test = (v1 & mask) != 0;
@@ -146,20 +136,18 @@ namespace vx68k_m68k
       c->_status.set_cc (test);    // FIXME.
 
       ea1.finish (c);
-      return pc + D::extension_size ();
+      return pc + D<Size>::extension_size ();
     }
 
     /* Handles a BTST instruction (immediate).  */
-    template<class D>
-    address_t inst_btst_i (address_t pc, udata_fast16_t w,
-                           execution_context *c)
+    template<class Size, template<class Size> class D>
+    address_t do_BTST_i (address_t pc, udata_fast16_t w, execution_context *c)
     {
-      typedef typename D::size_type size_type;
-      typedef typename D::data_type data_type;
+      typedef typename Size::data_type data_type;
       assert (c != NULL);
 
-      int v2 = c->fetch_unsigned (word, pc) & size_type::data_size() * 8 - 1;
-      D ea1 (w & 7, pc + word_size::aligned_data_size ());
+      int v2 = c->fetch_unsigned (word, pc) & Size::data_size() * 8 - 1;
+      D<Size> ea1 (w & 7, pc + word_size::aligned_data_size ());
 
       data_type mask = (data_type) 1 << v2;
       data_type v1 = ea1.get (c);
@@ -168,7 +156,7 @@ namespace vx68k_m68k
       c->_status.set_cc (test);   // FIXME.
 
       ea1.finish (c);
-      return pc + word_size::aligned_data_size () + D::extension_size ();
+      return pc + word_size::aligned_data_size () + D<Size>::extension_size ();
     }
   }
 }

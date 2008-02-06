@@ -30,7 +30,7 @@ namespace vx68k_m68k
     template<class Size, template<class Size> class D>
     address_t do_ADDI (address_t pc, udata_fast16_t w, execution_context *c)
     {
-      typedef typename D<Size>::data_type data_type;
+      typedef typename Size::data_type data_type;
       assert (c != NULL);
 
       data_type v2 = c->fetch (Size (), pc);
@@ -49,7 +49,7 @@ namespace vx68k_m68k
     template<class Size, template<class Size> class D>
     address_t do_CMPI (address_t pc, udata_fast16_t w, execution_context *c)
     {
-      typedef typename D<Size>::data_type data_type;
+      typedef typename Size::data_type data_type;
       assert (c != NULL);
 
       data_type v2 = c->fetch (Size (), pc);
@@ -67,7 +67,7 @@ namespace vx68k_m68k
     template<class Size, template<class Size> class D>
     address_t do_SUBI (address_t pc, udata_fast16_t w, execution_context *c)
     {
-      typedef typename D<Size>::data_type data_type;
+      typedef typename Size::data_type data_type;
       assert (c != NULL);
 
       data_type v2 = c->fetch (Size (), pc);
