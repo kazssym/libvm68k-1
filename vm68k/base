@@ -1,0 +1,6 @@
+#ifndef _VM68K_BASE
+#define _VM68K_BASE
+
+#include <vm68k/bits/base.h>
+
+#endif
