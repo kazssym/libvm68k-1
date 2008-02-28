@@ -1,5 +1,9 @@
 2008-02-28  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* vm68k/bits/bus.h: Renamed from vm68k/bus.  Rename ssw to
+	status.  Rename _VM68K_PUBLIC to VM68K_PUBLIC.
+	(class system_bus): Add member null_accessible.
+
 	* vm68k/base: New file.
 
 	* vm68k/bits/base.h: Renamed from vm68k/base.

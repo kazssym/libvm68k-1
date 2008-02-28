@@ -17,13 +17,13 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
    USA.  */
 
-#ifndef _VM68K_BUS
-#define _VM68K_BUS 1
+#ifndef _VM68K_BUS_H
+#define _VM68K_BUS_H 1
 
 #include <exception>
 #include <string>
 #include <vector>
-#include <vm68k/base>
+#include <vm68k/bits/base.h>
 
 namespace vx68k_m68k
 {
@@ -52,13 +52,13 @@ namespace vx68k_m68k
   /**
    * Bus error.
    */
-  class _VM68K_PUBLIC bus_error : public std::exception
+  class VM68K_PUBLIC bus_error : public std::exception
   {
   public:
     bus_error (udata_fast16_t status, address_t address) throw ();
 
   public:
-    udata_fast16_t ssw () const throw () { return _ssw; }
+    udata_fast16_t status () const throw () { return _ssw; }
     address_t address () const throw () { return _address; }
     const char *what () const throw ();
 
@@ -70,13 +70,13 @@ namespace vx68k_m68k
   /**
    * Address error.
    */
-  class _VM68K_PUBLIC address_error : public std::exception
+  class VM68K_PUBLIC address_error : public std::exception
   {
   public:
     address_error (udata_fast16_t status, address_t address) throw ();
 
   public:
-    udata_fast16_t ssw () const throw () { return _ssw; }
+    udata_fast16_t status () const throw () { return _ssw; }
     address_t address () const throw () { return _address; }
     const char *what () const throw ();
 
@@ -85,12 +85,12 @@ namespace vx68k_m68k
     address_t _address;
   };
 
-  /* Abstract bus target.  A bus target will be mapped within an address
+  /* Bus target.  A bus target will be mapped within an address
      space.  */
-  class _VM68K_PUBLIC accessible
+  class VM68K_PUBLIC accessible
   {
   public:
-    virtual ~accessible () {}
+    virtual ~accessible ();
 
   public:
     virtual udata_fast8_t read8 (function_code fc, address_t address) const
@@ -113,15 +113,16 @@ namespace vx68k_m68k
 
   /* Maps an address space to memories.  An address space is a
      software view of a target machine.  */
-  class _VM68K_PUBLIC system_bus
+  class VM68K_PUBLIC system_bus
   {
   public:
     system_bus ();
-    virtual ~system_bus ();
+    ~system_bus ();
 
   protected:
     typedef std::vector<accessible *> page_table_type;
   private:
+    accessible null_accessible;
     page_table_type page_table[7];
 
   protected:
