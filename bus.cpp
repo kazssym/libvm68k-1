@@ -20,8 +20,16 @@
 #include <config.h>
 #endif
 
-#if __GNUC__
-#define _VM68K_PUBLIC __attribute__ ((__visibility__ ("default")))
+#if _WIN32
+#include <windows.h>
+#endif
+
+#if _WIN32
+#define VM68K_PUBLIC __declspec (dllexport)
+#elif __GNUC__
+#define VM68K_PUBLIC __attribute__ ((__visibility__ ("default")))
+#else
+#define VM68K_PUBLIC
 #endif
 
 #include <vm68k/bus>
@@ -63,6 +71,10 @@ namespace vx68k_m68k
   }
 
   /* Class accessible etc. implementation.  */
+
+  accessible::~accessible ()
+  {
+  }
 
   udata_fast8_t accessible::read8 (function_code fc, address_t address) const
     throw (bus_error)
@@ -112,8 +124,6 @@ namespace vx68k_m68k
 
   /* Class bus implementation.  */
 
-  static accessible null_accessible;
-
   system_bus::system_bus ()
   {
     page_table[USER_DATA]    .assign (NPAGES, &null_accessible);
@@ -132,7 +142,7 @@ namespace vx68k_m68k
   {
     for (int fc = 0; fc != 7; bits >>= 1, ++fc)
       {
-        if ((bits & 1U) != 0 && !(page_table[fc].empty ()))
+        if ((bits & 1U) != 0 && !page_table[fc].empty ())
           {
             page_table_type::iterator i =
               this->find_page ((function_code) fc,

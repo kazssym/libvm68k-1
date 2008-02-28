@@ -1,5 +1,9 @@
 2008-02-28  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* bus.cpp: Add minimual support for Win32.
+	(~accessible): New function.
+	(null_accessible): Removed.
+
 	* configure.ac: Move config.h out of include/.  Add comments.
 
 	* inst/monadic.h: New file.
