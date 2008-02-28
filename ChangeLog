@@ -1,5 +1,7 @@
 2008-02-28  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* configure.ac: Move config.h out of include/.  Add comments.
+
 	* inst/monadic.h: New file.
 	* inst/control.h: New file.
 

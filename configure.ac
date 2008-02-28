@@ -10,7 +10,9 @@ AC_PROG_CC_STDC
 AC_PROG_CXX
 AC_USE_SYSTEM_EXTENSIONS
 
-dnl Checks for libraries.
+# Checks for libraries.
+
+# Checks for header files.
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
@@ -37,6 +39,6 @@ if test "$ac_cv_cxx_namespaces" != yes; then
 fi
 
 AC_CONFIG_FILES([Makefile doc/Makefile])
-AC_CONFIG_HEADERS([include/config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SUBDIRS([libltdl])
 AC_OUTPUT
