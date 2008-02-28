@@ -1,5 +1,7 @@
 2008-02-28  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* vm68k/bits/base.h: Renamed from vm68k/base.
+
 	* bus.cpp: Add minimual support for Win32.
 	(~accessible): New function.
 	(null_accessible): Removed.

@@ -17,8 +17,8 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
    USA.  */
 
-#ifndef _VM68K_BASE
-#define _VM68K_BASE 1
+#ifndef _VM68K_BASE_H
+#define _VM68K_BASE_H 1
 
 #include <climits>
 
