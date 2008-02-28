@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * base - base unit header for Virtual M68000 Toolkit
+ * bus - bus unit header for Virtual M68000 Toolkit
  * Copyright (C) 2003-2008 Hypercore Software Design, Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _VM68K_BASE
-#define _VM68K_BASE
+#ifndef _VM68K_BUS
+#define _VM68K_BUS
 
-#include <vm68k/bits/base.h>
+#include <vm68k/bits/bus.h>
 
 #endif
