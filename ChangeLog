@@ -1,5 +1,7 @@
 2008-03-11  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/Makefile.am: New file.
+
 	* lib/vm68k/bits/base.h (_VM68K_DEPRECATED): New macro.
 
 	* lib/vm68k/bits/bus.h: Upgrade to the GPLv3.
