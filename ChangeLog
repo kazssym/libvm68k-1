@@ -1,11 +1,16 @@
 2008-03-11  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/vm68k/bits/bus.h: Upgrade to the GPLv3.
+	(namespace vx68k): Add vm68k_ prefixes to names.
+	(class vm68k_bus): Rename from system_bus.
+	(enum vm68k_bus_function): Rename from function_code.
+
 	* lib/vm68k/bits/base.h: Upgrade to the GPLv3.
 	(VM68K_PUBLIC): Add definition for Win32.
 	(namespace vx68k): Rename from vx68k_m68k.  Also change all
 	others.
-	(namespace vx68k): Rename (u)data*_t to (u)int*_t.  Add prefixes
-	to types.
+	(namespace vx68k): Rename (u)data*_t to (u)int*_t.  Add vm68k_
+	prefixes to names.
 
 	* Move source files under lib subdirectory.
 
