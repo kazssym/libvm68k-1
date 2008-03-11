@@ -1,5 +1,7 @@
 2008-03-11  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/vm68k/bits/base.h (_VM68K_DEPRECATED): New macro.
+
 	* lib/vm68k/bits/bus.h: Upgrade to the GPLv3.
 	(namespace vx68k): Add vm68k_ prefixes to names.
 	(class vm68k_bus): Rename from system_bus.

@@ -29,6 +29,12 @@
 #endif
 #endif
 
+#if __GNUC__
+#define _VM68K_DEPRECATED __attribute__ ((deprecated))
+#else
+#define _VM68K_DEPRECATED
+#endif
+
 namespace vx68k
 {
 #if SCHAR_MIN < -0x7f
