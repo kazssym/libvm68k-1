@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * base - base unit header for Virtual M68000 Toolkit
+ * base - base unit public header for Virtual M68000 Toolkit
  * Copyright (C) 2003-2008 Hypercore Software Design, Ltd.
  *
  * This program is free software: you can redistribute it and/or modify

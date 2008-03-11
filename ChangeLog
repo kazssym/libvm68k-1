@@ -1,3 +1,14 @@
+2008-03-11  Kaz Sasayama  <kazssym@vx68k.org>
+
+	* lib/vm68k/bits/base.h: Upgrade to the GPLv3.
+	(VM68K_PUBLIC): Add definition for Win32.
+	(namespace vx68k): Rename from vx68k_m68k.  Also change all
+	others.
+	(namespace vx68k): Rename (u)data*_t to (u)int*_t.  Add prefixes
+	to types.
+
+	* Move source files under lib subdirectory.
+
 2008-02-28  Kaz Sasayama  <kazssym@vx68k.org>
 
 	* vm68k/bus: New file.
