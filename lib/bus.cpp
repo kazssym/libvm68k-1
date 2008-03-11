@@ -40,236 +40,257 @@
 using std::string;
 using std::fill;
 
-namespace vx68k_m68k
+namespace vx68k
 {
-  bus_error::bus_error (udata_fast16_t status, address_t address)
+  vm68k_bus_error::vm68k_bus_error (vm68k_uint_fast16_t status,
+                                    vm68k_address_t addr)
     throw ()
   {
     assert ((status & ~0xffffU) == 0);
-    _ssw = status;
-    _address = address;
+    _status = status;
+    _address = addr;
   }
 
-  const char *bus_error::what () const
-    throw ()
+  const char *vm68k_bus_error::what () const throw ()
   {
-    return "vx68k_m68k::bus_error";
+    return "vm68k_bus_error";
   }
 
-  address_error::address_error (udata_fast16_t status, address_t address)
+  vm68k_address_error::vm68k_address_error (vm68k_uint_fast16_t status,
+                                            vm68k_address_t addr)
     throw ()
   {
     assert ((status & ~0xffffU) == 0);
-    _ssw = status;
-    _address = status;
+    _status = status;
+    _address = addr;
   }
 
-  const char *address_error::what () const
-    throw ()
+  const char *vm68k_address_error::what () const throw ()
   {
-    return "vx68k_m68k::address_error";
+    return "vm68k_address_error";
   }
 
   /* Class accessible etc. implementation.  */
 
-  accessible::~accessible ()
+  vm68k_accessible::~vm68k_accessible ()
   {
   }
 
-  udata_fast8_t accessible::read8 (function_code fc, address_t address) const
-    throw (bus_error)
+  vm68k_uint_fast8_t vm68k_accessible::read8 (vm68k_bus_function func,
+                                              vm68k_address_t addr) const
+    throw (vm68k_bus_error)
   {
-    throw bus_error (READ | fc, address);
+    throw vm68k_bus_error (VM68K_READ | func, addr);
   }
 
-  udata_fast16_t accessible::read16 (function_code fc, address_t address) const
-    throw (bus_error)
+  vm68k_uint_fast16_t vm68k_accessible::read16 (vm68k_bus_function func,
+                                                vm68k_address_t addr) const
+    throw (vm68k_bus_error)
   {
-    assert ((address & 1U) == 0);
-    throw bus_error (READ | fc, address);
+    assert ((addr & 1U) == 0);
+    throw vm68k_bus_error (VM68K_READ | func, addr);
   }
 
-  udata_fast32_t accessible::read32 (function_code fc, address_t address) const
-    throw (bus_error)
+  vm68k_uint_fast32_t vm68k_accessible::read32 (vm68k_bus_function func,
+                                                vm68k_address_t addr) const
+    throw (vm68k_bus_error)
   {
-    assert ((address & 3U) == 0);
-    udata_fast32_t value = ((udata_fast32_t) this->read16 (fc, address)) << 16;
-    value |= read16 (fc, address + 2) & 0xffffU;
+    assert ((addr & 3U) == 0);
+    vm68k_uint_fast32_t value =
+      ((vm68k_uint_fast32_t) this->read16 (func, addr)) << 16;
+    value |= read16 (func, addr + 2) & 0xffffU;
     return value;
   }
 
-  void accessible::write8 (function_code fc, address_t address,
-                           udata_fast8_t value)
-    throw (bus_error)
+  void vm68k_accessible::write8 (vm68k_bus_function func,
+                                 vm68k_address_t addr,
+                                 vm68k_uint_fast8_t value)
+    throw (vm68k_bus_error)
   {
-    throw bus_error (WRITE | fc, address);
+    throw vm68k_bus_error (VM68K_WRITE | func, addr);
   }
 
-  void accessible::write16 (function_code fc, address_t address,
-                            udata_fast16_t value)
-    throw (bus_error)
+  void vm68k_accessible::write16 (vm68k_bus_function func,
+                                  vm68k_address_t addr,
+                                  vm68k_uint_fast16_t value)
+    throw (vm68k_bus_error)
   {
-    assert ((address & 1U) == 0);
-    throw bus_error (WRITE | fc, address);
+    assert ((addr & 1U) == 0);
+    throw vm68k_bus_error (VM68K_WRITE | func, addr);
   }
 
-  void accessible::write32 (function_code fc, address_t address,
-                            udata_fast32_t value)
-    throw (bus_error)
+  void vm68k_accessible::write32 (vm68k_bus_function func,
+                                  vm68k_address_t addr,
+                                  vm68k_uint_fast32_t value)
+    throw (vm68k_bus_error)
   {
-    assert ((address & 3U) == 0);
-    this->write16 (fc, address,     value >> 16);
-    this->write16 (fc, address + 2, value);
+    assert ((addr & 3U) == 0);
+    this->write16 (func, addr,     value >> 16);
+    this->write16 (func, addr + 2, value);
   }
 
   /* Class bus implementation.  */
 
-  system_bus::system_bus ()
+  vm68k_bus::vm68k_bus ()
   {
-    page_table[USER_DATA]    .assign (NPAGES, &null_accessible);
-    page_table[USER_PROGRAM] .assign (NPAGES, &null_accessible);
-    page_table[SUPER_DATA]   .assign (NPAGES, &null_accessible);
-    page_table[SUPER_PROGRAM].assign (NPAGES, &null_accessible);
+    page_table[VM68K_USER_DATA]    .assign (NPAGES, &null_accessible);
+    page_table[VM68K_USER_PROGRAM] .assign (NPAGES, &null_accessible);
+    page_table[VM68K_SUPER_DATA]   .assign (NPAGES, &null_accessible);
+    page_table[VM68K_SUPER_PROGRAM].assign (NPAGES, &null_accessible);
   }
 
-  system_bus::~system_bus ()
+  vm68k_bus::~vm68k_bus ()
   {
   }
 
-  void system_bus::map_page (int bits,
-                             address_t address, udata_fast32_t size,
-                             accessible *p)
+  void vm68k_bus::map_pages (int func_mask, vm68k_address_t addr,
+                             vm68k_uint_fast32_t size, vm68k_accessible *p)
   {
-    for (int fc = 0; fc != 7; bits >>= 1, ++fc)
+    for (int func = 0; func != 7; func_mask >>= 1, ++func)
       {
-        if ((bits & 1U) != 0 && !page_table[fc].empty ())
+        if ((func_mask & 1U) != 0 && !page_table[func].empty ())
           {
             page_table_type::iterator i =
-              this->find_page ((function_code) fc,
-                               address + size + PAGE_SIZE - 1);
-            if (i == page_table[fc].begin ())
+              this->find_page ((vm68k_bus_function) func,
+                               addr + size + PAGE_SIZE - 1);
+            if (i == page_table[func].begin ())
               {
-                i = page_table[fc].end ();
+                i = page_table[func].end ();
               }
 
-            fill (this->find_page ((function_code) fc, address), i, p);
+            fill (this->find_page ((vm68k_bus_function) func, addr), i, p);
           }
       }
   }
 
-  void system_bus::unmap_page (int bits,
-                               address_t address, udata_fast32_t size)
+  void vm68k_bus::unmap_pages (int func_mask, vm68k_address_t addr,
+                               vm68k_uint_fast32_t size)
   {
-    this->map_page (bits, address, size, &null_accessible);
+    this->map_pages (func_mask, addr, size, &null_accessible);
   }
 
-  udata_fast16_t system_bus::read16 (function_code fc, address_t address) const
-    throw (bus_error, address_error)
+  vm68k_uint_fast16_t vm68k_bus::read16 (vm68k_bus_function func,
+                                         vm68k_address_t addr) const
+    throw (vm68k_bus_error, vm68k_address_error)
   {
-    if ((address & 1U) != 0)
-      throw address_error (READ | fc, address);
-
-    return this->read16_unchecked (fc, address);
-  }
-
-  udata_fast32_t system_bus::read32 (function_code fc, address_t address) const
-    throw (bus_error, address_error)
-  {
-    if ((address & 1U) != 0)
-      throw address_error (READ | fc, address);
-
-    udata_fast32_t value;
-    if ((address & 2U) != 0)
+    if ((addr & 1U) != 0)
       {
-	value = (udata_fast32_t) this->read16_unchecked (fc, address) << 16;
-	value |= this->read16_unchecked (fc, address + 2) & 0xffff;
+        throw vm68k_address_error (VM68K_READ | func, addr);
+      }
+
+    return this->read16_unchecked (func, addr);
+  }
+
+  vm68k_uint_fast32_t vm68k_bus::read32 (vm68k_bus_function func,
+                                         vm68k_address_t addr) const
+    throw (vm68k_bus_error, vm68k_address_error)
+  {
+    if ((addr & 1U) != 0)
+      {
+        throw vm68k_address_error (VM68K_READ | func, addr);
+      }
+
+    vm68k_uint_fast32_t value;
+    if ((addr & 2U) != 0)
+      {
+        value =
+          ((vm68k_uint_fast32_t) this->read16_unchecked (func, addr)) << 16;
+        value |= this->read16_unchecked (func, addr + 2) & 0xffff;
       }
     else
       {
-	const accessible *p = *(this->find_page (fc, address));
-	value = p->read32 (fc, address);
+        const vm68k_accessible *p = *(this->find_page (func, addr));
+        value = p->read32 (func, addr);
       }
 
     return value;
   }
 
-  string system_bus::read_string (function_code fc, address_t address) const
+  string vm68k_bus::read_string (vm68k_bus_function func,
+                                 vm68k_address_t addr) const
   {
     string s;
     for (;;)
       {
-	udata_fast8_t c = this->read8 (fc, address++);
-	if (c == 0)
-	  break;
-	s += (char) c;
+        vm68k_uint_fast8_t c = this->read8 (func, addr++);
+        if (c == 0)
+          {
+            break;
+          }
+
+        s += (char) c;
       }
 
     return s;
   }
 
   /* Read a block of data from memory.  */
-  void system_bus::read (function_code fc, address_t address,
-                         void *data, size_t size) const
+  void vm68k_bus::read (vm68k_bus_function func, vm68k_address_t addr,
+                        void *data, size_t size) const
   {
     unsigned char *i = static_cast<unsigned char *> (data);
     unsigned char *last = i + size;
 
     while (i != last)
       {
-        *i++ = this->read8 (fc, address++);
+        *i++ = this->read8 (func, addr++);
       }
   }
 
-  void system_bus::write16 (function_code fc, address_t address,
-                            udata_fast16_t value)
-    throw (bus_error, address_error)
+  void vm68k_bus::write16 (vm68k_bus_function func, vm68k_address_t addr,
+                           vm68k_uint_fast16_t value)
+    throw (vm68k_bus_error, vm68k_address_error)
   {
-    if ((address & 1U) != 0)
-      throw address_error (WRITE | fc, address);
+    if ((addr & 1U) != 0)
+      {
+        throw vm68k_address_error (VM68K_WRITE | func, addr);
+      }
 
-    this->write16_unchecked (fc, address, value);
+    this->write16_unchecked (func, addr, value);
   }
 
-  void system_bus::write32 (function_code fc, address_t address,
-                            udata_fast32_t value)
-    throw (bus_error, address_error)
+  void vm68k_bus::write32 (vm68k_bus_function func, vm68k_address_t addr,
+                           vm68k_uint_fast32_t value)
+    throw (vm68k_bus_error, vm68k_address_error)
   {
-    if ((address & 1U) != 0)
-      throw address_error (WRITE | fc, address);
-
-    if ((address & 2U) != 0)
+    if ((addr & 1U) != 0)
       {
-	this->write16_unchecked (fc, address,     value >> 16);
-	this->write16_unchecked (fc, address + 2, value);
+        throw vm68k_address_error (VM68K_WRITE | func, addr);
+      }
+
+    if ((addr & 2U) != 0)
+      {
+        this->write16_unchecked (func, addr,     value >> 16);
+        this->write16_unchecked (func, addr + 2, value);
       }
     else
       {
-	accessible *p = *(this->find_page (fc, address));
-	p->write32 (fc, address, value);
+        vm68k_accessible *p = *(this->find_page (func, addr));
+        p->write32 (func, addr, value);
       }
   }
 
-  void system_bus::write_string (function_code fc, address_t address,
-                                 const string &s)
+  void vm68k_bus::write_string (vm68k_bus_function func, vm68k_address_t addr,
+                                const string &s)
   {
     for (string::const_iterator i = s.begin(); i != s.end(); ++i)
       {
-        this->write8 (fc, address++, *i);
+        this->write8 (func, addr++, *i);
       }
 
-    this->write8 (fc, address++, 0);
+    this->write8 (func, addr++, 0);
   }
 
   /* Write a block of data to memory.  */
-  void system_bus::write (function_code fc, address_t address,
-                          const void *data, size_t size)
+  void vm68k_bus::write (vm68k_bus_function func, vm68k_address_t addr,
+                         const void *data, size_t size)
   {
     const unsigned char *i = static_cast<const unsigned char *> (data);
     const unsigned char *last = i + size;
 
     while (i != last)
       {
-        this->write8 (fc, address++, *i++);
+        this->write8 (func, addr++, *i++);
       }
   }
 }
