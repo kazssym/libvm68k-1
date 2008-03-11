@@ -148,10 +148,10 @@ namespace vx68k
     }
 
     /* Fills an address range with memory.  */
-    void map_pages (int func_bits, vm68k_address_t addr,
+    void map_pages (int func_mask, vm68k_address_t addr,
                     vm68k_uint_fast32_t size,
                     vm68k_accessible *p);
-    void unmap_pages (int func_bits, vm68k_address_t addr,
+    void unmap_pages (int func_mask, vm68k_address_t addr,
                       vm68k_uint_fast32_t size);
 
   public:

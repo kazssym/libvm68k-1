@@ -4,7 +4,8 @@
 
 	* lib/vm68k/bits/bus.h: Upgrade to the GPLv3.
 	(namespace vx68k): Add vm68k_ prefixes to names.
-	(class vm68k_bus): Rename from system_bus.
+	(class vm68k_bus): Rename from system_bus.  Rename map_page to
+	map_pages.  Rename unmap_page to unmap_pages.
 	(enum vm68k_bus_function): Rename from function_code.
 
 	* lib/vm68k/bits/base.h: Upgrade to the GPLv3.
