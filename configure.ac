@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT([Virtual M68000 Toolkit], [1.1.0], [vx68k@googlegroups.com], [libvm68k])
-AC_CONFIG_SRCDIR([processor.cpp])
+AC_CONFIG_SRCDIR([lib/processor.cpp])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 
@@ -38,7 +38,7 @@ if test "$ac_cv_cxx_namespaces" != yes; then
   AC_MSG_WARN([this program cannot be built without namespaces])
 fi
 
-AC_CONFIG_FILES([Makefile doc/Makefile])
+AC_CONFIG_FILES([Makefile doc/Makefile lib/Makefile])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SUBDIRS([libltdl])
 AC_OUTPUT
