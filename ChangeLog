@@ -1,8 +1,14 @@
+2008-05-19  Kaz Sasayama  <kazssym@vx68k.org>
+
+	* lib/Makefile.am (libvm68k_la_SOURCES): Rename instr1_3.cpp to
+	inst/inst3.cpp.
+	* lib/inst/inst3.cpp: Renamed from instr1_3.cpp.
+
 2008-05-18  Kaz Sasayama  <kazssym@vx68k.org>
 
-	* lib/Makefile.am (libvm68k_la_SOURCES): Add inst1.cpp and
-	inst2.cpp.
-	* lib/inst1.cpp, lib/inst2.cpp: New files.
+	* lib/Makefile.am (libvm68k_la_SOURCES): Add inst/inst1.cpp and
+	inst/inst2.cpp.
+	* lib/inst/inst1.cpp, lib/inst/inst2.cpp: New files.
 
 	* lib/vm68k/bits/data_size.h: Prefix vm68k_ to names.
 	(namespace vx68k): Renamed from vx68k_m68k.
