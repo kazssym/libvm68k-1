@@ -22,10 +22,12 @@
 #include <exception>
 #include <string>
 #include <vector>
-#include <vm68k/bits/base.h>
 
 namespace vx68k
 {
+  /* Address */
+  typedef vm68k_uint_fast32_t vm68k_address_t;
+
   const int PAGE_SHIFT = 12;
   const std::size_t PAGE_SIZE = ((std::size_t) 1) << PAGE_SHIFT;
 

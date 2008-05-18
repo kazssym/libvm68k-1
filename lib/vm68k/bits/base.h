@@ -72,8 +72,6 @@ namespace vx68k
   typedef unsigned int   vm68k_uint_fast8_t;
   typedef unsigned int   vm68k_uint_fast16_t;
   typedef vm68k_uint32_t vm68k_uint_fast32_t;
-
-  typedef vm68k_uint_fast32_t vm68k_address_t;
 }
 
 #endif

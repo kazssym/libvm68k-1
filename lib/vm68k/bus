@@ -19,6 +19,7 @@
 #ifndef _VM68K_BUS
 #define _VM68K_BUS
 
+#include <vm68k/bits/base.h>
 #include <vm68k/bits/bus.h>
 
 #endif

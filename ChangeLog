@@ -1,3 +1,8 @@
+2008-05-18  Kaz Sasayama  <kazssym@vx68k.org>
+
+	* lib/vm68k/bits/bus.h: Add vm68k_address_t.
+	* lib/vm68k/bits/base.h: Remove vm68k_address_t.
+
 2008-03-11  Kaz Sasayama  <kazssym@vx68k.org>
 
 	* configure.ac: Change AC_CONFIG_SRCDIR and AC_CONFIG_FILES.
