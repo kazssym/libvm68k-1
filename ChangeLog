@@ -1,5 +1,17 @@
 2008-05-18  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/vm68k/bits/processor.h (namespace vx68k): Renamed from
+	vm68k.
+	(class condition_tester, class bitset_condition_tester, class
+	condition_code, struct registers, class context): Removed.
+	(class vm68k_exception): Renamed from processor_exception.
+	(class vm68k_bus_error_exception, class
+	vm68k_address_error_exception, class
+	vm68k_illegal_instruction_exception): Likewise.
+	(class vm68k_instruction): New class.
+	(class vm68k_instruction_decoder): New class replacing processor.
+	(class processor): Removed.
+
 	* lib/vm68k/bits/context.h: Rename types.
 	(namespace vx68k): Renamed from vx68k_m68k.
 	(enum vm68k_register_name): Removed.

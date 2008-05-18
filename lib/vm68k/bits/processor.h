@@ -1,410 +1,237 @@
-/* -*-C++-*- */
-/* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
+/* -*-c++-*- */
+/* processor - processor unit private header for Virtual M68000 Toolkit
+ * Copyright (C) 1998-2008 Hypercore Software Design, Ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or (at
-   your option) any later version.
+#ifndef _VM68K_PROCESSOR_H
+#define _VM68K_PROCESSOR_H 1
 
-   This program is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+#include <exception>
+#include <vm68k/size>
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-   USA.  */
-
-#ifndef _VM68K_PROCESSOR
-#define _VM68K_PROCESSOR 1
-
-#include <vm68k/bus>
-#include <queue>
-#include <vector>
-#include <utility>
-
-namespace vm68k
-{
-  /* Abstruct base class for condition testers.  */
-  class condition_tester
-  {
-  public:
-    virtual bool ls(const sint32_type *) const;
-    virtual bool cs(const sint32_type *) const = 0;
-    virtual bool eq(const sint32_type *) const = 0;
-    virtual bool mi(const sint32_type *) const = 0;
-    virtual bool lt(const sint32_type *) const = 0;
-    virtual bool le(const sint32_type *) const;
-    virtual unsigned int x(const sint32_type *) const;
-  };
-
-  inline bool
-  condition_tester::ls(const sint32_type *v) const
-  {
-    return this->cs(v) || this->eq(v);
-  }
-
-  inline bool
-  condition_tester::le(const sint32_type *v) const
-  {
-    return this->eq(v) || this->lt(v);
-  }
-
-  inline unsigned int
-  condition_tester::x(const sint32_type *v) const
-  {
-    return this->cs(v);
-  }
-
-  class bitset_condition_tester: public condition_tester
-  {
-  public:
-    bool cs(const sint32_type *) const;
-    bool eq(const sint32_type *) const;
-    bool mi(const sint32_type *) const;
-    bool lt(const sint32_type *) const;
-  };
-  
-  /* Status register.  */
-  class condition_code
-  {
-  protected:
-    enum
-    {S = 1 << 13};
-
-  private:			// Condition testers
-    static const bitset_condition_tester bitset_tester;
-    static const condition_tester *const general_condition_tester;
-    static const condition_tester *const add_condition_tester;
-
-  private:
-    const condition_tester *cc_eval;
-    sint32_type cc_values[3];
-    const condition_tester *x_eval;
-    sint32_type x_values[3];
-    uint16_type value;
-
-  public:
-    condition_code();
-
-  public:
-    operator uint16_type() const;
-    condition_code &operator=(uint16_type v)
-    {
-      value = v & 0xff00;
-      x_eval = cc_eval = &bitset_tester;
-      x_values[0] = cc_values[0] = v;
-      return *this;
-    }
-
-  public:
-    bool hi() const {return !cc_eval->ls(cc_values);}
-    bool ls() const {return  cc_eval->ls(cc_values);}
-    bool cc() const {return !cc_eval->cs(cc_values);}
-    bool cs() const {return  cc_eval->cs(cc_values);}
-    bool ne() const {return !cc_eval->eq(cc_values);}
-    bool eq() const {return  cc_eval->eq(cc_values);}
-    bool pl() const {return !cc_eval->mi(cc_values);}
-    bool mi() const {return  cc_eval->mi(cc_values);}
-    bool ge() const {return !cc_eval->lt(cc_values);}
-    bool lt() const {return  cc_eval->lt(cc_values);}
-    bool gt() const {return !cc_eval->le(cc_values);}
-    bool le() const {return  cc_eval->le(cc_values);}
-
-  public:
-    int x() const
-    {return x_eval->cs(x_values) ? 1 : 0;}
-
-  public:
-    /* Sets the condition codes by a result.  */
-    void set_cc(sint32_type r)
-    {
-      cc_eval = general_condition_tester;
-      cc_values[0] = r;
-    }
-
-    /* Sets the condition codes as ADD.  */
-    void set_cc_as_add(sint32_type r, sint32_type d, sint32_type s)
-    {
-      x_eval = cc_eval = add_condition_tester;
-      x_values[0] = cc_values[0] = r;
-      x_values[1] = cc_values[1] = d;
-      x_values[2] = cc_values[2] = s;
-    }
-
-    void set_cc_cmp(sint32_type, sint32_type, sint32_type);
-    void set_cc_sub(sint32_type, sint32_type, sint32_type);
-    void set_cc_asr(sint32_type, sint32_type, sint32_type);
-    void set_cc_lsr(sint32_type r, sint32_type d, sint32_type s)
-      {set_cc_asr(r, d, s);}
-    void set_cc_lsl(sint32_type, sint32_type, sint32_type);
-
-  public:
-    /* Returns whether supervisor state.  */
-    bool supervisor_state() const
-      {return (value & S) != 0;}
-
-    /* Sets the S bit.  */
-    void set_s_bit(bool s)
-      {if (s) value |= S; else value &= ~S;}
-  };
-
-  typedef condition_code status_register;
-
-  /* CPU registers (mc68000).  */
-  struct registers
-  {
-    uint32_type d[8];		/* %d0-%d7 */
-    uint32_type a[8];		/* %a0-%a6/%sp */
-    condition_code ccr;
-    uint32_type usp;
-    uint32_type ssp;
-
-    template <class Size>
-    typename Size::svalue_type data_register(unsigned int regno, Size)
-    {return Size::get(d[regno]);}
-    template <class Size>
-    void set_data_register(unsigned int regno, Size,
-			   typename Size::uvalue_type value)
-    {Size::put(d[regno], value);}
-  };
-
-  /* Context of execution.  A context represents all the state of
-     execution.  See also `class processor'.  */
-  class context
-  {
-  public:
-    registers regs;
-    bus *mem;
-
-  private:
-    /* Cache values for program and data FC's.  */
-    function_code pfc_cache, dfc_cache;
-
-  private:			// interrupt
-    /* True if the thread in this context is interrupted.  */
-    bool a_interrupted;
-
-    std::vector<std::queue<unsigned int> > interrupt_queues;
-
-  public:
-    explicit context(bus *);
-
-  public:
-    /* Returns true if supervisor state.  */
-    bool supervisor_state() const
-    {return regs.ccr.supervisor_state();}
-
-    /* Sets the supervisor state to STATE.  */
-    void set_supervisor_state(bool state);
-
-    /* Returns the value of the status register.  */
-    uint16_type sr() const;
-
-    /* Sets the status register.  */
-    void set_sr(uint16_type value);
-
-  public:
-    /* Returns the FC for program in the current state.  */
-    function_code program_fc() const {return pfc_cache;}
-
-    /* Returns the FC for data in the current state.  */
-    function_code data_fc() const {return dfc_cache;}
-
-  public:
-    template <class Size>
-    typename Size::uvalue_type fetch_u(Size, uint32_type address) const;
-    template <class Size>
-    typename Size::svalue_type fetch_s(Size, uint32_type address) const;
-
-  public:			// interrupt
-    /* Returns true if the thread in this context is interrupted.  */
-    bool interrupted() const
-    {return a_interrupted;}
-
-    /* Interrupts.  */
-    void interrupt(int prio, unsigned int vecno);
-
-    /* XXX This should be in class processor.  */
-    /* Handles interrupts.  */
-    uint32_type handle_interrupts(uint32_type pc);
-  };
-
-  template <class Size> inline typename Size::uvalue_type
-  context::fetch_u(Size, uint32_type address) const
-  {
-    return Size::get_instruction_u(*mem, address, program_fc());
-  }
-
-  template <class Size> inline typename Size::svalue_type
-  context::fetch_s(Size, uint32_type address) const
-  {
-    return Size::get_instruction_s(*mem, address, program_fc());
-  }
-}
-
-namespace vm68k
+namespace vx68k
 {
   /* Base class of processor exceptions.  */
-  class processor_exception: public std::exception
+  class VM68K_PUBLIC vm68k_exception : public std::exception
   {
-  public:
-    uint32_type pc() const throw () {return _pc;}
-    virtual int vecno() const throw () = 0;
-
   protected:
-    explicit processor_exception(uint32_type pc);
+    explicit vm68k_exception (vm68k_address_t pc);
+
+  public:
+    vm68k_address_t pc () const throw ()
+    {
+      return _pc;
+    }
+
+    virtual vm68k_uint_fast16_t vecno () const throw () = 0;
 
   private:
-    uint32_type _pc;
+    vm68k_address_t _pc;
   };
-
-  inline
-  processor_exception::processor_exception(uint32_type pc)
-    : _pc(pc)
-  {
-  }
 
   /* Bus error exception.  */
-  class bus_error_exception: public processor_exception
+  class VM68K_PUBLIC vm68k_bus_error_exception : public vm68k_exception
   {
   public:
-    bus_error_exception(uint32_type pc, const bus_error &source);
-    const bus_error &source() const throw () {return _source;}
-    int vecno() const throw () {return 2;}
+    vm68k_bus_error_exception (vm68k_address_t pc,
+                               const vm68k_bus_error &source)
+      : vm68k_exception (pc)
+    {
+      _source = source;
+    }
+
+    const vm68k_bus_error &source () const throw ()
+    {
+      return _source;
+    }
+
+    vm68k_uint_fast16_t vecno () const throw ()
+    {
+      return 2;
+    }
 
   private:
-    bus_error _source;
+    vm68k_bus_error _source;
   };
-
-  /* Constructor.  */
-  inline
-  bus_error_exception::bus_error_exception(uint32_type pc,
-					   const bus_error &source)
-    : processor_exception(pc),
-      _source(source)
-  {
-  }
 
   /* Address error exception.  */
-  class address_error_exception: public processor_exception
+  class VM68K_PUBLIC vm68k_address_error_exception : public vm68k_exception
   {
   public:
-    address_error_exception(uint32_type pc, const address_error &source);
-    const address_error &source() const throw () {return _source;}
-    int vecno() const throw () {return 3;}
+    vm68k_address_error_exception (vm68k_address_t pc,
+                                   const vm68k_address_error &source)
+      : vm68k_exception(pc)
+    {
+      _source = source;
+    }
+
+    const vm68k_address_error &source () const throw ()
+    {
+      return _source;
+    }
+
+    vm68k_uint_fast16_t vecno () const throw ()
+    {
+      return 3;
+    }
 
   private:
-    address_error _source;
+    vm68k_address_error _source;
   };
-
-  /* Constructor.  */
-  inline
-  address_error_exception::address_error_exception(uint32_type pc,
-						   const address_error &source)
-    : processor_exception(pc),
-      _source(source)
-  {
-  }
 
   /* Illegal instruction exception.  */
-  struct illegal_instruction_exception: processor_exception
+  struct VM68K_PUBLIC vm68k_illegal_instruction_exception : vm68k_exception
   {
-    explicit illegal_instruction_exception(uint32_type pc);
-    int vecno() const throw () {return 4;}
-  };
+    explicit vm68k_illegal_instruction_exception (vm68k_address_t pc)
+      : vm68k_exception (pc)
+    {
+    }
 
-  /* Constructor.  */
-  inline
-  illegal_instruction_exception::illegal_instruction_exception(uint32_type pc)
-    : processor_exception(pc)
-  {
-  }
+    vm68k_uint_fast16_t vecno () const throw ()
+    {
+      return 4;
+    }
+  };
 
   /* Zero divide exception.  */
-  struct zero_divide_exception: processor_exception
+  struct zero_divide_exception: vm68k_exception
   {
-    explicit zero_divide_exception(uint32_type pc);
-    int vecno() const throw () {return 5;}
+    explicit zero_divide_exception(vm68k_address_t pc);
+    vm68k_uint_fast16_t vecno () const throw () {return 5;}
   };
 
   inline
-  zero_divide_exception::zero_divide_exception(uint32_type pc)
-    : processor_exception(pc)
+  zero_divide_exception::zero_divide_exception(vm68k_address_t pc)
+    : vm68k_exception(pc)
   {
   }
 
   /* Privilege violation exception.  */
-  struct privilege_violation_exception: processor_exception
+  struct privilege_violation_exception: vm68k_exception
   {
-    explicit privilege_violation_exception(uint32_type pc);
-    int vecno() const throw () {return 8;}
+    explicit privilege_violation_exception(vm68k_address_t pc);
+    vm68k_uint_fast16_t vecno () const throw () {return 8;}
   };
 
   /* Constructor.  */
   inline
-  privilege_violation_exception::privilege_violation_exception(uint32_type pc)
-    : processor_exception(pc)
+  privilege_violation_exception::privilege_violation_exception(vm68k_address_t pc)
+    : vm68k_exception (pc)
   {
   }
-}
-
-namespace vm68k
-{
-  /* Decodes and executes an instruction sequence.  */
-  class processor
+
+  class VM68K_PUBLIC vm68k_instruction
   {
   public:
     /* Type of an instruction handler.  */
-    typedef uint32_type
-    (*instruction_handler)(uint32_type pc, context &, uint16_type w, void *);
-
-    /* Type of an instruction.  */
-    typedef std::pair<instruction_handler, void *> instruction_type;
+    typedef vm68k_address_t (*function) (vm68k_address_t pc,
+                                         vm68k_uint_fast16_t w,
+                                         vm68k_context *c);
 
   public:
-    /* Raises an illegal instruction exception.  */
-    static uint32_type
-    illegal(uint32_type pc, context &, uint16_type w, void *);
+    friend bool operator== (const vm68k_instruction &x,
+                            const vm68k_instruction &y)
+    {
+      return x._func == y._func;
+    }
+
+  public:
+    vm68k_instruction ();
+    vm68k_instruction (function func);
+
+  public:
+    vm68k_address_t operator() (vm68k_address_t pc, vm68k_uint_fast16_t w,
+                                vm68k_context *c) const
+    {
+      return _func (pc, w, c);
+    }
 
   private:
-    std::vector<instruction_type> instructions;
+    function _func;
+  };
+
+  inline bool operator!= (const vm68k_instruction &x,
+                          const vm68k_instruction &y)
+  {
+    return !(x == y);
+  }
+
+  /* Decodes and executes an instruction sequence.  */
+  class VM68K_PUBLIC vm68k_instruction_decoder
+  {
+  public:
+    struct spec
+    {
+      vm68k_uint16_t code;
+      vm68k_uint16_t mask;
+      vm68k_instruction::function func;
+    };
+
+  private:
+    static void insert_inst0 (vm68k_instruction_decoder *p);
+    static void insert_inst1 (vm68k_instruction_decoder *p);
+    static void insert_inst2 (vm68k_instruction_decoder *p);
+    static void insert_inst3 (vm68k_instruction_decoder *p);
+    static void insert_inst4 (vm68k_instruction_decoder *p);
+    static void insert_inst5 (vm68k_instruction_decoder *p);
+    static void insert_inst6 (vm68k_instruction_decoder *p);
+    static void insert_inst7 (vm68k_instruction_decoder *p);
+    static void insert_inst8 (vm68k_instruction_decoder *p);
+    static void insert_inst9 (vm68k_instruction_decoder *p);
+    static void insert_inst10 (vm68k_instruction_decoder *p);
+    static void insert_inst11 (vm68k_instruction_decoder *p);
+    static void insert_inst12 (vm68k_instruction_decoder *p);
+    static void insert_inst13 (vm68k_instruction_decoder *p);
+    static void insert_inst14 (vm68k_instruction_decoder *p);
+    static void insert_inst15 (vm68k_instruction_decoder *p);
 
   public:
-    processor();
+    vm68k_instruction_decoder ();
+    virtual ~vm68k_instruction_decoder ();
 
   public:
     /* Sets an instruction for an operation word.  The old value is
        returned.  */
-    instruction_type set_instruction(uint16_type op, const instruction_type &i)
+    void insert (vm68k_uint_fast16_t code, vm68k_instruction::function i);
+    void insert (const spec &s);
+
+    template<typename InputIterator>
+    void insert (InputIterator first, InputIterator last)
     {
-      op &= 0xffffu;
-      instruction_type old_value = instructions[op];
-      instructions[op] = i;
-      return old_value;
+      while (first != last)
+        {
+          this->insert (*first++);
+        }
     }
 
-    /* Sets an instruction to operation codes.  */
-    void set_instruction(int op, int mask, const instruction_type &i);
+    /* Starts the program.  */
+    vm68k_address_t run (vm68k_address_t pc, vm68k_context &c) const
+      throw (vm68k_exception);
 
   protected:
     /* Dispatches for instruction handlers.  */
-    uint32_type dispatch(uint32_type pc, context &c, uint16_type w) const;
+    vm68k_address_t dispatch (vm68k_address_t pc, vm68k_uint_fast16_t w,
+                        vm68k_context *c) const
+    {
+      return _instruction[w] (pc, w, c);
+    }
 
-  public:
-    /* Starts the program.  */
-    uint32_type run(uint32_type pc, context &c) const
-      throw (processor_exception);
+  private:
+    vm68k_instruction _instruction[0x10000];
   };
-
-  inline uint32_type
-  processor::dispatch(uint32_type pc, context &c, uint16_type w) const
-  {
-    w &= 0xffff;
-    return instructions[w].first(pc, c, w, instructions[w].second);
-  }
 }
 
-#endif /* not _VM68K_PROCESSOR */
+#endif
