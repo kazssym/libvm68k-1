@@ -1,5 +1,13 @@
 2008-05-18  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/vm68k/bits/context.h: Rename types.
+	(namespace vx68k): Renamed from vx68k_m68k.
+	(enum vm68k_register_name): Removed.
+	(class vm68k_context): Renamed from context.
+	(class status_register): Deprecate.
+	(class vm68k_context): Add member _status_high.  Add member
+	function push, pop, and pop_unsigned.
+
 	* lib/vm68k/bits/bus.h: Add vm68k_address_t.
 	* lib/vm68k/bits/base.h: Remove vm68k_address_t.
 
