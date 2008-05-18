@@ -20,7 +20,6 @@
 #define _VM68K_PROCESSOR_H 1
 
 #include <exception>
-#include <vm68k/size>
 
 namespace vx68k
 {
@@ -48,9 +47,9 @@ namespace vx68k
   public:
     vm68k_bus_error_exception (vm68k_address_t pc,
                                const vm68k_bus_error &source)
-      : vm68k_exception (pc)
+      : vm68k_exception (pc),
+        _source (source)
     {
-      _source = source;
     }
 
     const vm68k_bus_error &source () const throw ()
@@ -73,9 +72,9 @@ namespace vx68k
   public:
     vm68k_address_error_exception (vm68k_address_t pc,
                                    const vm68k_address_error &source)
-      : vm68k_exception(pc)
+      : vm68k_exception(pc),
+        _source (source)
     {
-      _source = source;
     }
 
     const vm68k_address_error &source () const throw ()

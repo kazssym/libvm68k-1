@@ -21,6 +21,7 @@
 
 #include <vm68k/bits/base.h>
 #include <vm68k/bits/bus.h>
+#include <vm68k/bits/data_size.h>
 #include <vm68k/bits/context.h>
 
 #endif
