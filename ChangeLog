@@ -1,7 +1,9 @@
 2008-05-19  Kaz Sasayama  <kazssym@vx68k.org>
 
-	* lib/Makefile.am (libvm68k_la_SOURCES): Rename instr1_3.cpp to
+	* lib/Makefile.am (libvm68k_la_SOURCES): Move instr1_3.cpp to
 	inst/inst3.cpp.
+	(libvm68k_la_SOURCES): Move inst0.cpp to inst/inst0.cpp.
+	* lib/inst/inst0.cpp: Moved.
 	* lib/inst/inst3.cpp: Renamed from instr1_3.cpp.  Split group 1 &
 	2 to lib/inst/inst1.cpp & lib/inst/inst2.cpp.
 
