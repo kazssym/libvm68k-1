@@ -19,6 +19,7 @@
 #ifndef INST_TRANSFER_H
 #define INST_TRANSFER_H 1
 
+#include <vm68k/context>
 #include "addressing.h"
 
 #include <cassert>
