@@ -1,5 +1,12 @@
 2008-05-21  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/vm68k/bits/data_size.h (struct vm68k_data_size): New struct.
+	(vm68k_byte, vm68k_word, vm68k_long_word): Removed.  Also change
+	all users to use vm68k_data_size members.
+	(struct vm68k_byte): Renamed from vm68k_byte_size.  Also change
+	all users.
+	(struct vm68k_word, struct vm68k_long_word): Likewise.
+
 	* lib/Makefile.am (libvm68k_la_SOURCES): Reorder files.
 	(nobase_include_HEADERS): Reorder files.
 	(nobase_noinst_HEADERS): Move addressing.h to inst/addressing.h.
