@@ -52,19 +52,22 @@ namespace vx68k
         return (int_fast8_t) value;
     }
 
-    static uint_fast8_t read_unsigned (const uint_least32_t &reg)
+    template<typename T>
+    static uint_fast8_t read_unsigned (const T &reg)
     {
-      return reg & 0xffU;
+      return (uint_fast8_t) reg & 0xffU;
     }
 
-    static int_fast8_t read (const uint_least32_t &reg)
+    template<typename T>
+    static int_fast8_t read (const T &reg)
     {
-      return as_signed (reg & 0xffU);
+      return as_signed (read_unsigned (reg));
     }
 
-    static void write (uint_least32_t &reg, uint_fast8_t value)
+    template<typename T>
+    static void write (T &reg, uint_fast8_t value)
     {
-      reg = reg & ~0xffU | value & 0xffU;
+      reg = (reg & 0xffffff00UL) | (value & 0xffU);
     }
 
     static uint_fast8_t read_unsigned (const vm68k_bus *bus,
@@ -78,7 +81,7 @@ namespace vx68k
                              vm68k_bus::function_code func,
                              vm68k_address_t addr)
     {
-      return as_signed (bus->read8 (func, addr));
+      return as_signed (read_unsigned (bus, func, addr));
     }
 
     static void write (vm68k_bus *bus, vm68k_bus::function_code func,
@@ -98,7 +101,7 @@ namespace vx68k
                                   vm68k_bus::function_code func,
                                   vm68k_address_t addr)
     {
-      return as_signed (bus->read8 (func, addr | 1U));
+      return as_signed (read_inst_unsigned (bus, func, addr));
     }
 
     static const char *suffix ()
@@ -133,19 +136,22 @@ namespace vx68k
         return (int_fast16_t) value;
     }
 
-    static uint_fast16_t read_unsigned (const uint_least32_t &reg)
+    template<typename T>
+    static uint_fast16_t read_unsigned (const T &reg)
     {
-      return reg & 0xffffU;
+      return (uint_fast16_t) reg & 0xffffU;
     }
 
-    static int_fast16_t read (const uint_least32_t &reg)
+    template<typename T>
+    static int_fast16_t read (const T &reg)
     {
-      return as_signed (reg & 0xffffU);
+      return as_signed (read_unsigned (reg));
     }
 
-    static void write (uint_least32_t &reg, uint_fast16_t value)
+    template<typename T>
+    static void write (T &reg, uint_fast16_t value)
     {
-      reg = reg & ~0xffffU | value & 0xffffU;
+      reg = (reg & 0xffff0000UL) | (value & 0xffffU);
     }
 
     static uint_fast16_t read_unsigned (const vm68k_bus *bus,
@@ -159,7 +165,7 @@ namespace vx68k
                               vm68k_bus::function_code func,
                               vm68k_address_t addr)
     {
-      return as_signed (bus->read16 (func, addr));
+      return as_signed (read_unsigned (bus, func, addr));
     }
 
     static void write (vm68k_bus *bus, vm68k_bus::function_code func,
@@ -179,7 +185,7 @@ namespace vx68k
                                    vm68k_bus::function_code func,
                                    vm68k_address_t addr)
     {
-      return as_signed (bus->read16 (func, addr));
+      return as_signed (read_inst_unsigned (bus, func, addr));
     }
 
     static const char *suffix ()
@@ -214,17 +220,20 @@ namespace vx68k
         return (int_fast32_t) value;
     }
 
-    static uint_fast32_t read_unsigned (const uint_least32_t &reg)
+    template<typename T>
+    static uint_fast32_t read_unsigned (const T &reg)
     {
-      return reg;
+      return (uint_fast32_t) reg & 0xffffffffUL;
     }
 
-    static int_fast32_t read (const uint_least32_t &reg)
+    template<typename T>
+    static int_fast32_t read (const T &reg)
     {
-      return as_signed (reg);
+      return as_signed (read_unsigned (reg));
     }
 
-    static void write (uint_least32_t &reg, uint_fast32_t value)
+    template<typename T>
+    static void write (T &reg, uint_fast32_t value)
     {
       reg = value & 0xffffffffUL;
     }
@@ -240,7 +249,7 @@ namespace vx68k
                               vm68k_bus::function_code func,
                               vm68k_address_t addr)
     {
-      return as_signed (bus->read32 (func, addr));
+      return as_signed (read_unsigned (bus, func, addr));
     }
 
     static void write (vm68k_bus *bus, vm68k_bus::function_code func,
@@ -260,7 +269,7 @@ namespace vx68k
                                    vm68k_bus::function_code func,
                                    vm68k_address_t addr)
     {
-      return as_signed (bus->read32 (func, addr));
+      return as_signed (read_inst_unsigned (bus, func, addr));
     }
 
     static const char *suffix ()
