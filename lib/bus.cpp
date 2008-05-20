@@ -42,7 +42,7 @@ using std::fill;
 
 namespace vx68k
 {
-  vm68k_bus_error::vm68k_bus_error (vm68k_uint_fast16_t status,
+  vm68k_bus_error::vm68k_bus_error (uint_fast16_t status,
                                     vm68k_address_t addr)
     throw ()
   {
@@ -56,7 +56,7 @@ namespace vx68k
     return "vm68k_bus_error";
   }
 
-  vm68k_address_error::vm68k_address_error (vm68k_uint_fast16_t status,
+  vm68k_address_error::vm68k_address_error (uint_fast16_t status,
                                             vm68k_address_t addr)
     throw ()
   {
@@ -72,56 +72,53 @@ namespace vx68k
 
   /* Class accessible etc. implementation.  */
 
-  vm68k_accessible::~vm68k_accessible ()
+  vm68k_bus::mappable::~mappable ()
   {
   }
 
-  vm68k_uint_fast8_t vm68k_accessible::read8 (vm68k_bus_function func,
-                                              vm68k_address_t addr) const
+  uint_fast8_t vm68k_bus::mappable::read8 (function_code func,
+                                           vm68k_address_t addr) const
     throw (vm68k_bus_error)
   {
-    throw vm68k_bus_error (VM68K_READ | func, addr);
+    throw vm68k_bus_error (READ | func, addr);
   }
 
-  vm68k_uint_fast16_t vm68k_accessible::read16 (vm68k_bus_function func,
-                                                vm68k_address_t addr) const
+  uint_fast16_t vm68k_bus::mappable::read16 (function_code func,
+                                             vm68k_address_t addr) const
     throw (vm68k_bus_error)
   {
     assert ((addr & 1U) == 0);
-    throw vm68k_bus_error (VM68K_READ | func, addr);
+    throw vm68k_bus_error (READ | func, addr);
   }
 
-  vm68k_uint_fast32_t vm68k_accessible::read32 (vm68k_bus_function func,
-                                                vm68k_address_t addr) const
+  uint_fast32_t vm68k_bus::mappable::read32 (function_code func,
+                                             vm68k_address_t addr) const
     throw (vm68k_bus_error)
   {
     assert ((addr & 3U) == 0);
-    vm68k_uint_fast32_t value =
-      ((vm68k_uint_fast32_t) this->read16 (func, addr)) << 16;
+    uint_fast32_t value =
+      ((uint_fast32_t) this->read16 (func, addr)) << 16;
     value |= read16 (func, addr + 2) & 0xffffU;
     return value;
   }
 
-  void vm68k_accessible::write8 (vm68k_bus_function func,
-                                 vm68k_address_t addr,
-                                 vm68k_uint_fast8_t value)
+  void vm68k_bus::mappable::write8 (function_code func, vm68k_address_t addr,
+                                    uint_fast8_t value)
     throw (vm68k_bus_error)
   {
-    throw vm68k_bus_error (VM68K_WRITE | func, addr);
+    throw vm68k_bus_error (WRITE | func, addr);
   }
 
-  void vm68k_accessible::write16 (vm68k_bus_function func,
-                                  vm68k_address_t addr,
-                                  vm68k_uint_fast16_t value)
+  void vm68k_bus::mappable::write16 (function_code func, vm68k_address_t addr,
+                                     uint_fast16_t value)
     throw (vm68k_bus_error)
   {
     assert ((addr & 1U) == 0);
-    throw vm68k_bus_error (VM68K_WRITE | func, addr);
+    throw vm68k_bus_error (WRITE | func, addr);
   }
 
-  void vm68k_accessible::write32 (vm68k_bus_function func,
-                                  vm68k_address_t addr,
-                                  vm68k_uint_fast32_t value)
+  void vm68k_bus::mappable::write32 (function_code func, vm68k_address_t addr,
+                                     uint_fast32_t value)
     throw (vm68k_bus_error)
   {
     assert ((addr & 3U) == 0);
@@ -133,10 +130,10 @@ namespace vx68k
 
   vm68k_bus::vm68k_bus ()
   {
-    page_table[VM68K_USER_DATA]    .assign (NPAGES, &null_accessible);
-    page_table[VM68K_USER_PROGRAM] .assign (NPAGES, &null_accessible);
-    page_table[VM68K_SUPER_DATA]   .assign (NPAGES, &null_accessible);
-    page_table[VM68K_SUPER_PROGRAM].assign (NPAGES, &null_accessible);
+    page_table[USER_DATA]    .assign (NPAGES, &null_accessible);
+    page_table[USER_PROGRAM] .assign (NPAGES, &null_accessible);
+    page_table[SUPER_DATA]   .assign (NPAGES, &null_accessible);
+    page_table[SUPER_PROGRAM].assign (NPAGES, &null_accessible);
   }
 
   vm68k_bus::~vm68k_bus ()
@@ -144,75 +141,75 @@ namespace vx68k
   }
 
   void vm68k_bus::map_pages (int func_mask, vm68k_address_t addr,
-                             vm68k_uint_fast32_t size, vm68k_accessible *p)
+                             uint_fast32_t size, mappable *p)
   {
     for (int func = 0; func != 7; func_mask >>= 1, ++func)
       {
         if ((func_mask & 1U) != 0 && !page_table[func].empty ())
           {
             page_table_type::iterator i =
-              this->find_page ((vm68k_bus_function) func,
+              this->find_page ((function_code) func,
                                addr + size + PAGE_SIZE - 1);
             if (i == page_table[func].begin ())
               {
                 i = page_table[func].end ();
               }
 
-            fill (this->find_page ((vm68k_bus_function) func, addr), i, p);
+            fill (this->find_page ((function_code) func, addr), i, p);
           }
       }
   }
 
   void vm68k_bus::unmap_pages (int func_mask, vm68k_address_t addr,
-                               vm68k_uint_fast32_t size)
+                               uint_fast32_t size)
   {
     this->map_pages (func_mask, addr, size, &null_accessible);
   }
 
-  vm68k_uint_fast16_t vm68k_bus::read16 (vm68k_bus_function func,
-                                         vm68k_address_t addr) const
+  uint_fast16_t vm68k_bus::read16 (function_code func,
+                                   vm68k_address_t addr) const
     throw (vm68k_bus_error, vm68k_address_error)
   {
     if ((addr & 1U) != 0)
       {
-        throw vm68k_address_error (VM68K_READ | func, addr);
+        throw vm68k_address_error (READ | func, addr);
       }
 
     return this->read16_unchecked (func, addr);
   }
 
-  vm68k_uint_fast32_t vm68k_bus::read32 (vm68k_bus_function func,
-                                         vm68k_address_t addr) const
+  uint_fast32_t vm68k_bus::read32 (function_code func,
+                                   vm68k_address_t addr) const
     throw (vm68k_bus_error, vm68k_address_error)
   {
     if ((addr & 1U) != 0)
       {
-        throw vm68k_address_error (VM68K_READ | func, addr);
+        throw vm68k_address_error (READ | func, addr);
       }
 
-    vm68k_uint_fast32_t value;
+    uint_fast32_t value;
     if ((addr & 2U) != 0)
       {
         value =
-          ((vm68k_uint_fast32_t) this->read16_unchecked (func, addr)) << 16;
+          ((uint_fast32_t) this->read16_unchecked (func, addr)) << 16;
         value |= this->read16_unchecked (func, addr + 2) & 0xffff;
       }
     else
       {
-        const vm68k_accessible *p = *(this->find_page (func, addr));
+        const mappable *p = *(this->find_page (func, addr));
         value = p->read32 (func, addr);
       }
 
     return value;
   }
 
-  string vm68k_bus::read_string (vm68k_bus_function func,
+  string vm68k_bus::read_string (function_code func,
                                  vm68k_address_t addr) const
   {
     string s;
     for (;;)
       {
-        vm68k_uint_fast8_t c = this->read8 (func, addr++);
+        uint_fast8_t c = this->read8 (func, addr++);
         if (c == 0)
           {
             break;
@@ -225,8 +222,8 @@ namespace vx68k
   }
 
   /* Read a block of data from memory.  */
-  void vm68k_bus::read (vm68k_bus_function func, vm68k_address_t addr,
-                        void *data, size_t size) const
+  void vm68k_bus::read (function_code func, vm68k_address_t addr, void *data,
+                        size_t size) const
   {
     unsigned char *i = static_cast<unsigned char *> (data);
     unsigned char *last = i + size;
@@ -237,25 +234,25 @@ namespace vx68k
       }
   }
 
-  void vm68k_bus::write16 (vm68k_bus_function func, vm68k_address_t addr,
-                           vm68k_uint_fast16_t value)
+  void vm68k_bus::write16 (function_code func, vm68k_address_t addr,
+                           uint_fast16_t value)
     throw (vm68k_bus_error, vm68k_address_error)
   {
     if ((addr & 1U) != 0)
       {
-        throw vm68k_address_error (VM68K_WRITE | func, addr);
+        throw vm68k_address_error (WRITE | func, addr);
       }
 
     this->write16_unchecked (func, addr, value);
   }
 
-  void vm68k_bus::write32 (vm68k_bus_function func, vm68k_address_t addr,
-                           vm68k_uint_fast32_t value)
+  void vm68k_bus::write32 (function_code func, vm68k_address_t addr,
+                           uint_fast32_t value)
     throw (vm68k_bus_error, vm68k_address_error)
   {
     if ((addr & 1U) != 0)
       {
-        throw vm68k_address_error (VM68K_WRITE | func, addr);
+        throw vm68k_address_error (WRITE | func, addr);
       }
 
     if ((addr & 2U) != 0)
@@ -265,12 +262,12 @@ namespace vx68k
       }
     else
       {
-        vm68k_accessible *p = *(this->find_page (func, addr));
+        mappable *p = *(this->find_page (func, addr));
         p->write32 (func, addr, value);
       }
   }
 
-  void vm68k_bus::write_string (vm68k_bus_function func, vm68k_address_t addr,
+  void vm68k_bus::write_string (function_code func, vm68k_address_t addr,
                                 const string &s)
   {
     for (string::const_iterator i = s.begin(); i != s.end(); ++i)
@@ -282,7 +279,7 @@ namespace vx68k
   }
 
   /* Write a block of data to memory.  */
-  void vm68k_bus::write (vm68k_bus_function func, vm68k_address_t addr,
+  void vm68k_bus::write (function_code func, vm68k_address_t addr,
                          const void *data, size_t size)
   {
     const unsigned char *i = static_cast<const unsigned char *> (data);
