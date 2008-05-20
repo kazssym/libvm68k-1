@@ -129,16 +129,16 @@ namespace vx68k_m68k
   };
 
   template<>
-  inline void a_reg_direct<vm68k_word_size>::
-  put (vm68k_context *c, vm68k_word_size::udata_type value) const
+  inline void a_reg_direct<vm68k_word>::
+  put (vm68k_context *c, vm68k_word::udata_type value) const
   {
     /* Special case for a word write to an address register.  */
-    c->write_reg (vm68k_long_word, _regno,
-                  vm68k_word_size::as_signed (value & 0xffffU));
+    c->write_reg (vm68k_data_size::LONG_WORD, _regno,
+                  vm68k_word::as_signed (value & 0xffffU));
   }
 
   template<>
-  class a_reg_direct<vm68k_byte_size>
+  class a_reg_direct<vm68k_byte>
   {
   private:
     // XXX: This function is left unimplemented.
@@ -162,7 +162,7 @@ namespace vx68k_m68k
 
     vm68k_address_t address (const vm68k_context *c) const
     {
-      return c->read_reg (vm68k_long_word, _regno);
+      return c->read_reg (vm68k_data_size::LONG_WORD, _regno);
     }
 
     typename Size::udata_type get_unsigned (const vm68k_context *c) const
@@ -228,7 +228,7 @@ namespace vx68k_m68k
 
     void finish (vm68k_context *c) const
     {
-      c->write_reg (vm68k_long_word, _regno,
+      c->write_reg (vm68k_data_size::LONG_WORD, _regno,
                     this->address (c) + increment_size ());
     }
 
@@ -243,7 +243,7 @@ namespace vx68k_m68k
   protected:
     vm68k_address_t address (const vm68k_context *c) const
     {
-      return c->read_reg (vm68k_long_word, _regno);
+      return c->read_reg (vm68k_data_size::LONG_WORD, _regno);
     }
 
     uint_fast16_t increment_size () const
@@ -294,7 +294,7 @@ namespace vx68k_m68k
 
     void finish (vm68k_context *c) const
     {
-      c->write_reg (vm68k_long_word, _regno, this->address (c));
+      c->write_reg (vm68k_data_size::LONG_WORD, _regno, this->address (c));
     }
 
     std::string text (const vm68k_context *c) const
@@ -308,7 +308,8 @@ namespace vx68k_m68k
   protected:
     vm68k_address_t address (const vm68k_context *c) const
     {
-      return c->read_reg (vm68k_long_word, _regno) - this->decrement_size ();
+      return c->read_reg (vm68k_data_size::LONG_WORD, _regno)
+        - this->decrement_size ();
     }
 
     uint_fast16_t decrement_size () const
@@ -334,7 +335,7 @@ namespace vx68k_m68k
   public:
     static uint_fast16_t extension_size ()
     {
-      return vm68k_word_size::aligned_data_size ();
+      return vm68k_word::aligned_data_size ();
     }
 
     disp_indirect (int r, vm68k_address_t pc)
@@ -345,7 +346,8 @@ namespace vx68k_m68k
 
     vm68k_address_t address (const vm68k_context *c) const
     {
-      return c->read_reg (vm68k_long_word, _regno) + c->fetch (vm68k_word, _pc);
+      return c->read_reg (vm68k_data_size::LONG_WORD, _regno)
+        + c->fetch (vm68k_data_size::WORD, _pc);
     }
 
     typename Size::udata_type get_unsigned (const vm68k_context *c) const
@@ -371,7 +373,7 @@ namespace vx68k_m68k
     {
       char buf[64];
       std::sprintf (buf, "%%a%d@(%d) /*= %#lx*/", _regno - 8,
-                    (int) c->fetch (vm68k_word, _pc),
+                    (int) c->fetch (vm68k_data_size::WORD, _pc),
                     (unsigned long) this->address (c));
       return buf;
     }
@@ -388,7 +390,7 @@ namespace vx68k_m68k
   public:
     static uint_fast16_t extension_size ()
     {
-      return vm68k_word_size::aligned_data_size ();
+      return vm68k_word::aligned_data_size ();
     }
 
     index_indirect (int r, vm68k_address_t pc)
@@ -399,17 +401,19 @@ namespace vx68k_m68k
 
     vm68k_address_t address (const vm68k_context *c) const
     {
-      uint_fast16_t w = c->fetch_unsigned (vm68k_word, _pc);
+      uint_fast16_t w = c->fetch_unsigned (vm68k_data_size::WORD, _pc);
       int x = w >> 12 & 0xf;
       if ((w & 0x800) != 0)
         {
-          return c->read_reg (vm68k_long_word, _regno) + c->read_reg (vm68k_long_word, x)
-            + vm68k_byte_size::as_signed (w & 0xffU);
+          return c->read_reg (vm68k_data_size::LONG_WORD, _regno)
+            + c->read_reg (vm68k_data_size::LONG_WORD, x)
+            + vm68k_byte::as_signed (w & 0xffU);
         }
       else
         {
-          return c->read_reg (vm68k_long_word, _regno) + c->read_reg (vm68k_word, x)
-            + vm68k_byte_size::as_signed (w & 0xffU);
+          return c->read_reg (vm68k_data_size::LONG_WORD, _regno)
+            + c->read_reg (vm68k_data_size::WORD, x)
+            + vm68k_byte::as_signed (w & 0xffU);
         }
     }
 
@@ -434,20 +438,20 @@ namespace vx68k_m68k
 
     std::string text (const vm68k_context *c) const
     {
-      uint_fast16_t w = c->fetch_unsigned (vm68k_word, _pc);
+      uint_fast16_t w = c->fetch_unsigned (vm68k_data_size::WORD, _pc);
       int x = w >> 12 & 0xf;
       const char *xp = x >= 8 ? "%a" : "%d";
       char buf[64];
       if ((w & 0x800) != 0)
         {
           std::sprintf (buf, "%%a%d@(%d,%s%d:l) /*= %#lx*/", _regno - 8,
-                        (int) vm68k_byte_size::as_signed (w & 0xffU), xp, x & 7,
+                        (int) vm68k_byte::as_signed (w & 0xffU), xp, x & 7,
                         (unsigned long) this->address (c));
         }
       else
         {
           std::sprintf (buf, "%%a%d@(%d,%s%d:w) /*= %#lx*/", _regno - 8,
-                        (int) vm68k_byte_size::as_signed (w & 0xffU), xp, x & 7,
+                        (int) vm68k_byte::as_signed (w & 0xffU), xp, x & 7,
                         (unsigned long) this->address (c));
         }
       return buf;
@@ -465,7 +469,7 @@ namespace vx68k_m68k
   public:
     static uint_fast16_t extension_size ()
     {
-      return vm68k_word_size::aligned_data_size ();
+      return vm68k_word::aligned_data_size ();
     }
 
     abs_short (int, vm68k_address_t pc)
@@ -475,7 +479,7 @@ namespace vx68k_m68k
 
     vm68k_address_t address (const vm68k_context *c) const
     {
-      return c->fetch (vm68k_word, _pc);
+      return c->fetch (vm68k_data_size::WORD, _pc);
     }
 
     typename Size::udata_type get_unsigned (const vm68k_context *c) const
@@ -515,7 +519,7 @@ namespace vx68k_m68k
   public:
     static uint_fast16_t extension_size ()
     {
-      return vm68k_long_word_size::aligned_data_size ();
+      return vm68k_long_word::aligned_data_size ();
     }
 
     abs_long (int, vm68k_address_t pc)
@@ -525,7 +529,7 @@ namespace vx68k_m68k
 
     vm68k_address_t address (const vm68k_context *c) const
     {
-      return c->fetch (vm68k_long_word, _pc);
+      return c->fetch (vm68k_data_size::LONG_WORD, _pc);
     }
 
     typename Size::udata_type get_unsigned (const vm68k_context *c) const
@@ -565,7 +569,7 @@ namespace vx68k_m68k
   public:
     static uint_fast16_t extension_size ()
     {
-      return vm68k_word_size::aligned_data_size ();
+      return vm68k_word::aligned_data_size ();
     }
 
     disp_pc_indirect (int, vm68k_address_t pc)
@@ -575,7 +579,7 @@ namespace vx68k_m68k
 
     vm68k_address_t address (const vm68k_context *c) const
     {
-      return _pc + c->fetch (vm68k_word, _pc);
+      return _pc + c->fetch (vm68k_data_size::WORD, _pc);
     }
 
     typename Size::udata_type get_unsigned (const vm68k_context *c) const
@@ -596,7 +600,7 @@ namespace vx68k_m68k
     {
       char buf[64];
       std::sprintf (buf, "%%pc@(%d) /*= %#lx*/",
-                    (int) c->fetch (vm68k_word, _pc),
+                    (int) c->fetch (vm68k_data_size::WORD, _pc),
                     (unsigned long) this->address (c));
       return buf;
     }
@@ -616,7 +620,7 @@ namespace vx68k_m68k
   public:
     static uint_fast16_t extension_size ()
     {
-      return vm68k_word_size::aligned_data_size ();
+      return vm68k_word::aligned_data_size ();
     }
 
     index_pc_indirect (int, vm68k_address_t pc)
@@ -626,17 +630,17 @@ namespace vx68k_m68k
 
     vm68k_address_t address (const vm68k_context *c) const
     {
-      uint_fast16_t w = c->fetch_unsigned (vm68k_word, _pc);
+      uint_fast16_t w = c->fetch_unsigned (vm68k_data_size::WORD, _pc);
       int x = w >> 12 & 0xf;
       if ((w & 0x800) != 0)
         {
-          return _pc + c->read_reg (vm68k_long_word, x)
-            + vm68k_byte_size::as_signed (w & 0xffU);
+          return _pc + c->read_reg (vm68k_data_size::LONG_WORD, x)
+            + vm68k_byte::as_signed (w & 0xffU);
         }
       else
         {
-          return _pc + c->read_reg (vm68k_word, x)
-            + vm68k_byte_size::as_signed (w & 0xffU);
+          return _pc + c->read_reg (vm68k_data_size::WORD, x)
+            + vm68k_byte::as_signed (w & 0xffU);
         }
     }
 
@@ -656,20 +660,20 @@ namespace vx68k_m68k
 
     std::string text (const vm68k_context *c) const
     {
-      uint_fast16_t w = c->fetch_unsigned (vm68k_word, _pc);
+      uint_fast16_t w = c->fetch_unsigned (vm68k_data_size::WORD, _pc);
       int x = w >> 12 & 0xf;
       const char *xp = x >= 8 ? "%a" : "%d";
       char buf[64];
       if ((w & 0x800) != 0)
         {
           std::sprintf (buf, "%%pc@(%d,%s%d:l) /*= %#lx*/",
-                        (int) vm68k_byte_size::as_signed (w & 0xffU), xp, x & 7,
+                        (int) vm68k_byte::as_signed (w & 0xffU), xp, x & 7,
                         (unsigned long) this->address (c));
         }
       else
         {
           std::sprintf (buf, "%%pc@(%d,%s%d:w) /*= %#lx*/",
-                        (int) vm68k_byte_size::as_signed (w & 0xffU), xp, x & 7,
+                        (int) vm68k_byte::as_signed (w & 0xffU), xp, x & 7,
                         (unsigned long) this->address (c));
         }
       return buf;
