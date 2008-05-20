@@ -1,5 +1,10 @@
 2008-05-21  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/inst/arith.h (struct addi_instruction, struct
+	cmpi_instruction, struct subi_instruction): New structs.
+	(do_ADDI, do_CMPI, do_SUBI): Removed.  Also change all users to
+	use the new structs.
+
 	* lib/inst/transfer.h (struct move_instruction, struct
 	movea_instruction, struct lea_instruction, struct
 	pea_instruction): New structs.
