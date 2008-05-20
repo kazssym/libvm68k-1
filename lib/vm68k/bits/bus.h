@@ -100,47 +100,49 @@ namespace vx68k
     vm68k_address_t _address;
   };
 
-  /* Bus target.  A bus target will be mapped within an address
-     space.  */
-  class VM68K_PUBLIC vm68k_accessible
-  {
-  public:
-    virtual ~vm68k_accessible ();
-
-  public:
-    virtual uint_fast8_t read8 (vm68k_bus_function func,
-                                vm68k_address_t addr) const
-      throw (vm68k_bus_error);
-    virtual uint_fast16_t read16 (vm68k_bus_function func,
-                                  vm68k_address_t addr) const
-      throw (vm68k_bus_error);
-    virtual uint_fast32_t read32 (vm68k_bus_function func,
-                                  vm68k_address_t addr) const
-      throw (vm68k_bus_error);
-
-    virtual void write8 (vm68k_bus_function func, vm68k_address_t addr,
-                         uint_fast8_t value)
-      throw (vm68k_bus_error);
-    virtual void write16 (vm68k_bus_function func, vm68k_address_t addr,
-                          uint_fast16_t value)
-      throw (vm68k_bus_error);
-    virtual void write32 (vm68k_bus_function func, vm68k_address_t addr,
-                          uint_fast32_t value)
-      throw (vm68k_bus_error);
-  };
-
   /* Maps an address space to memories.  An address space is a
      software view of a target machine.  */
   class VM68K_PUBLIC vm68k_bus
   {
   public:
+    /**
+     * Object that can be mapped onto a bus.
+     */
+    class VM68K_PUBLIC mappable
+    {
+    public:
+      virtual ~mappable ();
+
+    public:
+      virtual uint_fast8_t read8 (vm68k_bus_function func,
+                                  vm68k_address_t addr) const
+        throw (vm68k_bus_error);
+      virtual uint_fast16_t read16 (vm68k_bus_function func,
+                                    vm68k_address_t addr) const
+        throw (vm68k_bus_error);
+      virtual uint_fast32_t read32 (vm68k_bus_function func,
+                                    vm68k_address_t addr) const
+        throw (vm68k_bus_error);
+
+      virtual void write8 (vm68k_bus_function func, vm68k_address_t addr,
+                           uint_fast8_t value)
+        throw (vm68k_bus_error);
+      virtual void write16 (vm68k_bus_function func, vm68k_address_t addr,
+                            uint_fast16_t value)
+        throw (vm68k_bus_error);
+      virtual void write32 (vm68k_bus_function func, vm68k_address_t addr,
+                            uint_fast32_t value)
+        throw (vm68k_bus_error);
+    };
+
+  public:
     vm68k_bus ();
     ~vm68k_bus ();
 
   protected:
-    typedef std::vector<vm68k_accessible *> page_table_type;
+    typedef std::vector<mappable *> page_table_type;
   private:
-    vm68k_accessible null_accessible;
+    mappable null_accessible;
     page_table_type page_table[7];
 
   protected:
@@ -160,7 +162,7 @@ namespace vx68k
 
     /* Fills an address range with memory.  */
     void map_pages (int func_mask, vm68k_address_t addr, uint_fast32_t size,
-                    vm68k_accessible *p);
+                    mappable *p);
     void unmap_pages (int func_mask, vm68k_address_t addr, uint_fast32_t size);
 
   public:
@@ -168,7 +170,7 @@ namespace vx68k
     uint_fast8_t read8 (vm68k_bus_function func, vm68k_address_t addr) const
       throw (vm68k_bus_error)
     {
-      const vm68k_accessible *p = *(this->find_page (func, addr));
+      const mappable *p = *(this->find_page (func, addr));
       return p->read8 (func, addr);
     }
 
@@ -178,7 +180,7 @@ namespace vx68k
                                     vm68k_address_t addr) const
       throw (vm68k_bus_error)
     {
-      const vm68k_accessible *p = *(this->find_page (func, addr));
+      const mappable *p = *(this->find_page (func, addr));
       return p->read16 (func, addr);
     }
 
@@ -192,8 +194,8 @@ namespace vx68k
     uint_fast32_t read32 (vm68k_bus_function func, vm68k_address_t addr) const
       throw (vm68k_bus_error, vm68k_address_error);
 
-    std::string read_string (vm68k_bus_function func,
-                             vm68k_address_t addr) const;
+    std::string read_string (vm68k_bus_function func, vm68k_address_t addr)
+      const;
 
     void read (vm68k_bus_function func, vm68k_address_t addr, void *buffer,
                size_t size) const;
@@ -203,7 +205,7 @@ namespace vx68k
                  uint_fast8_t value)
       throw (vm68k_bus_error)
     {
-      vm68k_accessible *p = *(this->find_page (func, addr));
+      mappable *p = *(this->find_page (func, addr));
       p->write8 (func, addr, value);
     }
 
@@ -213,7 +215,7 @@ namespace vx68k
                             uint_fast16_t value)
       throw (vm68k_bus_error)
     {
-      vm68k_accessible *p = *(this->find_page (func, addr));
+      mappable *p = *(this->find_page (func, addr));
       p->write16 (func, addr, value);
     }
 
