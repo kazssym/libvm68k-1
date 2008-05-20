@@ -1,3 +1,8 @@
+2008-05-21  Kaz Sasayama  <kazssym@vx68k.org>
+
+	* lib/vm68k/bits/base.h: Removed the vm68k_ prefix from type
+	names.  Also changes all users.
+
 2008-05-19  Kaz Sasayama  <kazssym@vx68k.org>
 
 	* lib/Makefile.am (libvm68k_la_SOURCES): Move instr1_3.cpp to
