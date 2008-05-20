@@ -287,7 +287,7 @@ namespace vx68k
     vm68k_bus *_bus;
 
     /* Cache values for program and data FC's.  */
-    vm68k_bus_function dfc_cache, pfc_cache;
+    vm68k_bus::function_code dfc_cache, pfc_cache;
 
   private:			// interrupt
     /* True if the thread in this context is interrupted.  */
