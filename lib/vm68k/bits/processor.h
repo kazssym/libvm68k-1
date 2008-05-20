@@ -174,8 +174,8 @@ namespace vx68k
   public:
     struct spec
     {
-      uint16_t code;
-      uint16_t mask;
+      uint_least16_t code;
+      uint_least16_t mask;
       vm68k_instruction::function func;
     };
 

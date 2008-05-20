@@ -55,7 +55,7 @@ namespace vx68k
     const char *what () const throw ();
 
   private:
-    uint16_t _status;
+    uint_least16_t _status;
     vm68k_address_t _address;
   };
 
@@ -79,7 +79,7 @@ namespace vx68k
     const char *what () const throw ();
 
   private:
-    uint16_t _status;
+    uint_least16_t _status;
     vm68k_address_t _address;
   };
 

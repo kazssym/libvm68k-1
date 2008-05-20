@@ -1,5 +1,10 @@
 2008-05-21  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/vm68k/bits/base.h (int_least8_t): Renamed from int8_t.  Also
+	changes all users.
+	(int_least16_t, int_least32_t, uint_least8_t, uint_least16_t,
+	uint_least32_t): Likewise.
+
 	* lib/vm68k/bits/bus.h (class mappable): Renamed from
 	vm68k_accessible and nested into class vm68k_bus.  Also changes
 	all users.

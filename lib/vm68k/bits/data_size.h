@@ -52,17 +52,17 @@ namespace vx68k
         return (int_fast8_t) value;
     }
 
-    static uint_fast8_t read_unsigned (const uint32_t &reg)
+    static uint_fast8_t read_unsigned (const uint_least32_t &reg)
     {
       return reg & 0xffU;
     }
 
-    static int_fast8_t read (const uint32_t &reg)
+    static int_fast8_t read (const uint_least32_t &reg)
     {
       return as_signed (reg & 0xffU);
     }
 
-    static void write (uint32_t &reg, uint_fast8_t value)
+    static void write (uint_least32_t &reg, uint_fast8_t value)
     {
       reg = reg & ~0xffU | value & 0xffU;
     }
@@ -133,17 +133,17 @@ namespace vx68k
         return (int_fast16_t) value;
     }
 
-    static uint_fast16_t read_unsigned (const uint32_t &reg)
+    static uint_fast16_t read_unsigned (const uint_least32_t &reg)
     {
       return reg & 0xffffU;
     }
 
-    static int_fast16_t read (const uint32_t &reg)
+    static int_fast16_t read (const uint_least32_t &reg)
     {
       return as_signed (reg & 0xffffU);
     }
 
-    static void write (uint32_t &reg, uint_fast16_t value)
+    static void write (uint_least32_t &reg, uint_fast16_t value)
     {
       reg = reg & ~0xffffU | value & 0xffffU;
     }
@@ -214,17 +214,17 @@ namespace vx68k
         return (int_fast32_t) value;
     }
 
-    static uint_fast32_t read_unsigned (const uint32_t &reg)
+    static uint_fast32_t read_unsigned (const uint_least32_t &reg)
     {
       return reg;
     }
 
-    static int_fast32_t read (const uint32_t &reg)
+    static int_fast32_t read (const uint_least32_t &reg)
     {
       return as_signed (reg);
     }
 
-    static void write (uint32_t &reg, uint_fast32_t value)
+    static void write (uint_least32_t &reg, uint_fast32_t value)
     {
       reg = value & 0xffffffffUL;
     }

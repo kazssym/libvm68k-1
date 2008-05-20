@@ -38,40 +38,40 @@
 namespace vx68k
 {
 #if SCHAR_MIN < -0x7f
-  typedef signed char int8_t;
+  typedef signed char int_least8_t;
 #else
-  typedef short       int8_t;
+  typedef short       int_least8_t;
 #endif
 #if SHRT_MIN < -0x7fff
-  typedef short       int16_t;
+  typedef short       int_least16_t;
 #elif INT_MIN < -0x7fff
-  typedef int         int16_t;
+  typedef int         int_least16_t;
 #else
-  typedef long        int16_t;
+  typedef long        int_least16_t;
 #endif
 #if INT_MIN < -0x7fffffffL && INT_MAX >= 0x7fffffffL
-  typedef int         int32_t;
+  typedef int         int_least32_t;
 #elif LONG_MIN < -0x7fffffffL
-  typedef long        int32_t;
+  typedef long        int_least32_t;
 #else
-#error No suitable type for int32_t
+#error No suitable type for int_least32_t
 #endif
 
-  typedef unsigned char  uint8_t;
-  typedef unsigned short uint16_t;
+  typedef unsigned char  uint_least8_t;
+  typedef unsigned short uint_least16_t;
 #if UINT_MAX >= 0xffffffffUL
-  typedef unsigned int   uint32_t;
+  typedef unsigned int   uint_least32_t;
 #else
-  typedef unsigned long  uint32_t;
+  typedef unsigned long  uint_least32_t;
 #endif
 
-  typedef int      int_fast8_t;
-  typedef int      int_fast16_t;
-  typedef int32_t  int_fast32_t;
+  typedef int            int_fast8_t;
+  typedef int            int_fast16_t;
+  typedef int_least32_t  int_fast32_t;
 
-  typedef unsigned int  uint_fast8_t;
-  typedef unsigned int  uint_fast16_t;
-  typedef uint32_t      uint_fast32_t;
+  typedef unsigned int   uint_fast8_t;
+  typedef unsigned int   uint_fast16_t;
+  typedef uint_least32_t uint_fast32_t;
 }
 
 #endif

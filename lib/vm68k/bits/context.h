@@ -31,29 +31,29 @@ namespace vx68k
     virtual ~condition_tester () {}
 
   public:
-    virtual bool ls(const int32_t *) const;
-    virtual bool cs(const int32_t *) const = 0;
-    virtual bool eq(const int32_t *) const = 0;
-    virtual bool mi(const int32_t *) const = 0;
-    virtual bool lt(const int32_t *) const = 0;
-    virtual bool le(const int32_t *) const;
-    virtual unsigned int x(const int32_t *) const;
+    virtual bool ls(const int_least32_t *) const;
+    virtual bool cs(const int_least32_t *) const = 0;
+    virtual bool eq(const int_least32_t *) const = 0;
+    virtual bool mi(const int_least32_t *) const = 0;
+    virtual bool lt(const int_least32_t *) const = 0;
+    virtual bool le(const int_least32_t *) const;
+    virtual unsigned int x(const int_least32_t *) const;
   };
 
   inline bool
-  condition_tester::ls(const int32_t *v) const
+  condition_tester::ls(const int_least32_t *v) const
   {
     return this->cs(v) || this->eq(v);
   }
 
   inline bool
-  condition_tester::le(const int32_t *v) const
+  condition_tester::le(const int_least32_t *v) const
   {
     return this->eq(v) || this->lt(v);
   }
 
   inline unsigned int
-  condition_tester::x(const int32_t *v) const
+  condition_tester::x(const int_least32_t *v) const
   {
     return this->cs(v);
   }
@@ -61,10 +61,10 @@ namespace vx68k
   class bitset_condition_tester: public condition_tester
   {
   public:
-    bool cs(const int32_t *) const;
-    bool eq(const int32_t *) const;
-    bool mi(const int32_t *) const;
-    bool lt(const int32_t *) const;
+    bool cs(const int_least32_t *) const;
+    bool eq(const int_least32_t *) const;
+    bool mi(const int_least32_t *) const;
+    bool lt(const int_least32_t *) const;
   };
 
   /* Status register.  */
@@ -81,17 +81,17 @@ namespace vx68k
 
   private:
     const condition_tester *cc_eval;
-    int32_t cc_values[3];
+    int_least32_t cc_values[3];
     const condition_tester *x_eval;
-    int32_t x_values[3];
-    uint16_t value;
+    int_least32_t x_values[3];
+    uint_least16_t value;
 
   public:
     status_register();
 
   public:
-    operator uint16_t() const;
-    status_register &operator=(uint16_t v)
+    operator uint_fast16_t() const;
+    status_register &operator=(uint_fast16_t v)
     {
       value = v & 0xff00;
       x_eval = cc_eval = &bitset_tester;
@@ -211,15 +211,15 @@ namespace vx68k
     static const uint_fast16_t S = 1 << 13;
     union
     {
-      uint32_t _reg[8 + 8];
+      uint_least32_t _reg[8 + 8];
       struct
       {
-        uint32_t d0, d1, d2, d3, d4, d5, d6, d7;
-        uint32_t a0, a1, a2, a3, a4, a5, a6, sp;
+        uint_least32_t d0, d1, d2, d3, d4, d5, d6, d7;
+        uint_least32_t a0, a1, a2, a3, a4, a5, a6, sp;
       } _named_reg;
     };
-    uint32_t _usp, _ssp;
-    uint16_t _status_high;
+    uint_least32_t _usp, _ssp;
+    uint_least16_t _status_high;
   public: /* FIXME temporarily public */
     /*_VM68K_DEPRECATED*/ status_register _status;
 
@@ -293,7 +293,7 @@ namespace vx68k
     /* True if the thread in this context is interrupted.  */
     bool a_interrupted;
 
-    std::queue<uint8_t> interrupt_queue[7];
+    std::queue<uint_least8_t> interrupt_queue[7];
 
   public:			// interrupt
     /* Returns true if the thread in this context is interrupted.  */
