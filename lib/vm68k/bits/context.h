@@ -31,29 +31,29 @@ namespace vx68k
     virtual ~condition_tester () {}
 
   public:
-    virtual bool ls(const vm68k_int32_t *) const;
-    virtual bool cs(const vm68k_int32_t *) const = 0;
-    virtual bool eq(const vm68k_int32_t *) const = 0;
-    virtual bool mi(const vm68k_int32_t *) const = 0;
-    virtual bool lt(const vm68k_int32_t *) const = 0;
-    virtual bool le(const vm68k_int32_t *) const;
-    virtual unsigned int x(const vm68k_int32_t *) const;
+    virtual bool ls(const int32_t *) const;
+    virtual bool cs(const int32_t *) const = 0;
+    virtual bool eq(const int32_t *) const = 0;
+    virtual bool mi(const int32_t *) const = 0;
+    virtual bool lt(const int32_t *) const = 0;
+    virtual bool le(const int32_t *) const;
+    virtual unsigned int x(const int32_t *) const;
   };
 
   inline bool
-  condition_tester::ls(const vm68k_int32_t *v) const
+  condition_tester::ls(const int32_t *v) const
   {
     return this->cs(v) || this->eq(v);
   }
 
   inline bool
-  condition_tester::le(const vm68k_int32_t *v) const
+  condition_tester::le(const int32_t *v) const
   {
     return this->eq(v) || this->lt(v);
   }
 
   inline unsigned int
-  condition_tester::x(const vm68k_int32_t *v) const
+  condition_tester::x(const int32_t *v) const
   {
     return this->cs(v);
   }
@@ -61,10 +61,10 @@ namespace vx68k
   class bitset_condition_tester: public condition_tester
   {
   public:
-    bool cs(const vm68k_int32_t *) const;
-    bool eq(const vm68k_int32_t *) const;
-    bool mi(const vm68k_int32_t *) const;
-    bool lt(const vm68k_int32_t *) const;
+    bool cs(const int32_t *) const;
+    bool eq(const int32_t *) const;
+    bool mi(const int32_t *) const;
+    bool lt(const int32_t *) const;
   };
 
   /* Status register.  */
@@ -81,17 +81,17 @@ namespace vx68k
 
   private:
     const condition_tester *cc_eval;
-    vm68k_int32_t cc_values[3];
+    int32_t cc_values[3];
     const condition_tester *x_eval;
-    vm68k_int32_t x_values[3];
-    vm68k_uint16_t value;
+    int32_t x_values[3];
+    uint16_t value;
 
   public:
     status_register();
 
   public:
-    operator vm68k_uint16_t() const;
-    status_register &operator=(vm68k_uint16_t v)
+    operator uint16_t() const;
+    status_register &operator=(uint16_t v)
     {
       value = v & 0xff00;
       x_eval = cc_eval = &bitset_tester;
@@ -119,14 +119,14 @@ namespace vx68k
 
   public:
     /* Sets the condition codes by a result.  */
-    void set_cc(vm68k_int_fast32_t r)
+    void set_cc(int_fast32_t r)
     {
       cc_eval = general_condition_tester;
       cc_values[0] = r;
     }
 
     /* Sets the condition codes as ADD.  */
-    void set_cc_as_add(vm68k_int_fast32_t r, vm68k_int_fast32_t d, vm68k_int_fast32_t s)
+    void set_cc_as_add(int_fast32_t r, int_fast32_t d, int_fast32_t s)
     {
       x_eval = cc_eval = add_condition_tester;
       x_values[0] = cc_values[0] = r;
@@ -134,12 +134,12 @@ namespace vx68k
       x_values[2] = cc_values[2] = s;
     }
 
-    void set_cc_cmp(vm68k_int_fast32_t, vm68k_int_fast32_t, vm68k_int_fast32_t);
-    void set_cc_sub(vm68k_int_fast32_t, vm68k_int_fast32_t, vm68k_int_fast32_t);
-    void set_cc_asr(vm68k_int_fast32_t, vm68k_int_fast32_t, vm68k_int_fast32_t);
-    void set_cc_lsr(vm68k_int_fast32_t r, vm68k_int_fast32_t d, vm68k_int_fast32_t s)
+    void set_cc_cmp(int_fast32_t, int_fast32_t, int_fast32_t);
+    void set_cc_sub(int_fast32_t, int_fast32_t, int_fast32_t);
+    void set_cc_asr(int_fast32_t, int_fast32_t, int_fast32_t);
+    void set_cc_lsr(int_fast32_t r, int_fast32_t d, int_fast32_t s)
       {set_cc_asr(r, d, s);}
-    void set_cc_lsl(vm68k_int_fast32_t, vm68k_int_fast32_t, vm68k_int_fast32_t);
+    void set_cc_lsl(int_fast32_t, int_fast32_t, int_fast32_t);
 
   public:
     /* Returns whether supervisor state.  */
@@ -164,6 +164,10 @@ namespace vx68k
     static void set_current_context (vm68k_context *context);
 
   public:
+    static const int D0 = 0;
+    static const int A0 = 8;
+    static const int SP = A0 + 7;
+
     template<class Size>
     typename Size::udata_type read_reg_unsigned (const Size &,
                                                  int regno) const
@@ -195,27 +199,27 @@ namespace vx68k
     void set_super (bool state);
 
     /* Returns the value of the status register.  */
-    vm68k_uint_fast16_t status () const
+    uint_fast16_t status () const
     {
       return _status_high | (_status & 0xffU);
     }
 
     /* Sets the status register.  */
-    void set_status (vm68k_uint_fast16_t value);
+    void set_status (uint_fast16_t value);
 
   private:
-    static const vm68k_uint_fast16_t S = 1 << 13;
+    static const uint_fast16_t S = 1 << 13;
     union
     {
-      vm68k_uint32_t _reg[16 + 2];
+      uint32_t _reg[8 + 8];
       struct
       {
-        vm68k_uint32_t d0, d1, d2, d3, d4, d5, d6, d7;
-        vm68k_uint32_t a0, a1, a2, a3, a4, a5, a6, sp;
-        vm68k_uint32_t usp, ssp;
+        uint32_t d0, d1, d2, d3, d4, d5, d6, d7;
+        uint32_t a0, a1, a2, a3, a4, a5, a6, sp;
       } _named_reg;
     };
-    vm68k_uint16_t _status_high;
+    uint32_t _usp, _ssp;
+    uint16_t _status_high;
   public: /* FIXME temporarily public */
     /*_VM68K_DEPRECATED*/ status_register _status;
 
@@ -243,9 +247,9 @@ namespace vx68k
     template<class Size>
     typename Size::udata_type pop_unsigned (const Size &) const
     {
-      typename Size::vm68k_uint_type value =
+      typename Size::uint_type value =
         Size::read_unsigned (_bus, dfc_cache, _named_reg.sp);
-      _named_reg.sp += Size::aligned_vm68k_int_size ();
+      _named_reg.sp += Size::aligned_data_size ();
       return value;
     }
 
@@ -254,14 +258,14 @@ namespace vx68k
     {
       typename Size::data_type value =
         Size::read (_bus, dfc_cache, _named_reg.sp);
-      _named_reg.sp += Size::aligned_vm68k_int_size ();
+      _named_reg.sp += Size::aligned_data_size ();
       return value;
     }
 
     template<class Size>
     void push (const Size &, typename Size::udata_type value)
     {
-      _named_reg.sp -= Size::aligned_vm68k_int_size ();
+      _named_reg.sp -= Size::aligned_data_size ();
       Size::write (_bus, dfc_cache, _named_reg.sp);
     }
 
@@ -289,7 +293,7 @@ namespace vx68k
     /* True if the thread in this context is interrupted.  */
     bool a_interrupted;
 
-    std::queue<vm68k_uint8_t> interrupt_queue[7];
+    std::queue<uint8_t> interrupt_queue[7];
 
   public:			// interrupt
     /* Returns true if the thread in this context is interrupted.  */
@@ -299,7 +303,7 @@ namespace vx68k
     }
 
     /* Interrupts.  */
-    void interrupt (int priority, vm68k_uint_fast8_t vecno);
+    void interrupt (int priority, uint_fast8_t vecno);
   };
 }
 

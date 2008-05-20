@@ -35,7 +35,7 @@ namespace vx68k
       return _pc;
     }
 
-    virtual vm68k_uint_fast16_t vecno () const throw () = 0;
+    virtual uint_fast16_t vecno () const throw () = 0;
 
   private:
     vm68k_address_t _pc;
@@ -57,7 +57,7 @@ namespace vx68k
       return _source;
     }
 
-    vm68k_uint_fast16_t vecno () const throw ()
+    uint_fast16_t vecno () const throw ()
     {
       return 2;
     }
@@ -82,7 +82,7 @@ namespace vx68k
       return _source;
     }
 
-    vm68k_uint_fast16_t vecno () const throw ()
+    uint_fast16_t vecno () const throw ()
     {
       return 3;
     }
@@ -99,7 +99,7 @@ namespace vx68k
     {
     }
 
-    vm68k_uint_fast16_t vecno () const throw ()
+    uint_fast16_t vecno () const throw ()
     {
       return 4;
     }
@@ -109,7 +109,7 @@ namespace vx68k
   struct zero_divide_exception: vm68k_exception
   {
     explicit zero_divide_exception(vm68k_address_t pc);
-    vm68k_uint_fast16_t vecno () const throw () {return 5;}
+    uint_fast16_t vecno () const throw () {return 5;}
   };
 
   inline
@@ -122,7 +122,7 @@ namespace vx68k
   struct privilege_violation_exception: vm68k_exception
   {
     explicit privilege_violation_exception(vm68k_address_t pc);
-    vm68k_uint_fast16_t vecno () const throw () {return 8;}
+    uint_fast16_t vecno () const throw () {return 8;}
   };
 
   /* Constructor.  */
@@ -137,7 +137,7 @@ namespace vx68k
   public:
     /* Type of an instruction handler.  */
     typedef vm68k_address_t (*function) (vm68k_address_t pc,
-                                         vm68k_uint_fast16_t w,
+                                         uint_fast16_t w,
                                          vm68k_context *c);
 
   public:
@@ -152,7 +152,7 @@ namespace vx68k
     vm68k_instruction (function func);
 
   public:
-    vm68k_address_t operator() (vm68k_address_t pc, vm68k_uint_fast16_t w,
+    vm68k_address_t operator() (vm68k_address_t pc, uint_fast16_t w,
                                 vm68k_context *c) const
     {
       return _func (pc, w, c);
@@ -174,8 +174,8 @@ namespace vx68k
   public:
     struct spec
     {
-      vm68k_uint16_t code;
-      vm68k_uint16_t mask;
+      uint16_t code;
+      uint16_t mask;
       vm68k_instruction::function func;
     };
 
@@ -204,7 +204,7 @@ namespace vx68k
   public:
     /* Sets an instruction for an operation word.  The old value is
        returned.  */
-    void insert (vm68k_uint_fast16_t code, vm68k_instruction::function i);
+    void insert (uint_fast16_t code, vm68k_instruction::function i);
     void insert (const spec &s);
 
     template<typename InputIterator>
@@ -222,7 +222,7 @@ namespace vx68k
 
   protected:
     /* Dispatches for instruction handlers.  */
-    vm68k_address_t dispatch (vm68k_address_t pc, vm68k_uint_fast16_t w,
+    vm68k_address_t dispatch (vm68k_address_t pc, uint_fast16_t w,
                         vm68k_context *c) const
     {
       return _instruction[w] (pc, w, c);

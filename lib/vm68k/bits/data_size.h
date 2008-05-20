@@ -29,52 +29,52 @@ namespace vx68k
   /* Access methods for byte data.  */
   struct VM68K_PUBLIC vm68k_byte_size
   {
-    typedef vm68k_int_fast8_t  data_type;
-    typedef vm68k_uint_fast8_t udata_type;
+    typedef int_fast8_t  data_type;
+    typedef uint_fast8_t udata_type;
 
     typedef void half_size;
 
-    static vm68k_uint_fast16_t data_size ()
+    static uint_fast16_t data_size ()
     {
       return 1;
     }
 
-    static vm68k_uint_fast16_t aligned_data_size ()
+    static uint_fast16_t aligned_data_size ()
     {
       return 2;
     }
 
-    static vm68k_int_fast8_t as_signed (vm68k_uint_fast8_t value)
+    static int_fast8_t as_signed (uint_fast8_t value)
     {
       if (value > 0x7fU)
-        return -((vm68k_int_fast8_t) (0xffU - value)) - 1;
+        return -((int_fast8_t) (0xffU - value)) - 1;
       else
-        return (vm68k_int_fast8_t) value;
+        return (int_fast8_t) value;
     }
 
-    static vm68k_uint_fast8_t read_unsigned (const vm68k_uint32_t &reg)
+    static uint_fast8_t read_unsigned (const uint32_t &reg)
     {
       return reg & 0xffU;
     }
 
-    static vm68k_int_fast8_t read (const vm68k_uint32_t &reg)
+    static int_fast8_t read (const uint32_t &reg)
     {
       return as_signed (reg & 0xffU);
     }
 
-    static void write (vm68k_uint32_t &reg, vm68k_uint_fast8_t value)
+    static void write (uint32_t &reg, uint_fast8_t value)
     {
       reg = reg & ~0xffU | value & 0xffU;
     }
 
-    static vm68k_uint_fast8_t read_unsigned (const vm68k_bus *bus,
+    static uint_fast8_t read_unsigned (const vm68k_bus *bus,
                                              vm68k_bus_function func,
                                              vm68k_address_t addr)
     {
       return bus->read8 (func, addr);
     }
 
-    static vm68k_int_fast8_t read (const vm68k_bus *bus,
+    static int_fast8_t read (const vm68k_bus *bus,
                                    vm68k_bus_function func,
                                    vm68k_address_t addr)
     {
@@ -83,19 +83,19 @@ namespace vx68k
 
     static void write (vm68k_bus *bus,
                        vm68k_bus_function func,
-                       vm68k_address_t addr, vm68k_uint_fast8_t value)
+                       vm68k_address_t addr, uint_fast8_t value)
     {
       bus->write8 (func, addr, value);
     }
 
-    static vm68k_uint_fast8_t read_inst_unsigned (const vm68k_bus *bus,
+    static uint_fast8_t read_inst_unsigned (const vm68k_bus *bus,
                                                   vm68k_bus_function func,
                                                   vm68k_address_t addr)
     {
       return bus->read8 (func, addr | 1U);
     }
 
-    static vm68k_int_fast8_t read_inst (const vm68k_bus *bus,
+    static int_fast8_t read_inst (const vm68k_bus *bus,
                                         vm68k_bus_function func,
                                         vm68k_address_t addr)
     {
@@ -111,52 +111,52 @@ namespace vx68k
   /* Access methods for word data.  */
   struct VM68K_PUBLIC vm68k_word_size
   {
-    typedef vm68k_int_fast16_t  data_type;
-    typedef vm68k_uint_fast16_t udata_type;
+    typedef int_fast16_t  data_type;
+    typedef uint_fast16_t udata_type;
 
     typedef vm68k_byte_size half_size;
 
-    static vm68k_uint_fast16_t data_size ()
+    static uint_fast16_t data_size ()
     {
       return 2;
     }
 
-    static vm68k_uint_fast16_t aligned_data_size ()
+    static uint_fast16_t aligned_data_size ()
     {
       return 2;
     }
 
-    static vm68k_int_fast16_t as_signed (vm68k_uint_fast16_t value)
+    static int_fast16_t as_signed (uint_fast16_t value)
     {
       if (value > 0x7fffU)
-        return -((vm68k_int_fast16_t) (0xffffU - value)) - 1;
+        return -((int_fast16_t) (0xffffU - value)) - 1;
       else
-        return (vm68k_int_fast16_t) value;
+        return (int_fast16_t) value;
     }
 
-    static vm68k_uint_fast16_t read_unsigned (const vm68k_uint32_t &reg)
+    static uint_fast16_t read_unsigned (const uint32_t &reg)
     {
       return reg & 0xffffU;
     }
 
-    static vm68k_int_fast16_t read (const vm68k_uint32_t &reg)
+    static int_fast16_t read (const uint32_t &reg)
     {
       return as_signed (reg & 0xffffU);
     }
 
-    static void write (vm68k_uint32_t &reg, vm68k_uint_fast16_t value)
+    static void write (uint32_t &reg, uint_fast16_t value)
     {
       reg = reg & ~0xffffU | value & 0xffffU;
     }
 
-    static vm68k_uint_fast16_t read_unsigned (const vm68k_bus *bus,
+    static uint_fast16_t read_unsigned (const vm68k_bus *bus,
                                               vm68k_bus_function func,
                                               vm68k_address_t addr)
     {
       return bus->read16 (func, addr);
     }
 
-    static vm68k_int_fast16_t read (const vm68k_bus *bus,
+    static int_fast16_t read (const vm68k_bus *bus,
                                     vm68k_bus_function func,
                                     vm68k_address_t addr)
     {
@@ -165,19 +165,19 @@ namespace vx68k
 
     static void write (vm68k_bus *bus,
                        vm68k_bus_function func,
-                       vm68k_address_t addr, vm68k_uint_fast16_t value)
+                       vm68k_address_t addr, uint_fast16_t value)
     {
       bus->write16 (func, addr, value);
     }
 
-    static vm68k_uint_fast16_t read_inst_unsigned (const vm68k_bus *bus,
+    static uint_fast16_t read_inst_unsigned (const vm68k_bus *bus,
                                                    vm68k_bus_function func,
                                                    vm68k_address_t addr)
     {
       return bus->read16 (func, addr);
     }
 
-    static vm68k_int_fast16_t read_inst (const vm68k_bus *bus,
+    static int_fast16_t read_inst (const vm68k_bus *bus,
                                          vm68k_bus_function func,
                                          vm68k_address_t addr)
     {
@@ -193,52 +193,52 @@ namespace vx68k
   /* Access methods for long word data.  */
   struct VM68K_PUBLIC vm68k_long_word_size
   {
-    typedef vm68k_int_fast32_t  data_type;
-    typedef vm68k_uint_fast32_t udata_type;
+    typedef int_fast32_t  data_type;
+    typedef uint_fast32_t udata_type;
 
     typedef vm68k_word_size half_size;
 
-    static vm68k_uint_fast16_t data_size ()
+    static uint_fast16_t data_size ()
     {
       return 4;
     }
 
-    static vm68k_uint_fast32_t aligned_data_size ()
+    static uint_fast32_t aligned_data_size ()
     {
       return 4;
     }
 
-    static vm68k_int_fast32_t as_signed (vm68k_uint_fast32_t value)
+    static int_fast32_t as_signed (uint_fast32_t value)
     {
       if (value > 0x7fffffffUL)
-        return -((vm68k_int_fast32_t) (0xffffffffUL - value)) - 1;
+        return -((int_fast32_t) (0xffffffffUL - value)) - 1;
       else
-        return (vm68k_int_fast32_t) value;
+        return (int_fast32_t) value;
     }
 
-    static vm68k_uint_fast32_t read_unsigned (const vm68k_uint32_t &reg)
+    static uint_fast32_t read_unsigned (const uint32_t &reg)
     {
       return reg;
     }
 
-    static vm68k_int_fast32_t read (const vm68k_uint32_t &reg)
+    static int_fast32_t read (const uint32_t &reg)
     {
       return as_signed (reg);
     }
 
-    static void write (vm68k_uint32_t &reg, vm68k_uint_fast32_t value)
+    static void write (uint32_t &reg, uint_fast32_t value)
     {
       reg = value & 0xffffffffUL;
     }
 
-    static vm68k_uint_fast32_t read_unsigned (const vm68k_bus *bus,
+    static uint_fast32_t read_unsigned (const vm68k_bus *bus,
                                               vm68k_bus_function func,
                                               vm68k_address_t addr)
     {
       return bus->read32 (func, addr);
     }
 
-    static vm68k_int_fast32_t read (const vm68k_bus *bus,
+    static int_fast32_t read (const vm68k_bus *bus,
                                     vm68k_bus_function func,
                                     vm68k_address_t addr)
     {
@@ -247,21 +247,21 @@ namespace vx68k
 
     static void write (vm68k_bus *bus,
                        vm68k_bus_function func,
-                       vm68k_address_t addr, vm68k_uint_fast32_t value)
+                       vm68k_address_t addr, uint_fast32_t value)
     {
       bus->write32 (func, addr, value);
     }
 
-    static vm68k_uint_fast32_t read_inst_unsigned (const vm68k_bus *bus,
+    static uint_fast32_t read_inst_unsigned (const vm68k_bus *bus,
                                                    vm68k_bus_function func,
                                                    vm68k_address_t addr)
     {
       return bus->read32 (func, addr);
     }
 
-    static vm68k_int_fast32_t read_inst (const vm68k_bus *bus,
-                                         vm68k_bus_function func,
-                                         vm68k_address_t addr)
+    static int_fast32_t read_inst (const vm68k_bus *bus,
+                                   vm68k_bus_function func,
+                                   vm68k_address_t addr)
     {
       return as_signed (bus->read32 (func, addr));
     }

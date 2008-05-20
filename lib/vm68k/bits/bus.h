@@ -26,7 +26,7 @@
 namespace vx68k
 {
   /* Address */
-  typedef vm68k_uint_fast32_t vm68k_address_t;
+  typedef uint_fast32_t vm68k_address_t;
 
   const int PAGE_SHIFT = 12;
   const std::size_t PAGE_SIZE = ((std::size_t) 1) << PAGE_SHIFT;
@@ -56,16 +56,22 @@ namespace vx68k
   class VM68K_PUBLIC vm68k_bus_error : public std::exception
   {
   public:
-    vm68k_bus_error (vm68k_uint_fast16_t status, vm68k_address_t addr)
+    vm68k_bus_error (uint_fast16_t status, vm68k_address_t addr)
       throw ();
 
   public:
-    vm68k_uint_fast16_t status () const throw () { return _status; }
-    vm68k_address_t address () const throw () { return _address; }
+    uint_fast16_t status () const throw ()
+    {
+      return _status;
+    }
+    vm68k_address_t address () const throw ()
+    {
+      return _address;
+    }
     const char *what () const throw ();
 
   private:
-    vm68k_uint16_t _status;
+    uint16_t _status;
     vm68k_address_t _address;
   };
 
@@ -75,16 +81,22 @@ namespace vx68k
   class VM68K_PUBLIC vm68k_address_error : public std::exception
   {
   public:
-    vm68k_address_error (vm68k_uint_fast16_t status, vm68k_address_t addr)
+    vm68k_address_error (uint_fast16_t status, vm68k_address_t addr)
       throw ();
 
   public:
-    vm68k_uint_fast16_t status () const throw () { return _status; }
-    vm68k_address_t address () const throw () { return _address; }
+    uint_fast16_t status () const throw ()
+    {
+      return _status;
+    }
+    vm68k_address_t address () const throw ()
+    {
+      return _address;
+    }
     const char *what () const throw ();
 
   private:
-    vm68k_uint16_t _status;
+    uint16_t _status;
     vm68k_address_t _address;
   };
 
@@ -96,27 +108,24 @@ namespace vx68k
     virtual ~vm68k_accessible ();
 
   public:
-    virtual vm68k_uint_fast8_t read8 (vm68k_bus_function func,
-                                      vm68k_address_t addr) const
+    virtual uint_fast8_t read8 (vm68k_bus_function func,
+                                vm68k_address_t addr) const
       throw (vm68k_bus_error);
-    virtual vm68k_uint_fast16_t read16 (vm68k_bus_function func,
-                                        vm68k_address_t addr) const
+    virtual uint_fast16_t read16 (vm68k_bus_function func,
+                                  vm68k_address_t addr) const
       throw (vm68k_bus_error);
-    virtual vm68k_uint_fast32_t read32 (vm68k_bus_function func,
-                                        vm68k_address_t addr) const
+    virtual uint_fast32_t read32 (vm68k_bus_function func,
+                                  vm68k_address_t addr) const
       throw (vm68k_bus_error);
 
-    virtual void write8 (vm68k_bus_function func,
-                         vm68k_address_t addr,
-                         vm68k_uint_fast8_t value)
+    virtual void write8 (vm68k_bus_function func, vm68k_address_t addr,
+                         uint_fast8_t value)
       throw (vm68k_bus_error);
-    virtual void write16 (vm68k_bus_function func,
-                          vm68k_address_t addr,
-                          vm68k_uint_fast16_t value)
+    virtual void write16 (vm68k_bus_function func, vm68k_address_t addr,
+                          uint_fast16_t value)
       throw (vm68k_bus_error);
-    virtual void write32 (vm68k_bus_function func,
-                          vm68k_address_t addr,
-                          vm68k_uint_fast32_t value)
+    virtual void write32 (vm68k_bus_function func, vm68k_address_t addr,
+                          uint_fast32_t value)
       throw (vm68k_bus_error);
   };
 
@@ -150,16 +159,13 @@ namespace vx68k
     }
 
     /* Fills an address range with memory.  */
-    void map_pages (int func_mask, vm68k_address_t addr,
-                    vm68k_uint_fast32_t size,
+    void map_pages (int func_mask, vm68k_address_t addr, uint_fast32_t size,
                     vm68k_accessible *p);
-    void unmap_pages (int func_mask, vm68k_address_t addr,
-                      vm68k_uint_fast32_t size);
+    void unmap_pages (int func_mask, vm68k_address_t addr, uint_fast32_t size);
 
   public:
     /* Returns one byte at address ADDR in this address space.  */
-    vm68k_uint_fast8_t read8 (vm68k_bus_function func,
-                              vm68k_address_t addr) const
+    uint_fast8_t read8 (vm68k_bus_function func, vm68k_address_t addr) const
       throw (vm68k_bus_error)
     {
       const vm68k_accessible *p = *(this->find_page (func, addr));
@@ -168,8 +174,8 @@ namespace vx68k
 
     /* Returns one word at address ADDR in this address space.
        The address must be word-aligned.  */
-    vm68k_uint_fast16_t read16_unchecked (vm68k_bus_function func,
-                                          vm68k_address_t addr) const
+    uint_fast16_t read16_unchecked (vm68k_bus_function func,
+                                    vm68k_address_t addr) const
       throw (vm68k_bus_error)
     {
       const vm68k_accessible *p = *(this->find_page (func, addr));
@@ -178,25 +184,23 @@ namespace vx68k
 
     /* Returns one word at address ADDR in this address space.  Any
        unaligned address will be handled.  */
-    vm68k_uint_fast16_t read16 (vm68k_bus_function func,
-                                vm68k_address_t addr) const
+    uint_fast16_t read16 (vm68k_bus_function func, vm68k_address_t addr) const
       throw (vm68k_bus_error, vm68k_address_error);
 
     /* Returns one long word at address ADDR in this address space.
        Any unaligned address will be handled.  */
-    vm68k_uint_fast32_t read32 (vm68k_bus_function func,
-                                vm68k_address_t addr) const
+    uint_fast32_t read32 (vm68k_bus_function func, vm68k_address_t addr) const
       throw (vm68k_bus_error, vm68k_address_error);
 
     std::string read_string (vm68k_bus_function func,
                              vm68k_address_t addr) const;
 
-    void read (vm68k_bus_function func, vm68k_address_t addr,
-               void *buffer, size_t size) const;
+    void read (vm68k_bus_function func, vm68k_address_t addr, void *buffer,
+               size_t size) const;
 
     /* Stores byte VALUE at address ADDR in this address space.  */
     void write8 (vm68k_bus_function func, vm68k_address_t addr,
-                 vm68k_uint_fast8_t value)
+                 uint_fast8_t value)
       throw (vm68k_bus_error)
     {
       vm68k_accessible *p = *(this->find_page (func, addr));
@@ -206,7 +210,7 @@ namespace vx68k
     /* Stores word VALUE at address ADDR in this address space.
        The address must be word-aligned.  */
     void write16_unchecked (vm68k_bus_function func, vm68k_address_t addr,
-                            vm68k_uint_fast16_t value)
+                            uint_fast16_t value)
       throw (vm68k_bus_error)
     {
       vm68k_accessible *p = *(this->find_page (func, addr));
@@ -216,13 +220,13 @@ namespace vx68k
     /* Stores word VALUE at address ADDR in this address space.
        Any unaligned address will be handled.  */
     void write16 (vm68k_bus_function func, vm68k_address_t addr,
-                  vm68k_uint_fast16_t value)
+                  uint_fast16_t value)
       throw (vm68k_bus_error, vm68k_address_error);
 
     /* Stores long word VALUE at address ADDR in this address
        space.  Any unaligned address will be handled.  */
     void write32 (vm68k_bus_function func, vm68k_address_t addr,
-                  vm68k_uint_fast32_t value)
+                  uint_fast32_t value)
       throw (vm68k_bus_error, vm68k_address_error);
 
     void write_string (vm68k_bus_function func, vm68k_address_t addr,
