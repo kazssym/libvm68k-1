@@ -14,5 +14,5 @@ nobase_include_HEADERS = vm68k/bits/base.h vm68k/bits/bus.h \
 	vm68k/bits/data_size.h vm68k/bits/context.h vm68k/bits/processor.h \
 	vm68k/bus vm68k/data_size vm68k/context vm68k/processor
 nobase_noinst_HEADERS = inst/addressing.h \
-	inst/transfer.h inst/monadic.h inst/arith.h inst/logical.h \
+	inst/transfer.h inst/monadic.h inst/arith.h inst/logic.h \
 	inst/bit.h

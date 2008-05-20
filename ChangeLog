@@ -4,6 +4,8 @@
 	(nobase_include_HEADERS): Reorder files.
 	(nobase_noinst_HEADERS): Move addressing.h to inst/addressing.h.
 	Remove instr.h.
+	(nobase_noinst_HEADERS): Move inst/logical.h to inst/logic.h.
+	* lib/inst/logic.h: Renamed.
 
 	* ChangeLog: Documentation fix.
 
