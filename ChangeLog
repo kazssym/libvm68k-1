@@ -1,5 +1,7 @@
 2008-05-21  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/vm68k/bits/context.h (enum register_index): New enum.
+
 	* lib/vm68k/bits/data_size.h (struct byte_size, struct word_size,
 	struct long_word_size): Templateize read_unsigned, read and write
 	for registers.  Modify signed read to use the corresponging

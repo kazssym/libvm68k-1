@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* context - context unit private header for Virtual M68000 Toolkit
+/* -*-c++-*-
+ * context - context unit private header for Virtual M68000 Toolkit
  * Copyright (C) 1998-2008 Hypercore Software Design, Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -164,9 +164,11 @@ namespace vx68k
     static void set_current_context (vm68k_context *context);
 
   public:
-    static const int D0 = 0;
-    static const int A0 = 8;
-    static const int SP = A0 + 7;
+    enum register_index
+    {
+      D0, D1, D2, D3, D4, D5, D6, D7,
+      A0, A1, A2, A3, A4, A5, A6, SP
+    };
 
     template<class Size>
     typename Size::udata_type read_reg_unsigned (const Size &,

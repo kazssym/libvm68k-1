@@ -1,5 +1,5 @@
-/* -*-c++-*- */
-/* data_size - data_size unit private header for Virtual M68000 Toolkit
+/* -*-c++-*-
+ * data_size - data_size unit private header for Virtual M68000 Toolkit
  * Copyright (C) 1998-2008 Hypercore Software Design, Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
