@@ -1,5 +1,10 @@
 2008-05-21  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* ChangeLog: Documentation fix.
+
+	* lib/inst/addressing.h: Moved from lib/addressing.h.  Rewrite
+	classes.
+
 	* lib/vm68k/bits/context.h (enum register_index): New enum.
 
 	* lib/vm68k/bits/data_size.h (struct byte_size, struct word_size,
@@ -8,20 +13,20 @@
 	unsigned version.
 
 	* lib/vm68k/bits/base.h (int_least8_t): Renamed from int8_t.  Also
-	changes all users.
+	change all users.
 	(int_least16_t, int_least32_t, uint_least8_t, uint_least16_t,
 	uint_least32_t): Likewise.
 
 	* lib/vm68k/bits/bus.h (class mappable): Renamed from
-	vm68k_accessible and nested into class vm68k_bus.  Also changes
+	vm68k_accessible and nested into class vm68k_bus.  Also change
 	all users.
 	(enum function_code): Renamed from vm68k_bus_function and nested
-	into class vm68k_bus.  Also changes all users.
+	into class vm68k_bus.  Also change all users.
 	(enum direction_code): Renamed from vm68k_bus_direction and nested
-	into class vm68k_bus.  Also changes all users.
+	into class vm68k_bus.  Also change all users.
 
 	* lib/vm68k/bits/base.h: Removed the vm68k_ prefix from type
-	names.  Also changes all users.
+	names.  Also change all users.
 
 2008-05-19  Kaz Sasayama  <kazssym@vx68k.org>
 

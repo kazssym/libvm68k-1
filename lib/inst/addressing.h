@@ -1,1025 +1,732 @@
-/* -*-C++-*- */
-/* Libvm68k - M68000 virtual machine library
-   Copyright (C) 1998-2002 Hypercore Software Design, Ltd.
+/* -*-c++-*-
+ * addressing - addressing mode for Virtual M68000 Toolkit
+ * Copyright (C) 1998-2008 Hypercore Software Design, Ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
+#ifndef INST_ADDRESSING_H
+#define INST_ADDRESSING_H 1
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
-
-#ifndef _VM68K_ADDRESSING
-#define _VM68K_ADDRESSING 1
-
-#include <vm68k/processor>
-#include <vm68k/size>
 #include <string>
 #include <cstdio>
+#include <vm68k/context>
 
-namespace vm68k
+#include <cassert>
+
+namespace vx68k_m68k
 {
-  namespace addressing
+  using namespace vx68k;
+  using vx68k::uint_fast16_t;   // avoid ambiguity
+
+  /* Data register direct addressing.  */
+  template<class Size>
+  class d_reg_direct
   {
-    /* Data register direct addressing.  */
-    class data_register_direct
+  public:
+    static uint_fast16_t extension_size ()
     {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return 0;}
+      return 0;
+    }
 
-      data_register_direct(int reg, uint32_type address);
+    d_reg_direct (int r, vm68k_address_t)
+    {
+      _regno = vm68k_context::D0 + r;
+    }
 
-      // XXX: address is left unimplemented.
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->read_reg_unsigned (Size (), _regno);
+    }
 
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->read_reg (Size (), _regno);
+    }
 
-      template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
+    void put (vm68k_context *c, typename Size::udata_type value) const
+    {
+      c->write_reg (Size (), _regno, value);
+    }
 
-      template <class Size>
-      void finish(Size, context &c) const {}
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      int _reg;
-    };
-
-    inline
-    data_register_direct::data_register_direct(int reg, uint32_type address)
-      : _reg(reg)
+    void finish (vm68k_context *) const
     {
     }
 
-    template <class Size>
-    inline typename Size::uvalue_type
-    data_register_direct::get_u(Size, const context &c) const
+    std::string text (const vm68k_context *) const
     {
-      return Size::get_u(c.regs.d[_reg]);
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    data_register_direct::get_s(Size, const context &c) const
-    {
-      return Size::get_s(c.regs.d[_reg]);
-    }
-
-    template <class Size>
-    inline void
-    data_register_direct::put(Size, context &c,
-			      typename Size::uvalue_type value) const
-    {
-      Size::put(c.regs.d[_reg], value);
-    }
-
-    template <class Size>
-    inline std::string
-    data_register_direct::text(Size, const context &c) const
-    {
-      char buf[64];
-      std::sprintf(buf, "%%d%d", _reg);
+      char buf[32];
+      std::sprintf (buf, "%%d%d", _regno - 0);
       return buf;
     }
 
-    /* Address register direct addressing.  */
-    class address_register_direct
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return 0;}
-
-      address_register_direct(int reg, uint32_type address);
-
-      // XXX: address is left unimplemented.
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
-
-      template <class Size>
-      void finish(Size, context &c) const {}
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      int _reg;
-    };
-
-    inline
-    address_register_direct::address_register_direct(int reg,
-						     uint32_type address)
-      : _reg(reg)
-    {
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    address_register_direct::get_u(Size, const context &c) const
-    {
-      return Size::get_u(c.regs.a[_reg]);
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    address_register_direct::get_s(Size, const context &c) const
-    {
-      return Size::get_s(c.regs.a[_reg]);
-    }
-
-    template <class Size>
-    inline void
-    address_register_direct::put(Size, context &c,
-				 typename Size::uvalue_type value) const
-    {
-      c.regs.a[_reg] = long_word::normal_u(value);
-    }
-
-    template <class Size>
-    inline std::string
-    address_register_direct::text(Size, const context &c) const
-    {
-      char buf[64];
-      std::sprintf(buf, "%%a%d", _reg);
-      return buf;
-    }
-
-    /* Indirect addressing.  */
-    class indirect
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return 0;}
-
-      indirect(int reg, uint32_type address);
-
-      template <class Size>
-      uint32_type address(Size, const context &c) const;
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
-
-      template <class Size>
-      void finish(Size, context &c) const {}
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      int _reg;
-    };
-
-    inline
-    indirect::indirect(int reg, uint32_type address)
-      : _reg(reg)
-    {
-    }
-
-    template <class Size>
-    inline uint32_type
-    indirect::address(Size, const context &c) const
-    {
-      return c.regs.a[_reg];
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    indirect::get_u(Size, const context &c) const
-    {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    indirect::get_s(Size, const context &c) const
-    {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline void
-    indirect::put(Size, context &c, typename Size::uvalue_type value) const
-    {
-      Size::put(*c.mem, address(Size(), c), c.data_fc(), value);
-    }
-
-    template <class Size>
-    inline std::string
-    indirect::text(Size, const context &c) const
-    {
-      char buf[64];
-      std::sprintf(buf, "%%a%d@/*%#lx*/", _reg, address(Size(), c) + 0UL);
-      return buf;
-    }
-
-    /* Indirect addressing with postincrement.  */
-    class postinc_indirect
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return 0;}
-
-      postinc_indirect(int reg, uint32_type address);
-
-      // XXX: address is left unimplemented.
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
-
-      template <class Size>
-      void finish(Size, context &c) const;
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      int _reg;
-
-      template <class Size>
-      uint32_type increment_size(Size) const;
-    };
-
-    inline
-    postinc_indirect::postinc_indirect(int reg, uint32_type address)
-      : _reg(reg)
-    {
-    }
-
-    template <class Size>
-    inline uint32_type
-    postinc_indirect::increment_size(Size) const
-    {
-      if (_reg == 7)		// XXX: %a7 is special.
-	return Size::aligned_size();
-      else
-	return Size::size();
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    postinc_indirect::get_u(Size, const context &c) const
-    {
-      return Size::get_u(*c.mem, c.regs.a[_reg], c.data_fc());
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    postinc_indirect::get_s(Size, const context &c) const
-    {
-      return Size::get_s(*c.mem, c.regs.a[_reg], c.data_fc());
-    }
-
-    template <class Size>
-    inline void
-    postinc_indirect::put(Size, context &c,
-			  typename Size::uvalue_type value) const
-    {
-      Size::put(*c.mem, c.regs.a[_reg], c.data_fc(), value);
-    }
-
-    template <class Size>
-    inline void
-    postinc_indirect::finish(Size, context &c) const
-    {
-      c.regs.a[_reg]
-	= long_word::normal_u(c.regs.a[_reg] + increment_size(Size()));
-    }
-
-    template <class Size>
-    inline std::string
-    postinc_indirect::text(Size, const context &c) const
-    {
-      char buf[64];
-      std::sprintf(buf, "%%a%d@+/*%#lx*/", _reg, c.regs.a[_reg] + 0UL);
-      return buf;
-    }
-
-    /* Indirect addressing with predecrement.  */
-    class predec_indirect
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return 0;}
-
-      predec_indirect(int reg, uint32_type address);
-
-      // XXX: address is left unimplemented.
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
-
-      template <class Size>
-      void finish(Size, context &c) const;
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      int _reg;
-
-      template <class Size>
-      uint32_type decrement_size(Size) const;
-    };
-
-    inline
-    predec_indirect::predec_indirect(int reg, uint32_type address)
-      : _reg(reg)
-    {
-    }
-
-    template <class Size>
-    inline uint32_type
-    predec_indirect::decrement_size(Size) const
-    {
-      if (_reg == 7)		// XXX: %a7 is special.
-	return Size::aligned_size();
-      else
-	return Size::size();
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    predec_indirect::get_u(Size, const context &c) const
-    {
-      return Size::get_u(*c.mem, c.regs.a[_reg] - decrement_size(Size()),
-			 c.data_fc());
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    predec_indirect::get_s(Size, const context &c) const
-    {
-      return Size::get_s(*c.mem, c.regs.a[_reg] - decrement_size(Size()),
-			 c.data_fc());
-    }
-
-    template <class Size>
-    inline void
-    predec_indirect::put(Size, context &c,
-			  typename Size::uvalue_type value) const
-    {
-      Size::put(*c.mem, c.regs.a[_reg] - decrement_size(Size()), c.data_fc(),
-		value);
-    }
-
-    template <class Size>
-    inline void
-    predec_indirect::finish(Size, context &c) const
-    {
-      c.regs.a[_reg]
-	= long_word::normal_u(c.regs.a[_reg] - decrement_size(Size()));
-    }
-
-    template <class Size>
-    inline std::string
-    predec_indirect::text(Size, const context &c) const
-    {
-      char buf[64];
-      std::sprintf(buf, "%%a%d@-/*%#lx*/", _reg,
-		   long_word::normal_u(c.regs.a[_reg] - decrement_size(Size()))
-		   + 0UL);
-      return buf;
-    }
-
-    /* Indirect addressing with displacement.  */
-    class disp_indirect
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return word::size();}
-
-      disp_indirect(int reg, uint32_type address);
-
-      template <class Size>
-      uint32_type address(Size, const context &c) const;
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
-
-      template <class Size>
-      void finish(Size, context &c) const {}
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      int _reg;
-      uint32_type _address;
-    };
-
-    inline
-    disp_indirect::disp_indirect(int reg, uint32_type address)
-      : _reg(reg),
-	_address(address)
-    {
-    }
-
-    template <class Size>
-    inline uint32_type
-    disp_indirect::address(Size, const context &c) const
-    {
-      return long_word::normal_u(c.regs.a[_reg] + c.fetch_s(word(), _address));
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    disp_indirect::get_u(Size, const context &c) const
-    {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    disp_indirect::get_s(Size, const context &c) const
-    {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline void
-    disp_indirect::put(Size, context &c,
-		       typename Size::uvalue_type value) const
-    {
-      Size::put(*c.mem, address(Size(), c), c.data_fc(), value);
-    }
-
-    template <class Size>
-    inline std::string
-    disp_indirect::text(Size, const context &c) const
-    {
-      char buf[64];
-      std::sprintf(buf, "%%a%d@(%d)/*%#lx*/", _reg,
-		   c.fetch_s(word(), _address), address(Size(), c) + 0UL);
-      return buf;
-    }
-
-    /* Indirect addressing with index.  */
-    class index_indirect
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return word::size();}
-
-      index_indirect(int reg, uint32_type address);
-
-      template <class Size>
-      uint32_type address(Size, const context &c) const;
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
-
-      template <class Size>
-      void finish(Size, context &c) const {}
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      int _reg;
-      uint32_type _address;
-    };
-
-    inline
-    index_indirect::index_indirect(int reg, uint32_type address)
-      : _reg(reg),
-	_address(address)
-    {
-    }
-
-    template <class Size>
-    inline uint32_type
-    index_indirect::address(Size, const context &c) const
-    {
-      uint16_type w = c.fetch_u(word(), _address);
-      int xreg = w >> 12 & 0xf;
-      uint32_type x = xreg >= 8 ? c.regs.a[xreg - 8] : c.regs.d[xreg];
-      if (w & 0x800)
-	return long_word::normal_u(c.regs.a[_reg] + long_word::get_s(x)
-				   + byte::normal_s(w));
-      else
-	return long_word::normal_u(c.regs.a[_reg] + word::get_s(x)
-				   + byte::normal_s(w));
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    index_indirect::get_u(Size, const context &c) const
-    {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    index_indirect::get_s(Size, const context &c) const
-    {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline void
-    index_indirect::put(Size, context &c,
-		       typename Size::uvalue_type value) const
-    {
-      Size::put(*c.mem, address(Size(), c), c.data_fc(), value);
-    }
-
-    template <class Size>
-    inline std::string
-    index_indirect::text(Size, const context &c) const
-    {
-      uint16_type w = c.fetch_u(word(), _address);
-      int xreg = w >> 12 & 0xf;
-      const char *x = xreg >= 8 ? "%a" : "%d";
-      char buf[64];
-      if (w & 0x800)
-	std::sprintf(buf, "%%a%d@(%d,%s%d:l)/*%#lx*/", _reg, byte::normal_s(w),
-		     x, xreg & 7, address(Size(), c) + 0UL);
-      else
-	std::sprintf(buf, "%%a%d@(%d,%s%d:w)/*%#lx*/", _reg, byte::normal_s(w),
-		     x, xreg & 7, address(Size(), c) + 0UL);
-      return buf;
-    }
-
-    /* Absolute short addressing.  */
-    class absolute_short
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return word::size();}
-
-      absolute_short(int reg, uint32_type address);
-
-      template <class Size>
-      uint32_type address(Size, const context &c) const;
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
-
-      template <class Size>
-      void finish(Size, context &c) const {}
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      uint32_type _address;
-    };
-
-    inline
-    absolute_short::absolute_short(int reg, uint32_type address)
-      : _address(address)
-    {
-    }
-
-    template <class Size>
-    inline uint32_type
-    absolute_short::address(Size, const context &c) const
-    {
-      return long_word::normal_u(c.fetch_s(word(), _address));
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    absolute_short::get_u(Size, const context &c) const
-    {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    absolute_short::get_s(Size, const context &c) const
-    {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline void
-    absolute_short::put(Size, context &c,
-			typename Size::uvalue_type value) const
-    {
-      Size::put(*c.mem, address(Size(), c), c.data_fc(), value);
-    }
-
-    template <class Size>
-    inline std::string
-    absolute_short::text(Size, const context &c) const
-    {
-      char buf[64];
-      std::sprintf(buf, "%#lx:w", address(Size(), c) + 0UL);
-      return buf;
-    }
-
-    /* Absolute long addressing.  */
-    class absolute_long
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return long_word::size();}
-
-      absolute_long(int reg, uint32_type address);
-
-      template <class Size>
-      uint32_type address(Size, const context &c) const;
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      template <class Size>
-      void put(Size, context &c, typename Size::uvalue_type value) const;
-
-      template <class Size>
-      void finish(Size, context &c) const {}
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      uint32_type _address;
-    };
-
-    inline
-    absolute_long::absolute_long(int reg, uint32_type address)
-      : _address(address)
-    {
-    }
-
-    template <class Size>
-    inline uint32_type
-    absolute_long::address(Size, const context &c) const
-    {
-      return c.fetch_u(long_word(), _address);
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    absolute_long::get_u(Size, const context &c) const
-    {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    absolute_long::get_s(Size, const context &c) const
-    {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline void
-    absolute_long::put(Size, context &c,
-		       typename Size::uvalue_type value) const
-    {
-      Size::put(*c.mem, address(Size(), c), c.data_fc(), value);
-    }
-
-    template <class Size>
-    inline std::string
-    absolute_long::text(Size, const context &c) const
-    {
-      char buf[64];
-      std::sprintf(buf, "%#lx", address(Size(), c) + 0UL);
-      return buf;
-    }
-
-    /* PC indirect addressing with displacement.  */
-    class disp_pc_indirect
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return word::size();}
-
-      disp_pc_indirect(int reg, uint32_type address);
-
-      template <class Size>
-      uint32_type address(Size, const context &c) const;
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      // XXX: put is left unimplemented.
-
-      template <class Size>
-      void finish(Size, context &c) const {}
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      uint32_type _address;
-    };
-
-    inline
-    disp_pc_indirect::disp_pc_indirect(int reg, uint32_type address)
-      : _address(address)
-    {
-    }
-
-    template <class Size>
-    inline uint32_type
-    disp_pc_indirect::address(Size, const context &c) const
-    {
-      return long_word::normal_u(_address + c.fetch_s(word(), _address));
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    disp_pc_indirect::get_u(Size, const context &c) const
-    {
-      return Size::get_u(*c.mem, address(Size(), c), c.program_fc());
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    disp_pc_indirect::get_s(Size, const context &c) const
-    {
-      return Size::get_s(*c.mem, address(Size(), c), c.program_fc());
-    }
-
-    template <class Size>
-    inline std::string
-    disp_pc_indirect::text(Size, const context &c) const
-    {
-      char buf[64];
-      std::sprintf(buf, "%%pc@(%d)/*%#lx*/", c.fetch_s(word(), _address),
-		   address(Size(), c) + 0UL);
-      return buf;
-    }
-
-    /* PC indirect addressing with index.  */
-    class index_pc_indirect
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return word::size();}
-
-      index_pc_indirect(int reg, uint32_type address);
-
-      template <class Size>
-      uint32_type address(Size, const context &c) const;
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      // XXX: put is left unimplemented.
-
-      template <class Size>
-      void finish(Size, context &c) const {}
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-       uint32_type _address;
-    };
-
-    inline
-    index_pc_indirect::index_pc_indirect(int reg, uint32_type address)
-      : _address(address)
-    {
-    }
-
-    template <class Size>
-    inline uint32_type
-    index_pc_indirect::address(Size, const context &c) const
-    {
-      uint16_type w = c.fetch_u(word(), _address);
-      int xreg = w >> 12 & 0xf;
-      uint32_type x = xreg >= 8 ? c.regs.a[xreg - 8] : c.regs.d[xreg];
-      if (w & 0x800)
-	return long_word::normal_u(_address + long_word::get_s(x)
-				   + byte::normal_s(w));
-      else
-	return long_word::normal_u(_address + word::get_s(x)
-				   + byte::normal_s(w));
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    index_pc_indirect::get_u(Size, const context &c) const
-    {
-      return Size::get_u(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    index_pc_indirect::get_s(Size, const context &c) const
-    {
-      return Size::get_s(*c.mem, address(Size(), c), c.data_fc());
-    }
-
-    template <class Size>
-    inline std::string
-    index_pc_indirect::text(Size, const context &c) const
-    {
-      uint16_type w = c.fetch_u(word(), _address);
-      int xreg = w >> 12 & 0xf;
-      const char *x = xreg >= 8 ? "%a" : "%d";
-      char buf[64];
-      if (w & 0x800)
-	std::sprintf(buf, "%%pc@(%d,%s%d:l)/*%#lx*/", byte::normal_s(w),
-		     x, xreg & 7, address(Size(), c) + 0UL);
-      else
-	std::sprintf(buf, "%%pc@(%d,%s%d:w)/*%#lx*/", byte::normal_s(w),
-		     x, xreg & 7, address(Size(), c) + 0UL);
-      return buf;
-    }
-
-    /* Immediate addressing.  */
-    class immediate
-    {
-    public:
-      template <class Size>
-      static uint32_type extension_size(Size) {return Size::aligned_size();}
-
-      immediate(int reg, uint32_type address);
-
-      // XXX: address is left unimplemented.
-
-      template <class Size>
-      typename Size::uvalue_type get_u(Size, const context &c) const;
-      template <class Size>
-      typename Size::svalue_type get_s(Size, const context &c) const;
-
-      // XXX: put is left unimplemented.
-
-      template <class Size>
-      void finish(Size, context &c) const {}
-
-      template <class Size>
-      std::string text(Size, const context &c) const;
-
-    protected:
-      uint32_type _address;
-    };
-
-    inline
-    immediate::immediate(int reg, uint32_type address)
-      : _address(address)
-    {
-    }
-
-    template <class Size>
-    inline typename Size::uvalue_type
-    immediate::get_u(Size, const context &c) const
-    {
-      return c.fetch_u(Size(), _address);
-    }
-
-    template <class Size>
-    inline typename Size::svalue_type
-    immediate::get_s(Size, const context &c) const
-    {
-      return c.fetch_s(Size(), _address);
-    }
-
-    template <class Size>
-    inline std::string
-    immediate::text(Size, const context &c) const
-    {
-      char buf[64];
-      std::sprintf(buf, "#%#lx", get_u(Size(), c) + 0UL);
-      return buf;
-    }
-  }
-}
-
-namespace vm68k
-{
-  namespace addressing
+  private:
+    // XXX: This function is left unimplemented.
+    vm68k_address_t address (const vm68k_context *) const;
+
+  private:
+    int _regno;
+  };
+
+  /* Address register direct addressing.  */
+  template<class Size>
+  class a_reg_direct
   {
-    template <class Addressing, class Size> class old_addressing
+  public:
+    static uint_fast16_t extension_size ()
     {
-    public:
-      typedef Size size_type;
-      typedef typename Size::uvalue_type uvalue_type;
-      typedef typename Size::svalue_type svalue_type;
+      return 0;
+    }
 
-    public:
-      static uint32_type extension_size()
-      {return Addressing::extension_size(Size());}
+    a_reg_direct (int r, vm68k_address_t)
+    {
+      _regno = vm68k_context::A0 + r;
+    }
 
-      old_addressing(int reg, uint32_type address)
-	: addressing(reg, address) {}
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->read_reg_unsigned (Size (), _regno);
+    }
 
-      uint32_type address(const context &c) const
-      {return addressing.address(Size(), c);}
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->read_reg (Size (), _regno);
+    }
 
-      typename Size::svalue_type get(const context &c) const
-      {return addressing.get_s(Size(), c);}
+    void put (vm68k_context *c, typename Size::udata_type value) const
+    {
+      c->write_reg (Size (), _regno, value);
+    }
 
-      void put(context &c, svalue_type value) const
-      {addressing.put(Size(), c, value);}
+    void finish (vm68k_context *) const
+    {
+    }
 
-      void finish(context &c) const {addressing.finish(Size(), c);}
+    std::string text (const vm68k_context *) const
+    {
+      char buf[32];
+      std::sprintf (buf, "%%a%d", _regno - 8);
+      return buf;
+    }
 
-      std::string text(const context &c) const
-      {return addressing.text(Size(), c);}
+  private:
+    // XXX: This function is left unimplemented.
+    vm68k_address_t address (const vm68k_context *) const;
 
-    protected:
-      Addressing addressing;
-    };
+  private:
+    int _regno;
+  };
 
-    typedef old_addressing<data_register_direct, byte> byte_d_register;
-    typedef old_addressing<data_register_direct, word> word_d_register;
-    typedef old_addressing<data_register_direct, long_word> long_word_d_register;
-
-    // XXX: Address register direct is not allowed for byte size.
-    typedef old_addressing<address_register_direct, word> word_a_register;
-    typedef old_addressing<address_register_direct, long_word> long_word_a_register;
-
-    typedef old_addressing<indirect, byte> byte_indirect;
-    typedef old_addressing<indirect, word> word_indirect;
-    typedef old_addressing<indirect, long_word> long_word_indirect;
-
-    typedef old_addressing<postinc_indirect, byte> byte_postinc_indirect;
-    typedef old_addressing<postinc_indirect, word> word_postinc_indirect;
-    typedef old_addressing<postinc_indirect, long_word> long_word_postinc_indirect;
-
-    typedef old_addressing<predec_indirect, byte> byte_predec_indirect;
-    typedef old_addressing<predec_indirect, word> word_predec_indirect;
-    typedef old_addressing<predec_indirect, long_word> long_word_predec_indirect;
-
-    typedef old_addressing<disp_indirect, byte> byte_disp_indirect;
-    typedef old_addressing<disp_indirect, word> word_disp_indirect;
-    typedef old_addressing<disp_indirect, long_word> long_word_disp_indirect;
-
-    typedef old_addressing<index_indirect, byte> byte_index_indirect;
-    typedef old_addressing<index_indirect, word> word_index_indirect;
-    typedef old_addressing<index_indirect, long_word> long_word_index_indirect;
-
-    typedef old_addressing<absolute_short, byte> byte_abs_short;
-    typedef old_addressing<absolute_short, word> word_abs_short;
-    typedef old_addressing<absolute_short, long_word> long_word_abs_short;
-
-    typedef old_addressing<absolute_long, byte> byte_abs_long;
-    typedef old_addressing<absolute_long, word> word_abs_long;
-    typedef old_addressing<absolute_long, long_word> long_word_abs_long;
-
-    typedef old_addressing<disp_pc_indirect, byte> byte_disp_pc_indirect;
-    typedef old_addressing<disp_pc_indirect, word> word_disp_pc_indirect;
-    typedef old_addressing<disp_pc_indirect, long_word> long_word_disp_pc_indirect;
-
-    typedef old_addressing<index_pc_indirect, byte> byte_index_pc_indirect;
-    typedef old_addressing<index_pc_indirect, word> word_index_pc_indirect;
-    typedef old_addressing<index_pc_indirect, long_word> long_word_index_pc_indirect;
-
-    typedef old_addressing<immediate, byte> byte_immediate;
-    typedef old_addressing<immediate, word> word_immediate;
-    typedef old_addressing<immediate, long_word> long_word_immediate;
+  template<>
+  inline void a_reg_direct<vm68k_word_size>::
+  put (vm68k_context *c, vm68k_word_size::udata_type value) const
+  {
+    /* Special case for a word write to an address register.  */
+    c->write_reg (vm68k_long_word, _regno,
+                  vm68k_word_size::as_signed (value & 0xffffU));
   }
+
+  template<>
+  class a_reg_direct<vm68k_byte_size>
+  {
+  private:
+    // XXX: This function is left unimplemented.
+    a_reg_direct ();
+  };
+
+  /* Indirect addressing.  */
+  template<class Size>
+  class indirect
+  {
+  public:
+    static uint_fast16_t extension_size ()
+    {
+      return 0;
+    }
+
+    indirect (int r, vm68k_address_t)
+    {
+      _regno = vm68k_context::A0 + r;
+    }
+
+    vm68k_address_t address (const vm68k_context *c) const
+    {
+      return c->read_reg (vm68k_long_word, _regno);
+    }
+
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->load_unsigned (Size (), this->address (c));
+    }
+
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->load (Size (), this->address (c));
+    }
+
+    void put (vm68k_context *c, typename Size::udata_type value) const
+    {
+      c->store (Size (), this->address (c), value);
+    }
+
+    void finish (vm68k_context *c) const
+    {
+    }
+
+    std::string text (const vm68k_context *c) const
+    {
+      char buf[64];
+      std::sprintf (buf, "%%a%d@ /*= %#lx*/", _regno - 8,
+                    (unsigned long) this->address (Size (), c));
+      return buf;
+    }
+
+  private:
+    int _regno;
+  };
+
+  /* Indirect addressing with postincrement.  */
+  template<class Size>
+  class postinc_indirect
+  {
+  public:
+    static uint_fast16_t extension_size ()
+    {
+      return 0;
+    }
+
+    postinc_indirect (int r, vm68k_address_t)
+    {
+      _regno = vm68k_context::A0 + r;
+    }
+
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->load_unsigned (Size (), this->address (c));
+    }
+
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->load (Size (), this->address (c));
+    }
+
+    void put (vm68k_context *c, typename Size::udata_type value) const
+    {
+      c->store (Size (), this->address (c), value);
+    }
+
+    void finish (vm68k_context *c) const
+    {
+      c->write_reg (vm68k_long_word, _regno,
+                    this->address (c) + increment_size ());
+    }
+
+    std::string text (const vm68k_context *c) const
+    {
+      char buf[64];
+      std::sprintf (buf, "%%a%d@+ /*= %#lx*/", _regno - 8,
+                    (unsigned long) this->address (Size (), c));
+      return buf;
+    }
+
+  protected:
+    vm68k_address_t address (const vm68k_context *c) const
+    {
+      return c->read_reg (vm68k_long_word, _regno);
+    }
+
+    uint_fast16_t increment_size () const
+    {
+      if (_regno == vm68k_context::SP) // XXX: %sp is special.
+        {
+          return Size::aligned_data_size ();
+        }
+      else
+        {
+          return Size::data_size ();
+        }
+    }
+
+  private:
+    int _regno;
+  };
+
+  /* Indirect addressing with predecrement.  */
+  template<class Size>
+  class predec_indirect
+  {
+  public:
+    static uint_fast16_t extension_size ()
+    {
+      return 0;
+    }
+
+    predec_indirect (int r, vm68k_address_t)
+    {
+      _regno = vm68k_context::A0 + r;
+    }
+
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->load_unsigned (Size (), this->address (c));
+    }
+
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->load (Size (), this->address (c));
+    }
+
+    void put (vm68k_context *c, typename Size::udata_type value) const
+    {
+      c->store (Size (), this->address (c), value);
+    }
+
+    void finish (vm68k_context *c) const
+    {
+      c->write_reg (vm68k_long_word, _regno, this->address (c));
+    }
+
+    std::string text (const vm68k_context *c) const
+    {
+      char buf[64];
+      std::sprintf (buf, "%%a%d@- /*= %#lx*/", _regno - 8,
+                    (unsigned long) this->address (Size (), c));
+      return buf;
+    }
+
+  protected:
+    vm68k_address_t address (const vm68k_context *c) const
+    {
+      return c->read_reg (vm68k_long_word, _regno) - this->decrement_size ();
+    }
+
+    uint_fast16_t decrement_size () const
+    {
+      if (_regno == vm68k_context::SP) // XXX: %sp is special.
+        {
+          return Size::aligned_data_size ();
+        }
+      else
+        {
+          return Size::data_size ();
+        }
+    }
+
+  private:
+    int _regno;
+  };
+
+  /* Indirect addressing with displacement.  */
+  template<class Size>
+  class disp_indirect
+  {
+  public:
+    static uint_fast16_t extension_size ()
+    {
+      return vm68k_word_size::aligned_data_size ();
+    }
+
+    disp_indirect (int r, vm68k_address_t pc)
+    {
+      _regno = vm68k_context::A0 + r;
+      _pc = pc;
+    }
+
+    vm68k_address_t address (const vm68k_context *c) const
+    {
+      return c->read_reg (vm68k_long_word, _regno) + c->fetch (vm68k_word, _pc);
+    }
+
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->load_unsigned (Size (), this->address (c));
+    }
+
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->load (Size (), this->address (c));
+    }
+
+    void put (vm68k_context *c, typename Size::udata_type value) const
+    {
+      c->store (Size (), this->address (c), value);
+    }
+
+    void finish (vm68k_context *c) const
+    {
+    }
+
+    std::string text (const vm68k_context *c) const
+    {
+      char buf[64];
+      std::sprintf (buf, "%%a%d@(%d) /*= %#lx*/", _regno - 8,
+                    (int) c->fetch (vm68k_word, _pc),
+                    (unsigned long) this->address (c));
+      return buf;
+    }
+
+  private:
+    int _regno;
+    vm68k_address_t _pc;
+  };
+
+  /* Indirect addressing with index.  */
+  template<class Size>
+  class index_indirect
+  {
+  public:
+    static uint_fast16_t extension_size ()
+    {
+      return vm68k_word_size::aligned_data_size ();
+    }
+
+    index_indirect (int r, vm68k_address_t pc)
+    {
+      _regno = vm68k_context::A0 + r;
+      _pc = pc;
+    }
+
+    vm68k_address_t address (const vm68k_context *c) const
+    {
+      uint_fast16_t w = c->fetch_unsigned (vm68k_word, _pc);
+      int x = w >> 12 & 0xf;
+      if ((w & 0x800) != 0)
+        {
+          return c->read_reg (vm68k_long_word, _regno) + c->read_reg (vm68k_long_word, x)
+            + vm68k_byte_size::as_signed (w & 0xffU);
+        }
+      else
+        {
+          return c->read_reg (vm68k_long_word, _regno) + c->read_reg (vm68k_word, x)
+            + vm68k_byte_size::as_signed (w & 0xffU);
+        }
+    }
+
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->load_unsigned (Size (), this->address (c));
+    }
+
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->load (Size (), this->address (c));
+    }
+
+    void put (vm68k_context *c, typename Size::udata_type value) const
+    {
+      c->store (Size (), this->address (c), value);
+    }
+
+    void finish (vm68k_context *c) const
+    {
+    }
+
+    std::string text (const vm68k_context *c) const
+    {
+      uint_fast16_t w = c->fetch_unsigned (vm68k_word, _pc);
+      int x = w >> 12 & 0xf;
+      const char *xp = x >= 8 ? "%a" : "%d";
+      char buf[64];
+      if ((w & 0x800) != 0)
+        {
+          std::sprintf (buf, "%%a%d@(%d,%s%d:l) /*= %#lx*/", _regno - 8,
+                        (int) vm68k_byte_size::as_signed (w & 0xffU), xp, x & 7,
+                        (unsigned long) this->address (c));
+        }
+      else
+        {
+          std::sprintf (buf, "%%a%d@(%d,%s%d:w) /*= %#lx*/", _regno - 8,
+                        (int) vm68k_byte_size::as_signed (w & 0xffU), xp, x & 7,
+                        (unsigned long) this->address (c));
+        }
+      return buf;
+    }
+
+  private:
+    int _regno;
+    vm68k_address_t _pc;
+  };
+
+  /* Absolute short addressing.  */
+  template<class Size>
+  class abs_short
+  {
+  public:
+    static uint_fast16_t extension_size ()
+    {
+      return vm68k_word_size::aligned_data_size ();
+    }
+
+    abs_short (int, vm68k_address_t pc)
+    {
+      _pc = pc;
+    }
+
+    vm68k_address_t address (const vm68k_context *c) const
+    {
+      return c->fetch (vm68k_word, _pc);
+    }
+
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->load_unsigned (Size (), this->address (c));
+    }
+
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->load (Size (), this->address (c));
+    }
+
+    void put (vm68k_context *c, typename Size::udata_type value) const
+    {
+      c->store (Size (), this->address (c), value);
+    }
+
+    void finish (vm68k_context *c) const
+    {
+    }
+
+    std::string text (const vm68k_context *c) const
+    {
+      char buf[32];
+      std::sprintf (buf, "%#lx:w", (unsigned long) this->address (c));
+      return buf;
+    }
+
+  private:
+    vm68k_address_t _pc;
+  };
+
+  /* Absolute long addressing.  */
+  template<class Size>
+  class abs_long
+  {
+  public:
+    static uint_fast16_t extension_size ()
+    {
+      return vm68k_long_word_size::aligned_data_size ();
+    }
+
+    abs_long (int, vm68k_address_t pc)
+    {
+      _pc = pc;
+    }
+
+    vm68k_address_t address (const vm68k_context *c) const
+    {
+      return c->fetch (vm68k_long_word, _pc);
+    }
+
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->load_unsigned (Size (), this->address (c));
+    }
+
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->load (Size (), this->address (c));
+    }
+
+    void put (vm68k_context *c, typename Size::udata_type value) const
+    {
+      c->store (Size (), this->address (c), value);
+    }
+
+    void finish (vm68k_context *c) const
+    {
+    }
+
+    std::string text (const vm68k_context *c) const
+    {
+      char buf[32];
+      std::sprintf (buf, "%#lx", (unsigned long) this->address (c));
+      return buf;
+    }
+
+  private:
+    vm68k_address_t _pc;
+  };
+
+  /* PC indirect addressing with displacement.  */
+  template<class Size>
+  class disp_pc_indirect
+  {
+  public:
+    static uint_fast16_t extension_size ()
+    {
+      return vm68k_word_size::aligned_data_size ();
+    }
+
+    disp_pc_indirect (int, vm68k_address_t pc)
+    {
+      _pc = pc;
+    }
+
+    vm68k_address_t address (const vm68k_context *c) const
+    {
+      return _pc + c->fetch (vm68k_word, _pc);
+    }
+
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->load_unsigned (Size (), this->address (c));
+    }
+
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->load (Size (), this->address (c));
+    }
+
+    void finish (vm68k_context *c) const
+    {
+    }
+
+    std::string text (const vm68k_context *c) const
+    {
+      char buf[64];
+      std::sprintf (buf, "%%pc@(%d) /*= %#lx*/",
+                    (int) c->fetch (vm68k_word, _pc),
+                    (unsigned long) this->address (c));
+      return buf;
+    }
+
+  private:
+    // XXX: This function is left unimplemented.
+    void put (vm68k_context *, typename Size::udata_type) const;
+
+  private:
+    vm68k_address_t _pc;
+  };
+
+  /* PC indirect addressing with index.  */
+  template<class Size>
+  class index_pc_indirect
+  {
+  public:
+    static uint_fast16_t extension_size ()
+    {
+      return vm68k_word_size::aligned_data_size ();
+    }
+
+    index_pc_indirect (int, vm68k_address_t pc)
+    {
+      _pc = pc;
+    }
+
+    vm68k_address_t address (const vm68k_context *c) const
+    {
+      uint_fast16_t w = c->fetch_unsigned (vm68k_word, _pc);
+      int x = w >> 12 & 0xf;
+      if ((w & 0x800) != 0)
+        {
+          return _pc + c->read_reg (vm68k_long_word, x)
+            + vm68k_byte_size::as_signed (w & 0xffU);
+        }
+      else
+        {
+          return _pc + c->read_reg (vm68k_word, x)
+            + vm68k_byte_size::as_signed (w & 0xffU);
+        }
+    }
+
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->load_unsigned (Size (), this->address (c));
+    }
+
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->load (Size (), this->address (c));
+    }
+
+    void finish (vm68k_context *c) const
+    {
+    }
+
+    std::string text (const vm68k_context *c) const
+    {
+      uint_fast16_t w = c->fetch_unsigned (vm68k_word, _pc);
+      int x = w >> 12 & 0xf;
+      const char *xp = x >= 8 ? "%a" : "%d";
+      char buf[64];
+      if ((w & 0x800) != 0)
+        {
+          std::sprintf (buf, "%%pc@(%d,%s%d:l) /*= %#lx*/",
+                        (int) vm68k_byte_size::as_signed (w & 0xffU), xp, x & 7,
+                        (unsigned long) this->address (c));
+        }
+      else
+        {
+          std::sprintf (buf, "%%pc@(%d,%s%d:w) /*= %#lx*/",
+                        (int) vm68k_byte_size::as_signed (w & 0xffU), xp, x & 7,
+                        (unsigned long) this->address (c));
+        }
+      return buf;
+    }
+
+  private:
+    // XXX: This function is left unimplemented.
+    void put (vm68k_context *, typename Size::udata_type) const;
+
+  private:
+    vm68k_address_t _pc;
+  };
+
+  /* Immediate addressing.  */
+  template<class Size>
+  class immediate
+  {
+  public:
+    static uint_fast16_t extension_size ()
+    {
+      return Size::aligned_data_size ();
+    }
+
+    immediate (int, vm68k_address_t pc)
+    {
+      _pc = pc;
+    }
+
+    typename Size::udata_type get_unsigned (const vm68k_context *c) const
+    {
+      return c->fetch_unsigned (Size (), _pc);
+    }
+
+    typename Size::data_type get (const vm68k_context *c) const
+    {
+      return c->fetch (Size (), _pc);
+    }
+
+    void finish (vm68k_context *c) const
+    {
+    }
+
+    std::string text (const vm68k_context *c) const
+    {
+      char buf[32];
+      std::sprintf (buf, "#%#lx", (unsigned long) this->get_unsigned (c));
+      return buf;
+    }
+
+  private:
+    // XXX: These functions are left unimplemented.
+    vm68k_address_t address (const vm68k_context *) const;
+    void put (vm68k_context *, typename Size::udata_type) const;
+
+  private:
+    vm68k_address_t _pc;
+  };
 }
 
-#endif /* not _VM68K_ADDRESSING */
+#endif
