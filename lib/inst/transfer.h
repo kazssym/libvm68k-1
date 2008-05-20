@@ -1,5 +1,5 @@
 /* -*-c++-*-
- * transfer.h - data transfer instructions for Virtual M68000 Toolkit
+ * transfer - data transfer instructions for Virtual M68000 Toolkit
  * Copyright (C) 1998-2008 Hypercore Software Design, Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
