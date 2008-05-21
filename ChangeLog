@@ -1,5 +1,9 @@
 2008-05-21  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/vm68k/bits/context.h (class vm68k_context): Add new members
+	read_usp, read_usp_unsigned, write_usp, read_ssp,
+	read_ssp_unsigned, and write_ssp.
+
 	* lib/inst/arith.h (struct addi_instruction, struct
 	cmpi_instruction, struct subi_instruction): New structs.
 	(do_ADDI, do_CMPI, do_SUBI): Removed.  Also change all users to

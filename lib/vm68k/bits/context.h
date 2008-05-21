@@ -171,24 +171,51 @@ namespace vx68k
     };
 
     template<class Size>
-    typename Size::udata_type read_reg_unsigned (const Size &,
-                                                 int regno) const
+    typename Size::udata_type read_reg_unsigned (const Size &, int regno) const
     {
       return Size::read_unsigned (_reg[regno]);
     }
 
     template<class Size>
-    typename Size::data_type read_reg (const Size &,
-                                       int regno) const
+    typename Size::data_type read_reg (const Size &, int regno) const
     {
       return Size::read (_reg[regno]);
     }
 
     template<class Size>
-    void write_reg (const Size &,
-                    int regno, typename Size::udata_type value)
+    void write_reg (const Size &, int regno, typename Size::udata_type value)
     {
       Size::write (_reg[regno], value);
+    }
+
+    vm68k_long_word::udata_type read_usp_unsigned () const
+    {
+      return vm68k_long_word::read_unsigned (_usp);
+    }
+
+    vm68k_long_word::data_type read_usp () const
+    {
+      return vm68k_long_word::read (_usp);
+    }
+
+    void write_usp (vm68k_long_word::udata_type value)
+    {
+      vm68k_long_word::write (_usp, value);
+    }
+
+    vm68k_long_word::udata_type read_ssp_unsigned () const
+    {
+      return vm68k_long_word::read_unsigned (_ssp);
+    }
+
+    vm68k_long_word::data_type read_ssp () const
+    {
+      return vm68k_long_word::read (_ssp);
+    }
+
+    void write_ssp (vm68k_long_word::udata_type value)
+    {
+      vm68k_long_word::write (_ssp, value);
     }
 
     /* Returns true if supervisor state.  */

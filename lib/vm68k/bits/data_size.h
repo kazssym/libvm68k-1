@@ -62,7 +62,7 @@ namespace vx68k
     template<typename T>
     static void write (T &reg, uint_fast8_t value)
     {
-      reg = (reg & 0xffffff00UL) | (value & 0xffU);
+      reg = (reg & ~0xffU) | (value & 0xffU);
     }
 
     static uint_fast8_t read_unsigned (const vm68k_bus *bus,
@@ -146,7 +146,7 @@ namespace vx68k
     template<typename T>
     static void write (T &reg, uint_fast16_t value)
     {
-      reg = (reg & 0xffff0000UL) | (value & 0xffffU);
+      reg = (reg & ~0xffffU) | (value & 0xffffU);
     }
 
     static uint_fast16_t read_unsigned (const vm68k_bus *bus,
@@ -230,7 +230,7 @@ namespace vx68k
     template<typename T>
     static void write (T &reg, uint_fast32_t value)
     {
-      reg = value & 0xffffffffUL;
+      reg = value;
     }
 
     static uint_fast32_t read_unsigned (const vm68k_bus *bus,
