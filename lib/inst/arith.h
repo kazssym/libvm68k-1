@@ -35,14 +35,14 @@ namespace vx68k_m68k
     static vm68k_address_t execute (vm68k_address_t pc, uint_fast16_t w,
                                     vm68k_context *c)
     {
-      typedef typename Size::data_type data_type;
+      typedef typename Size::udata_type udata_type;
       assert (c != NULL);
 
-      data_type v2 = c->fetch (Size (), pc);
+      udata_type v2 = c->fetch_unsigned (Size (), pc);
       D<Size> ea1 (w & 7, pc + Size::aligned_data_size ());
 
-      data_type v1 = ea1.get (c);
-      data_type v = v1 + v2;
+      udata_type v1 = ea1.get (c);
+      udata_type v = v1 + v2;
       ea1.put (c, v);
       c->_status.set_cc_as_add (v, v1, v2);
 
@@ -60,14 +60,14 @@ namespace vx68k_m68k
     static vm68k_address_t execute (vm68k_address_t pc, uint_fast16_t w,
                                     vm68k_context *c)
     {
-      typedef typename Size::data_type data_type;
+      typedef typename Size::udata_type udata_type;
       assert (c != NULL);
 
-      data_type v2 = c->fetch (Size (), pc);
+      udata_type v2 = c->fetch_unsigned (Size (), pc);
       D<Size> ea1 (w & 7, pc + Size::aligned_data_size ());
 
-      data_type v1 = ea1.get (c);
-      data_type v = v1 - v2;
+      udata_type v1 = ea1.get (c);
+      udata_type v = v1 - v2;
       c->_status.set_cc_cmp (v, v1, v2);
 
       ea1.finish (c);
@@ -84,14 +84,14 @@ namespace vx68k_m68k
     static vm68k_address_t execute (vm68k_address_t pc, uint_fast16_t w,
                                     vm68k_context *c)
     {
-      typedef typename Size::data_type data_type;
+      typedef typename Size::udata_type udata_type;
       assert (c != NULL);
 
-      data_type v2 = c->fetch (Size (), pc);
+      udata_type v2 = c->fetch_unsigned (Size (), pc);
       D<Size> ea1 (w & 7, pc + Size::aligned_data_size ());
 
-      data_type v1 = ea1.get (c);
-      data_type v = v1 - v2;
+      udata_type v1 = ea1.get (c);
+      udata_type v = v1 - v2;
       ea1.put (c, v);
       c->_status.set_cc_sub (v, v1, v2);
 

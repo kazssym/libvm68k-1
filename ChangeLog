@@ -1,5 +1,8 @@
 2008-05-21  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/inst/arith.h (struct addi_instruction, struct
+	cmpi_instruction, struct subi_instruction): Use unsigned type.
+
 	* lib/vm68k/bits/data_size.h (struct vm68k_byte, struct
 	vm68k_word, struct vm68k_long_word): Micro-optimize as_signed.
 
