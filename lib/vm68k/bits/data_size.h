@@ -41,10 +41,10 @@ namespace vx68k
 
     static int_fast8_t as_signed (uint_fast8_t value)
     {
-      if (value > 0x7fU)
+      if ((value & 0xffU) > 0x7fU)
         return -((int_fast8_t) (0xffU - value)) - 1;
       else
-        return (int_fast8_t) value;
+        return value;
     }
 
     template<typename T>
@@ -125,10 +125,10 @@ namespace vx68k
 
     static int_fast16_t as_signed (uint_fast16_t value)
     {
-      if (value > 0x7fffU)
+      if ((value & 0xffffU) > 0x7fffU)
         return -((int_fast16_t) (0xffffU - value)) - 1;
       else
-        return (int_fast16_t) value;
+        return value;
     }
 
     template<typename T>
@@ -209,10 +209,10 @@ namespace vx68k
 
     static int_fast32_t as_signed (uint_fast32_t value)
     {
-      if (value > 0x7fffffffUL)
+      if ((value & 0xffffffffUL) > 0x7fffffffUL)
         return -((int_fast32_t) (0xffffffffUL - value)) - 1;
       else
-        return (int_fast32_t) value;
+        return value;
     }
 
     template<typename T>
