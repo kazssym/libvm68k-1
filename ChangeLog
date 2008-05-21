@@ -1,5 +1,12 @@
 2008-05-21  Kaz Sasayama  <kazssym@vx68k.org>
 
+	* lib/inst/logic.h (struct andi_instruction, struct
+	andi_to_ccr_instruction, struct andi_to_sr_instruction, struct
+	eori_instruction, struct ori_instruction, struct
+	ori_to_ccr_instruction, struct ori_to_sr_instruction): New
+	structs.
+	(do_ANDI, do_EORI, do_ORI): Removed.
+
 	* lib/inst/arith.h (struct addi_instruction, struct
 	cmpi_instruction, struct subi_instruction): Use unsigned type.
 
