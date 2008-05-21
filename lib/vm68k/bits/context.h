@@ -203,21 +203,6 @@ namespace vx68k
       vm68k_long_word::write (_usp, value);
     }
 
-    vm68k_long_word::udata_type read_ssp_unsigned () const
-    {
-      return vm68k_long_word::read_unsigned (_ssp);
-    }
-
-    vm68k_long_word::data_type read_ssp () const
-    {
-      return vm68k_long_word::read (_ssp);
-    }
-
-    void write_ssp (vm68k_long_word::udata_type value)
-    {
-      vm68k_long_word::write (_ssp, value);
-    }
-
     /* Returns true if supervisor state.  */
     bool super () const
     {
