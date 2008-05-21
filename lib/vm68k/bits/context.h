@@ -167,7 +167,8 @@ namespace vx68k
     enum register_index
     {
       D0, D1, D2, D3, D4, D5, D6, D7,
-      A0, A1, A2, A3, A4, A5, A6, SP
+      A0, A1, A2, A3, A4, A5, A6, SP,
+      REGISTER_MAX
     };
 
     template<class Size>
@@ -225,7 +226,7 @@ namespace vx68k
     static const uint_fast16_t S = 1 << 13;
     union
     {
-      uint_least32_t _reg[8 + 8];
+      uint_least32_t _reg[REGISTER_MAX];
       struct
       {
         uint_least32_t d0, d1, d2, d3, d4, d5, d6, d7;
